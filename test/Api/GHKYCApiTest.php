@@ -1,4 +1,5 @@
 <?php
+
 /**
  * GHKYCApiTest
  * PHP version 7.4
@@ -29,6 +30,8 @@ use PHPUnit\Framework\TestCase;
 class GHKYCApiTest extends TestCase
 {
 
+    protected \Dojah\Api\GHKYCApi $api;
+
     /**
      * Setup before running any test cases
      */
@@ -41,6 +44,14 @@ class GHKYCApiTest extends TestCase
      */
     public function setUp(): void
     {
+        $apiKey = getenv("DOJAH_API_KEY");
+        $appId = getenv("DOJAH_APP_ID");
+        print_r($apiKey);
+        print_r($appId);
+        \Dojah\Configuration::getDefaultConfiguration()->setApiKey('Authorization', $apiKey);
+        \Dojah\Configuration::getDefaultConfiguration()->setApiKey('AppId', $appId);
+        \Dojah\Configuration::getDefaultConfiguration()->setHost("https://sandbox.dojah.io");
+        $this->api = new \Dojah\Api\GHKYCApi(\Dojah\Configuration::getDefaultConfiguration());
     }
 
     /**
@@ -65,8 +76,11 @@ class GHKYCApiTest extends TestCase
      */
     public function testGetDriversLicense()
     {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
+        $response = $this->api->getDriversLicense("V0000000", "John Doe", "1988-09-01");
+        $this->assertNotNull(
+            $response,
+            "response is null"
+        );
     }
 
     /**
@@ -77,8 +91,11 @@ class GHKYCApiTest extends TestCase
      */
     public function testGetPassport()
     {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
+        $response = $this->api->getDriversLicense("V0000000", "John", "Doe", "", "1988-09-01");
+        $this->assertNotNull(
+            $response,
+            "response is null"
+        );
     }
 
     /**
