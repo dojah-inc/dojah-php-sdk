@@ -19,11 +19,11 @@ To install the bindings via [Composer](https://getcomposer.org/), add the follow
   "repositories": [
     {
       "type": "vcs",
-      "url": "https://github.com/konfig-dev/dojah-php-sdk.git"
+      "url": "https://github.com/dojah-inc/dojah-php-sdk.git"
     }
   ],
   "require": {
-    "konfig-dev/dojah-php-sdk": "1.0.0"
+    "dojah-inc/dojah-php-sdk": "1.0.0"
   }
 }
 ```
@@ -57,6 +57,9 @@ $config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('AppId', 'YO
 // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
 // $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('AppId', 'Bearer');
 
+
+// Setting host path is optional and defaults to https://api.dojah.io
+// Dojah\Configuration::getDefaultConfiguration()->setHost("https://api.dojah.io");
 $apiInstance = new Dojah\Api\AMLApi(
     // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
     // This is optional, `GuzzleHttp\Client` will be used as default.
