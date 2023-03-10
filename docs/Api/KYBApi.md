@@ -34,9 +34,9 @@ $config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('AppId', 'YO
 // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
 // $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('AppId', 'Bearer');
 
-
 // Setting host path is optional and defaults to https://api.dojah.io
 // Dojah\Configuration::getDefaultConfiguration()->setHost("https://api.dojah.io");
+
 $apiInstance = new Dojah\Api\KYBApi(
     // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
     // This is optional, `GuzzleHttp\Client` will be used as default.
@@ -109,9 +109,9 @@ $config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('AppId', 'YO
 // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
 // $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('AppId', 'Bearer');
 
-
 // Setting host path is optional and defaults to https://api.dojah.io
 // Dojah\Configuration::getDefaultConfiguration()->setHost("https://api.dojah.io");
+
 $apiInstance = new Dojah\Api\KYBApi(
     // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
     // This is optional, `GuzzleHttp\Client` will be used as default.
@@ -181,9 +181,9 @@ $config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('AppId', 'YO
 // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
 // $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('AppId', 'Bearer');
 
-
 // Setting host path is optional and defaults to https://api.dojah.io
 // Dojah\Configuration::getDefaultConfiguration()->setHost("https://api.dojah.io");
+
 $apiInstance = new Dojah\Api\KYBApi(
     // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
     // This is optional, `GuzzleHttp\Client` will be used as default.
@@ -253,9 +253,9 @@ $config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('AppId', 'YO
 // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
 // $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('AppId', 'Bearer');
 
-
 // Setting host path is optional and defaults to https://api.dojah.io
 // Dojah\Configuration::getDefaultConfiguration()->setHost("https://api.dojah.io");
+
 $apiInstance = new Dojah\Api\KYBApi(
     // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
     // This is optional, `GuzzleHttp\Client` will be used as default.
