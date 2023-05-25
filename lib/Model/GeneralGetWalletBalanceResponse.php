@@ -49,7 +49,7 @@ class GeneralGetWalletBalanceResponse implements ModelInterface, ArrayAccess, \J
       * @var string[]
       */
     protected static $openAPITypes = [
-        'entity' => '\Dojah\Model\GetWalletBalanceResponseEntity'
+        'entity' => '\Dojah\Model\GeneralGetWalletBalanceResponseEntity'
     ];
 
     /**
@@ -284,7 +284,7 @@ class GeneralGetWalletBalanceResponse implements ModelInterface, ArrayAccess, \J
     /**
      * Gets entity
      *
-     * @return \Dojah\Model\GetWalletBalanceResponseEntity|null
+     * @return \Dojah\Model\GeneralGetWalletBalanceResponseEntity|null
      */
     public function getEntity()
     {
@@ -294,7 +294,7 @@ class GeneralGetWalletBalanceResponse implements ModelInterface, ArrayAccess, \J
     /**
      * Sets entity
      *
-     * @param \Dojah\Model\GetWalletBalanceResponseEntity|null $entity entity
+     * @param \Dojah\Model\GeneralGetWalletBalanceResponseEntity|null $entity entity
      *
      * @return self
      */

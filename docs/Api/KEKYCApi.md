@@ -1,10 +1,10 @@
-# Dojah\KEKYCApi
+# Dojah\KeKycApi
 
 All URIs are relative to https://api.dojah.io, except if the operation defines another base path.
 
 | Method | HTTP request | Description |
 | ------------- | ------------- | ------------- |
-| [**getNationalId()**](KEKYCApi.md#getNationalId) | **GET** /api/v1/ke/kyc/id | KYC - National ID |
+| [**getNationalId()**](KeKycApi.md#getNationalId) | **GET** /api/v1/ke/kyc/id | KYC - National ID |
 
 
 ## `getNationalId()`
@@ -21,24 +21,9 @@ KYC - National ID
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
 
-// Configure API key authorization: apikeyAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
-
-// Configure API key authorization: appIdAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('AppId', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('AppId', 'Bearer');
-
-// Setting host path is optional and defaults to https://api.dojah.io
-// Dojah\Configuration::getDefaultConfiguration()->setHost("https://api.dojah.io");
-
-$apiInstance = new Dojah\Api\KEKYCApi(
-    // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
-    // This is optional, `GuzzleHttp\Client` will be used as default.
-    // new GuzzleHttp\Client(),
-    $config
+$dojah = new \Dojah\Client(
+    Authorization: YOUR_AUTHORIZATION,
+    AppId: YOUR_APP_ID,
 );
 
 $id = 24798402;
@@ -49,7 +34,7 @@ $date_of_birth = "1985-12-29";
 $gender = "M";
 
 try {
-    $result = $apiInstance->getNationalId(
+    $result = $dojah->keKyc->getNationalId(
         id: $id, 
         first_name: $first_name, 
         last_name: $last_name, 
@@ -59,7 +44,7 @@ try {
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
-    echo 'Exception when calling KEKYCApi->getNationalId: ', $e->getMessage(), PHP_EOL;
+    echo 'Exception when calling KeKycApi->getNationalId: ', $e->getMessage(), PHP_EOL;
 }
 ```
 

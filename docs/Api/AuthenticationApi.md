@@ -26,29 +26,14 @@ Messaging - Get Sender IDs
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
 
-// Configure API key authorization: apikeyAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
-
-// Configure API key authorization: appIdAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('AppId', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('AppId', 'Bearer');
-
-// Setting host path is optional and defaults to https://api.dojah.io
-// Dojah\Configuration::getDefaultConfiguration()->setHost("https://api.dojah.io");
-
-$apiInstance = new Dojah\Api\AuthenticationApi(
-    // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
-    // This is optional, `GuzzleHttp\Client` will be used as default.
-    // new GuzzleHttp\Client(),
-    $config
+$dojah = new \Dojah\Client(
+    Authorization: YOUR_AUTHORIZATION,
+    AppId: YOUR_APP_ID,
 );
 
 
 try {
-    $result = $apiInstance->getSenderId();
+    $result = $dojah->authentication->getSenderId();
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling AuthenticationApi->getSenderId: ', $e->getMessage(), PHP_EOL;
@@ -90,30 +75,15 @@ Messaging - Get SMS Status
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
 
-// Configure API key authorization: apikeyAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
-
-// Configure API key authorization: appIdAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('AppId', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('AppId', 'Bearer');
-
-// Setting host path is optional and defaults to https://api.dojah.io
-// Dojah\Configuration::getDefaultConfiguration()->setHost("https://api.dojah.io");
-
-$apiInstance = new Dojah\Api\AuthenticationApi(
-    // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
-    // This is optional, `GuzzleHttp\Client` will be used as default.
-    // new GuzzleHttp\Client(),
-    $config
+$dojah = new \Dojah\Client(
+    Authorization: YOUR_AUTHORIZATION,
+    AppId: YOUR_APP_ID,
 );
 
 $message_id = "54818c8a-4aed-4e5f-b846-8274fd4e0bbd";
 
 try {
-    $result = $apiInstance->getSmsStatus(
+    $result = $dojah->authentication->getSmsStatus(
         message_id: $message_id
     );
     print_r($result->$getEntity());
@@ -159,33 +129,16 @@ Messaging - Request Sender ID
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
 
-// Configure API key authorization: apikeyAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
-
-// Configure API key authorization: appIdAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('AppId', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('AppId', 'Bearer');
-
-// Setting host path is optional and defaults to https://api.dojah.io
-// Dojah\Configuration::getDefaultConfiguration()->setHost("https://api.dojah.io");
-
-$apiInstance = new Dojah\Api\AuthenticationApi(
-    // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
-    // This is optional, `GuzzleHttp\Client` will be used as default.
-    // new GuzzleHttp\Client(),
-    $config
+$dojah = new \Dojah\Client(
+    Authorization: YOUR_AUTHORIZATION,
+    AppId: YOUR_APP_ID,
 );
 
-$request_sender_id_request = [
-        "sender_id" => "Dojah",
-    ];
+$sender_id = "Dojah";
 
 try {
-    $result = $apiInstance->requestSenderId(
-        request_sender_id_request: $request_sender_id_request
+    $result = $dojah->authentication->requestSenderId(
+        sender_id: $sender_id
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
@@ -230,37 +183,24 @@ Messaging - Send OTP
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
 
-// Configure API key authorization: apikeyAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
-
-// Configure API key authorization: appIdAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('AppId', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('AppId', 'Bearer');
-
-// Setting host path is optional and defaults to https://api.dojah.io
-// Dojah\Configuration::getDefaultConfiguration()->setHost("https://api.dojah.io");
-
-$apiInstance = new Dojah\Api\AuthenticationApi(
-    // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
-    // This is optional, `GuzzleHttp\Client` will be used as default.
-    // new GuzzleHttp\Client(),
-    $config
+$dojah = new \Dojah\Client(
+    Authorization: YOUR_AUTHORIZATION,
+    AppId: YOUR_APP_ID,
 );
 
-$send_otp_request = [
-        "destination" => "08068810228",
-        "length" => 6,
-        "channel" => "sms",
-        "sender_id" => "Dojah",
-        "priority" => True,
-    ];
+$destination = "08068810228";
+$length = 6;
+$channel = "sms";
+$sender_id = "Dojah";
+$priority = True;
 
 try {
-    $result = $apiInstance->sendOtp(
-        send_otp_request: $send_otp_request
+    $result = $dojah->authentication->sendOtp(
+        destination: $destination, 
+        length: $length, 
+        channel: $channel, 
+        sender_id: $sender_id, 
+        priority: $priority
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
@@ -305,36 +245,22 @@ Messaging - Send SMS
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
 
-// Configure API key authorization: apikeyAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
-
-// Configure API key authorization: appIdAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('AppId', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('AppId', 'Bearer');
-
-// Setting host path is optional and defaults to https://api.dojah.io
-// Dojah\Configuration::getDefaultConfiguration()->setHost("https://api.dojah.io");
-
-$apiInstance = new Dojah\Api\AuthenticationApi(
-    // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
-    // This is optional, `GuzzleHttp\Client` will be used as default.
-    // new GuzzleHttp\Client(),
-    $config
+$dojah = new \Dojah\Client(
+    Authorization: YOUR_AUTHORIZATION,
+    AppId: YOUR_APP_ID,
 );
 
-$send_sms_request = [
-        "destination" => "08068810228",
-        "message" => "Checking to see if you are Okay",
-        "channel" => "whatsapp",
-        "sender_id" => "Kedesa",
-    ];
+$destination = "08068810228";
+$message = "Checking to see if you are Okay";
+$channel = "whatsapp";
+$sender_id = "Kedesa";
 
 try {
-    $result = $apiInstance->sendSms(
-        send_sms_request: $send_sms_request
+    $result = $dojah->authentication->sendSms(
+        destination: $destination, 
+        message: $message, 
+        channel: $channel, 
+        sender_id: $sender_id
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
@@ -379,31 +305,16 @@ Messaging - Validate OTP
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
 
-// Configure API key authorization: apikeyAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
-
-// Configure API key authorization: appIdAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('AppId', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('AppId', 'Bearer');
-
-// Setting host path is optional and defaults to https://api.dojah.io
-// Dojah\Configuration::getDefaultConfiguration()->setHost("https://api.dojah.io");
-
-$apiInstance = new Dojah\Api\AuthenticationApi(
-    // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
-    // This is optional, `GuzzleHttp\Client` will be used as default.
-    // new GuzzleHttp\Client(),
-    $config
+$dojah = new \Dojah\Client(
+    Authorization: YOUR_AUTHORIZATION,
+    AppId: YOUR_APP_ID,
 );
 
 $reference_id = "a89e4b64-367f-414f-a189-1800bc364b05";
 $code = 81974;
 
 try {
-    $result = $apiInstance->validateOtp(
+    $result = $dojah->authentication->validateOtp(
         reference_id: $reference_id, 
         code: $code
     );

@@ -1,6 +1,6 @@
 <?php
 /**
- * GHKYCApi
+ * GhKycApi
  * PHP version 7.4
  *
  * @category Class
@@ -33,7 +33,7 @@ use Dojah\Configuration;
 use Dojah\HeaderSelector;
 use Dojah\ObjectSerializer;
 
-class GHKYCApi
+class GhKycApi extends \Dojah\CustomApi
 {
     /**
      * @var ClientInterface
@@ -115,6 +115,16 @@ class GHKYCApi
     }
 
     /**
+     * For initializing request body parameter
+     */
+    private function setRequestBodyProperty(&$body, $property, $value) {
+        if ($body === null) $body = [];
+        // user did not pass in a value for this parameter
+        if ($value === SENTINEL_VALUE) return;
+        $body[$property] = $value;
+    }
+
+    /**
      * Operation getDriversLicense
      *
      * Driver&#39;s License
@@ -128,8 +138,17 @@ class GHKYCApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\GetDriversLicenseResponse
      */
-    public function getDriversLicense($id = null, $full_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getDriversLicense'][0])
+    public function getDriversLicense(
+        $id = SENTINEL_VALUE,
+        $full_name = SENTINEL_VALUE,
+        $date_of_birth = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getDriversLicense'][0]
+
+    )
     {
+
         list($response) = $this->getDriversLicenseWithHttpInfo($id, $full_name, $date_of_birth, $contentType);
         return $response;
     }
@@ -148,15 +167,32 @@ class GHKYCApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetDriversLicenseResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getDriversLicenseWithHttpInfo($id = null, $full_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getDriversLicense'][0])
+    public function getDriversLicenseWithHttpInfo($id = null, $full_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getDriversLicense'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->getDriversLicenseRequest($id, $full_name, $date_of_birth, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getDriversLicenseRequest($id, $full_name, $date_of_birth, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->getDriversLicenseWithHttpInfo(
+                        $id,
+                        $full_name,
+                        $date_of_birth,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -249,8 +285,17 @@ class GHKYCApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getDriversLicenseAsync($id = null, $full_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getDriversLicense'][0])
+    public function getDriversLicenseAsync(
+        $id = SENTINEL_VALUE,
+        $full_name = SENTINEL_VALUE,
+        $date_of_birth = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getDriversLicense'][0]
+
+    )
     {
+
         return $this->getDriversLicenseAsyncWithHttpInfo($id, $full_name, $date_of_birth, $contentType)
             ->then(
                 function ($response) {
@@ -272,10 +317,13 @@ class GHKYCApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getDriversLicenseAsyncWithHttpInfo($id = null, $full_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getDriversLicense'][0])
+    public function getDriversLicenseAsyncWithHttpInfo($id = null, $full_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getDriversLicense'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetDriversLicenseResponse';
-        $request = $this->getDriversLicenseRequest($id, $full_name, $date_of_birth, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getDriversLicenseRequest($id, $full_name, $date_of_birth, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -324,11 +372,21 @@ class GHKYCApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getDriversLicenseRequest($id = null, $full_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getDriversLicense'][0])
+    public function getDriversLicenseRequest($id = SENTINEL_VALUE, $full_name = SENTINEL_VALUE, $date_of_birth = SENTINEL_VALUE, string $contentType = self::contentTypes['getDriversLicense'][0])
     {
 
-
-
+        // Check if $id is a string
+        if ($id !== SENTINEL_VALUE && !is_string($id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($id, true), gettype($id)));
+        }
+        // Check if $full_name is a string
+        if ($full_name !== SENTINEL_VALUE && !is_string($full_name)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($full_name, true), gettype($full_name)));
+        }
+        // Check if $date_of_birth is a string
+        if ($date_of_birth !== SENTINEL_VALUE && !is_string($date_of_birth)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($date_of_birth, true), gettype($date_of_birth)));
+        }
 
 
         $resourcePath = '/api/v1/gh/kyc/dl';
@@ -338,33 +396,39 @@ class GHKYCApi
         $httpBody = '';
         $multipart = false;
 
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $id,
-            'id', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $full_name,
-            'full_name', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $date_of_birth,
-            'date_of_birth', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
+        if ($id !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $id,
+                'id', // param base name
+                'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
+        if ($full_name !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $full_name,
+                'full_name', // param base name
+                'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
+        if ($date_of_birth !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $date_of_birth,
+                'date_of_birth', // param base name
+                'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
 
 
 
@@ -422,14 +486,20 @@ class GHKYCApi
             $headers
         );
 
+        $method = 'GET';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'GET',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -448,8 +518,19 @@ class GHKYCApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\GetPassportResponse
      */
-    public function getPassport($id = null, $first_name = null, $last_name = null, $middle_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getPassport'][0])
+    public function getPassport(
+        $id = SENTINEL_VALUE,
+        $first_name = SENTINEL_VALUE,
+        $last_name = SENTINEL_VALUE,
+        $middle_name = SENTINEL_VALUE,
+        $date_of_birth = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getPassport'][0]
+
+    )
     {
+
         list($response) = $this->getPassportWithHttpInfo($id, $first_name, $last_name, $middle_name, $date_of_birth, $contentType);
         return $response;
     }
@@ -470,15 +551,34 @@ class GHKYCApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetPassportResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getPassportWithHttpInfo($id = null, $first_name = null, $last_name = null, $middle_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getPassport'][0])
+    public function getPassportWithHttpInfo($id = null, $first_name = null, $last_name = null, $middle_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getPassport'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->getPassportRequest($id, $first_name, $last_name, $middle_name, $date_of_birth, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getPassportRequest($id, $first_name, $last_name, $middle_name, $date_of_birth, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->getPassportWithHttpInfo(
+                        $id,
+                        $first_name,
+                        $last_name,
+                        $middle_name,
+                        $date_of_birth,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -573,8 +673,19 @@ class GHKYCApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getPassportAsync($id = null, $first_name = null, $last_name = null, $middle_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getPassport'][0])
+    public function getPassportAsync(
+        $id = SENTINEL_VALUE,
+        $first_name = SENTINEL_VALUE,
+        $last_name = SENTINEL_VALUE,
+        $middle_name = SENTINEL_VALUE,
+        $date_of_birth = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getPassport'][0]
+
+    )
     {
+
         return $this->getPassportAsyncWithHttpInfo($id, $first_name, $last_name, $middle_name, $date_of_birth, $contentType)
             ->then(
                 function ($response) {
@@ -598,10 +709,13 @@ class GHKYCApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getPassportAsyncWithHttpInfo($id = null, $first_name = null, $last_name = null, $middle_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getPassport'][0])
+    public function getPassportAsyncWithHttpInfo($id = null, $first_name = null, $last_name = null, $middle_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getPassport'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetPassportResponse';
-        $request = $this->getPassportRequest($id, $first_name, $last_name, $middle_name, $date_of_birth, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getPassportRequest($id, $first_name, $last_name, $middle_name, $date_of_birth, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -652,13 +766,29 @@ class GHKYCApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getPassportRequest($id = null, $first_name = null, $last_name = null, $middle_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getPassport'][0])
+    public function getPassportRequest($id = SENTINEL_VALUE, $first_name = SENTINEL_VALUE, $last_name = SENTINEL_VALUE, $middle_name = SENTINEL_VALUE, $date_of_birth = SENTINEL_VALUE, string $contentType = self::contentTypes['getPassport'][0])
     {
 
-
-
-
-
+        // Check if $id is a string
+        if ($id !== SENTINEL_VALUE && !is_string($id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($id, true), gettype($id)));
+        }
+        // Check if $first_name is a string
+        if ($first_name !== SENTINEL_VALUE && !is_string($first_name)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($first_name, true), gettype($first_name)));
+        }
+        // Check if $last_name is a string
+        if ($last_name !== SENTINEL_VALUE && !is_string($last_name)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($last_name, true), gettype($last_name)));
+        }
+        // Check if $middle_name is a string
+        if ($middle_name !== SENTINEL_VALUE && !is_string($middle_name)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($middle_name, true), gettype($middle_name)));
+        }
+        // Check if $date_of_birth is a string
+        if ($date_of_birth !== SENTINEL_VALUE && !is_string($date_of_birth)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($date_of_birth, true), gettype($date_of_birth)));
+        }
 
 
         $resourcePath = '/api/v1/gh/kyc/passport';
@@ -668,51 +798,61 @@ class GHKYCApi
         $httpBody = '';
         $multipart = false;
 
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $id,
-            'id', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $first_name,
-            'first_name', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $last_name,
-            'last_name', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $middle_name,
-            'middle_name', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $date_of_birth,
-            'date_of_birth', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
+        if ($id !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $id,
+                'id', // param base name
+                'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
+        if ($first_name !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $first_name,
+                'first_name', // param base name
+                'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
+        if ($last_name !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $last_name,
+                'last_name', // param base name
+                'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
+        if ($middle_name !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $middle_name,
+                'middle_name', // param base name
+                'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
+        if ($date_of_birth !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $date_of_birth,
+                'date_of_birth', // param base name
+                'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
 
 
 
@@ -770,14 +910,20 @@ class GHKYCApi
             $headers
         );
 
+        $method = 'GET';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'GET',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -794,8 +940,17 @@ class GHKYCApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\GetSsnitResponse
      */
-    public function getSsnit($id = null, $full_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getSsnit'][0])
+    public function getSsnit(
+        $id = SENTINEL_VALUE,
+        $full_name = SENTINEL_VALUE,
+        $date_of_birth = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getSsnit'][0]
+
+    )
     {
+
         list($response) = $this->getSsnitWithHttpInfo($id, $full_name, $date_of_birth, $contentType);
         return $response;
     }
@@ -814,15 +969,32 @@ class GHKYCApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetSsnitResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getSsnitWithHttpInfo($id = null, $full_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getSsnit'][0])
+    public function getSsnitWithHttpInfo($id = null, $full_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getSsnit'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->getSsnitRequest($id, $full_name, $date_of_birth, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getSsnitRequest($id, $full_name, $date_of_birth, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->getSsnitWithHttpInfo(
+                        $id,
+                        $full_name,
+                        $date_of_birth,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -915,8 +1087,17 @@ class GHKYCApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getSsnitAsync($id = null, $full_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getSsnit'][0])
+    public function getSsnitAsync(
+        $id = SENTINEL_VALUE,
+        $full_name = SENTINEL_VALUE,
+        $date_of_birth = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getSsnit'][0]
+
+    )
     {
+
         return $this->getSsnitAsyncWithHttpInfo($id, $full_name, $date_of_birth, $contentType)
             ->then(
                 function ($response) {
@@ -938,10 +1119,13 @@ class GHKYCApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getSsnitAsyncWithHttpInfo($id = null, $full_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getSsnit'][0])
+    public function getSsnitAsyncWithHttpInfo($id = null, $full_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getSsnit'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetSsnitResponse';
-        $request = $this->getSsnitRequest($id, $full_name, $date_of_birth, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getSsnitRequest($id, $full_name, $date_of_birth, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -990,11 +1174,21 @@ class GHKYCApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getSsnitRequest($id = null, $full_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getSsnit'][0])
+    public function getSsnitRequest($id = SENTINEL_VALUE, $full_name = SENTINEL_VALUE, $date_of_birth = SENTINEL_VALUE, string $contentType = self::contentTypes['getSsnit'][0])
     {
 
-
-
+        // Check if $id is a string
+        if ($id !== SENTINEL_VALUE && !is_string($id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($id, true), gettype($id)));
+        }
+        // Check if $full_name is a string
+        if ($full_name !== SENTINEL_VALUE && !is_string($full_name)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($full_name, true), gettype($full_name)));
+        }
+        // Check if $date_of_birth is a string
+        if ($date_of_birth !== SENTINEL_VALUE && !is_string($date_of_birth)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($date_of_birth, true), gettype($date_of_birth)));
+        }
 
 
         $resourcePath = '/api/v1/gh/kyc/ssnit';
@@ -1004,33 +1198,39 @@ class GHKYCApi
         $httpBody = '';
         $multipart = false;
 
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $id,
-            'id', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $full_name,
-            'full_name', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $date_of_birth,
-            'date_of_birth', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
+        if ($id !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $id,
+                'id', // param base name
+                'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
+        if ($full_name !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $full_name,
+                'full_name', // param base name
+                'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
+        if ($date_of_birth !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $date_of_birth,
+                'date_of_birth', // param base name
+                'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
 
 
 
@@ -1088,14 +1288,20 @@ class GHKYCApi
             $headers
         );
 
+        $method = 'GET';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'GET',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**

@@ -33,7 +33,7 @@ use Dojah\Configuration;
 use Dojah\HeaderSelector;
 use Dojah\ObjectSerializer;
 
-class AMLApi
+class AMLApi extends \Dojah\CustomApi
 {
     /**
      * @var ClientInterface
@@ -112,6 +112,16 @@ class AMLApi
     }
 
     /**
+     * For initializing request body parameter
+     */
+    private function setRequestBodyProperty(&$body, $property, $value) {
+        if ($body === null) $body = [];
+        // user did not pass in a value for this parameter
+        if ($value === SENTINEL_VALUE) return;
+        $body[$property] = $value;
+    }
+
+    /**
      * Operation getScreeningInfo
      *
      * Get AML Info
@@ -123,8 +133,15 @@ class AMLApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\GetScreeningInfoResponse
      */
-    public function getScreeningInfo($reference_id = null, string $contentType = self::contentTypes['getScreeningInfo'][0])
+    public function getScreeningInfo(
+        $reference_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getScreeningInfo'][0]
+
+    )
     {
+
         list($response) = $this->getScreeningInfoWithHttpInfo($reference_id, $contentType);
         return $response;
     }
@@ -141,15 +158,30 @@ class AMLApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetScreeningInfoResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getScreeningInfoWithHttpInfo($reference_id = null, string $contentType = self::contentTypes['getScreeningInfo'][0])
+    public function getScreeningInfoWithHttpInfo($reference_id = null, string $contentType = self::contentTypes['getScreeningInfo'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->getScreeningInfoRequest($reference_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getScreeningInfoRequest($reference_id, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->getScreeningInfoWithHttpInfo(
+                        $reference_id,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -240,8 +272,15 @@ class AMLApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getScreeningInfoAsync($reference_id = null, string $contentType = self::contentTypes['getScreeningInfo'][0])
+    public function getScreeningInfoAsync(
+        $reference_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getScreeningInfo'][0]
+
+    )
     {
+
         return $this->getScreeningInfoAsyncWithHttpInfo($reference_id, $contentType)
             ->then(
                 function ($response) {
@@ -261,10 +300,13 @@ class AMLApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getScreeningInfoAsyncWithHttpInfo($reference_id = null, string $contentType = self::contentTypes['getScreeningInfo'][0])
+    public function getScreeningInfoAsyncWithHttpInfo($reference_id = null, string $contentType = self::contentTypes['getScreeningInfo'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetScreeningInfoResponse';
-        $request = $this->getScreeningInfoRequest($reference_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getScreeningInfoRequest($reference_id, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -311,9 +353,13 @@ class AMLApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getScreeningInfoRequest($reference_id = null, string $contentType = self::contentTypes['getScreeningInfo'][0])
+    public function getScreeningInfoRequest($reference_id = SENTINEL_VALUE, string $contentType = self::contentTypes['getScreeningInfo'][0])
     {
 
+        // Check if $reference_id is a string
+        if ($reference_id !== SENTINEL_VALUE && !is_string($reference_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($reference_id, true), gettype($reference_id)));
+        }
 
 
         $resourcePath = '/v1/aml/screening/info';
@@ -323,15 +369,17 @@ class AMLApi
         $httpBody = '';
         $multipart = false;
 
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $reference_id,
-            'reference_id', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
+        if ($reference_id !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $reference_id,
+                'reference_id', // param base name
+                'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
 
 
 
@@ -389,14 +437,20 @@ class AMLApi
             $headers
         );
 
+        $method = 'GET';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'GET',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -411,8 +465,22 @@ class AMLApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\ScreenAmlResponse
      */
-    public function screenAml($screen_aml_request = null, string $contentType = self::contentTypes['screenAml'][0])
+    public function screenAml(
+        $first_name = SENTINEL_VALUE,
+        $last_name = SENTINEL_VALUE,
+        $date_of_birth = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['screenAml'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "first_name", $first_name);
+        $this->setRequestBodyProperty($_body, "last_name", $last_name);
+        $this->setRequestBodyProperty($_body, "date_of_birth", $date_of_birth);
+        $screen_aml_request = $_body;
+
         list($response) = $this->screenAmlWithHttpInfo($screen_aml_request, $contentType);
         return $response;
     }
@@ -429,15 +497,30 @@ class AMLApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\ScreenAmlResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function screenAmlWithHttpInfo($screen_aml_request = null, string $contentType = self::contentTypes['screenAml'][0])
+    public function screenAmlWithHttpInfo($screen_aml_request = null, string $contentType = self::contentTypes['screenAml'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->screenAmlRequest($screen_aml_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->screenAmlRequest($screen_aml_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->screenAmlWithHttpInfo(
+                        $screen_aml_request,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -528,8 +611,22 @@ class AMLApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function screenAmlAsync($screen_aml_request = null, string $contentType = self::contentTypes['screenAml'][0])
+    public function screenAmlAsync(
+        $first_name = SENTINEL_VALUE,
+        $last_name = SENTINEL_VALUE,
+        $date_of_birth = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['screenAml'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "first_name", $first_name);
+        $this->setRequestBodyProperty($_body, "last_name", $last_name);
+        $this->setRequestBodyProperty($_body, "date_of_birth", $date_of_birth);
+        $screen_aml_request = $_body;
+
         return $this->screenAmlAsyncWithHttpInfo($screen_aml_request, $contentType)
             ->then(
                 function ($response) {
@@ -549,10 +646,13 @@ class AMLApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function screenAmlAsyncWithHttpInfo($screen_aml_request = null, string $contentType = self::contentTypes['screenAml'][0])
+    public function screenAmlAsyncWithHttpInfo($screen_aml_request = null, string $contentType = self::contentTypes['screenAml'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\ScreenAmlResponse';
-        $request = $this->screenAmlRequest($screen_aml_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->screenAmlRequest($screen_aml_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -599,9 +699,17 @@ class AMLApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function screenAmlRequest($screen_aml_request = null, string $contentType = self::contentTypes['screenAml'][0])
+    public function screenAmlRequest($screen_aml_request = SENTINEL_VALUE, string $contentType = self::contentTypes['screenAml'][0])
     {
 
+        if ($screen_aml_request !== SENTINEL_VALUE) {
+            if (!($screen_aml_request instanceof \Dojah\Model\ScreenAmlRequest)) {
+                if (!is_array($screen_aml_request))
+                    throw new \InvalidArgumentException('"screen_aml_request" must be associative array or an instance of \Dojah\Model\ScreenAmlRequest AMLApi.screenAml.');
+                else
+                    $screen_aml_request = new \Dojah\Model\ScreenAmlRequest($screen_aml_request);
+            }
+        }
 
 
         $resourcePath = '/api/v1/aml/screening';
@@ -675,14 +783,20 @@ class AMLApi
             $headers
         );
 
+        $method = 'POST';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'POST',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**

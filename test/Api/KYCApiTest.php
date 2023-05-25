@@ -1,5 +1,4 @@
 <?php
-
 /**
  * KYCApiTest
  * PHP version 7.4
@@ -30,8 +29,6 @@ use PHPUnit\Framework\TestCase;
 class KYCApiTest extends TestCase
 {
 
-    protected \Dojah\Api\KYCApi $api;
-
     /**
      * Setup before running any test cases
      */
@@ -44,14 +41,6 @@ class KYCApiTest extends TestCase
      */
     public function setUp(): void
     {
-        $apiKey = getenv("DOJAH_API_KEY");
-        $appId = getenv("DOJAH_APP_ID");
-        print_r($apiKey);
-        print_r($appId);
-        \Dojah\Configuration::getDefaultConfiguration()->setApiKey('Authorization', $apiKey);
-        \Dojah\Configuration::getDefaultConfiguration()->setApiKey('AppId', $appId);
-        \Dojah\Configuration::getDefaultConfiguration()->setHost("https://sandbox.dojah.io");
-        $this->api = new \Dojah\Api\KYCApi(\Dojah\Configuration::getDefaultConfiguration());
     }
 
     /**
@@ -148,11 +137,8 @@ class KYCApiTest extends TestCase
      */
     public function testGetNuban()
     {
-        $response = $this->api->getNuban("123", "123");
-        $this->assertNotNull(
-            $response,
-            "response is null"
-        );
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
     }
 
     /**

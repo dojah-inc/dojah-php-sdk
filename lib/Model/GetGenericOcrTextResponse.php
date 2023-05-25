@@ -49,7 +49,7 @@ class GetGenericOcrTextResponse implements ModelInterface, ArrayAccess, \JsonSer
       * @var string[]
       */
     protected static $openAPITypes = [
-        'entity' => '\Dojah\Model\GetOcrTextResponseEntity'
+        'entity' => '\Dojah\Model\GetGenericOcrTextResponseEntity'
     ];
 
     /**
@@ -284,7 +284,7 @@ class GetGenericOcrTextResponse implements ModelInterface, ArrayAccess, \JsonSer
     /**
      * Gets entity
      *
-     * @return \Dojah\Model\GetOcrTextResponseEntity|null
+     * @return \Dojah\Model\GetGenericOcrTextResponseEntity|null
      */
     public function getEntity()
     {
@@ -294,7 +294,7 @@ class GetGenericOcrTextResponse implements ModelInterface, ArrayAccess, \JsonSer
     /**
      * Sets entity
      *
-     * @param \Dojah\Model\GetOcrTextResponseEntity|null $entity entity
+     * @param \Dojah\Model\GetGenericOcrTextResponseEntity|null $entity entity
      *
      * @return self
      */

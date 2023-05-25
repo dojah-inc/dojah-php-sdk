@@ -33,7 +33,7 @@ use Dojah\Configuration;
 use Dojah\HeaderSelector;
 use Dojah\ObjectSerializer;
 
-class WalletApi
+class WalletApi extends \Dojah\CustomApi
 {
     /**
      * @var ClientInterface
@@ -124,6 +124,16 @@ class WalletApi
     }
 
     /**
+     * For initializing request body parameter
+     */
+    private function setRequestBodyProperty(&$body, $property, $value) {
+        if ($body === null) $body = [];
+        // user did not pass in a value for this parameter
+        if ($value === SENTINEL_VALUE) return;
+        $body[$property] = $value;
+    }
+
+    /**
      * Operation createWallet
      *
      * Create NGN Wallet
@@ -135,8 +145,26 @@ class WalletApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\CreateWalletResponse
      */
-    public function createWallet($create_wallet_request = null, string $contentType = self::contentTypes['createWallet'][0])
+    public function createWallet(
+        $last_name = SENTINEL_VALUE,
+        $first_name = SENTINEL_VALUE,
+        $phone_number = SENTINEL_VALUE,
+        $dob = SENTINEL_VALUE,
+        $route = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['createWallet'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "last_name", $last_name);
+        $this->setRequestBodyProperty($_body, "first_name", $first_name);
+        $this->setRequestBodyProperty($_body, "phone_number", $phone_number);
+        $this->setRequestBodyProperty($_body, "dob", $dob);
+        $this->setRequestBodyProperty($_body, "route", $route);
+        $create_wallet_request = $_body;
+
         list($response) = $this->createWalletWithHttpInfo($create_wallet_request, $contentType);
         return $response;
     }
@@ -153,15 +181,30 @@ class WalletApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\CreateWalletResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function createWalletWithHttpInfo($create_wallet_request = null, string $contentType = self::contentTypes['createWallet'][0])
+    public function createWalletWithHttpInfo($create_wallet_request = null, string $contentType = self::contentTypes['createWallet'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->createWalletRequest($create_wallet_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->createWalletRequest($create_wallet_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->createWalletWithHttpInfo(
+                        $create_wallet_request,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -252,8 +295,26 @@ class WalletApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function createWalletAsync($create_wallet_request = null, string $contentType = self::contentTypes['createWallet'][0])
+    public function createWalletAsync(
+        $last_name = SENTINEL_VALUE,
+        $first_name = SENTINEL_VALUE,
+        $phone_number = SENTINEL_VALUE,
+        $dob = SENTINEL_VALUE,
+        $route = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['createWallet'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "last_name", $last_name);
+        $this->setRequestBodyProperty($_body, "first_name", $first_name);
+        $this->setRequestBodyProperty($_body, "phone_number", $phone_number);
+        $this->setRequestBodyProperty($_body, "dob", $dob);
+        $this->setRequestBodyProperty($_body, "route", $route);
+        $create_wallet_request = $_body;
+
         return $this->createWalletAsyncWithHttpInfo($create_wallet_request, $contentType)
             ->then(
                 function ($response) {
@@ -273,10 +334,13 @@ class WalletApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function createWalletAsyncWithHttpInfo($create_wallet_request = null, string $contentType = self::contentTypes['createWallet'][0])
+    public function createWalletAsyncWithHttpInfo($create_wallet_request = null, string $contentType = self::contentTypes['createWallet'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\CreateWalletResponse';
-        $request = $this->createWalletRequest($create_wallet_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->createWalletRequest($create_wallet_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -323,9 +387,17 @@ class WalletApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function createWalletRequest($create_wallet_request = null, string $contentType = self::contentTypes['createWallet'][0])
+    public function createWalletRequest($create_wallet_request = SENTINEL_VALUE, string $contentType = self::contentTypes['createWallet'][0])
     {
 
+        if ($create_wallet_request !== SENTINEL_VALUE) {
+            if (!($create_wallet_request instanceof \Dojah\Model\CreateWalletRequest)) {
+                if (!is_array($create_wallet_request))
+                    throw new \InvalidArgumentException('"create_wallet_request" must be associative array or an instance of \Dojah\Model\CreateWalletRequest WalletApi.createWallet.');
+                else
+                    $create_wallet_request = new \Dojah\Model\CreateWalletRequest($create_wallet_request);
+            }
+        }
 
 
         $resourcePath = '/v1/wallet/ngn/create';
@@ -399,14 +471,20 @@ class WalletApi
             $headers
         );
 
+        $method = 'POST';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'POST',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -421,8 +499,20 @@ class WalletApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\CreditSubwalletResponse
      */
-    public function creditSubwallet($credit_subwallet_request = null, string $contentType = self::contentTypes['creditSubwallet'][0])
+    public function creditSubwallet(
+        $amount = SENTINEL_VALUE,
+        $wallet_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['creditSubwallet'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "amount", $amount);
+        $this->setRequestBodyProperty($_body, "wallet_id", $wallet_id);
+        $credit_subwallet_request = $_body;
+
         list($response) = $this->creditSubwalletWithHttpInfo($credit_subwallet_request, $contentType);
         return $response;
     }
@@ -439,15 +529,30 @@ class WalletApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\CreditSubwalletResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function creditSubwalletWithHttpInfo($credit_subwallet_request = null, string $contentType = self::contentTypes['creditSubwallet'][0])
+    public function creditSubwalletWithHttpInfo($credit_subwallet_request = null, string $contentType = self::contentTypes['creditSubwallet'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->creditSubwalletRequest($credit_subwallet_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->creditSubwalletRequest($credit_subwallet_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->creditSubwalletWithHttpInfo(
+                        $credit_subwallet_request,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -538,8 +643,20 @@ class WalletApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function creditSubwalletAsync($credit_subwallet_request = null, string $contentType = self::contentTypes['creditSubwallet'][0])
+    public function creditSubwalletAsync(
+        $amount = SENTINEL_VALUE,
+        $wallet_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['creditSubwallet'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "amount", $amount);
+        $this->setRequestBodyProperty($_body, "wallet_id", $wallet_id);
+        $credit_subwallet_request = $_body;
+
         return $this->creditSubwalletAsyncWithHttpInfo($credit_subwallet_request, $contentType)
             ->then(
                 function ($response) {
@@ -559,10 +676,13 @@ class WalletApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function creditSubwalletAsyncWithHttpInfo($credit_subwallet_request = null, string $contentType = self::contentTypes['creditSubwallet'][0])
+    public function creditSubwalletAsyncWithHttpInfo($credit_subwallet_request = null, string $contentType = self::contentTypes['creditSubwallet'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\CreditSubwalletResponse';
-        $request = $this->creditSubwalletRequest($credit_subwallet_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->creditSubwalletRequest($credit_subwallet_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -609,9 +729,17 @@ class WalletApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function creditSubwalletRequest($credit_subwallet_request = null, string $contentType = self::contentTypes['creditSubwallet'][0])
+    public function creditSubwalletRequest($credit_subwallet_request = SENTINEL_VALUE, string $contentType = self::contentTypes['creditSubwallet'][0])
     {
 
+        if ($credit_subwallet_request !== SENTINEL_VALUE) {
+            if (!($credit_subwallet_request instanceof \Dojah\Model\CreditSubwalletRequest)) {
+                if (!is_array($credit_subwallet_request))
+                    throw new \InvalidArgumentException('"credit_subwallet_request" must be associative array or an instance of \Dojah\Model\CreditSubwalletRequest WalletApi.creditSubwallet.');
+                else
+                    $credit_subwallet_request = new \Dojah\Model\CreditSubwalletRequest($credit_subwallet_request);
+            }
+        }
 
 
         $resourcePath = '/v1/wallet/ngn/credit';
@@ -680,14 +808,20 @@ class WalletApi
             $headers
         );
 
+        $method = 'POST';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'POST',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -702,8 +836,15 @@ class WalletApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\GetTransactionResponse
      */
-    public function getTransaction($transaction_id = null, string $contentType = self::contentTypes['getTransaction'][0])
+    public function getTransaction(
+        $transaction_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getTransaction'][0]
+
+    )
     {
+
         list($response) = $this->getTransactionWithHttpInfo($transaction_id, $contentType);
         return $response;
     }
@@ -720,15 +861,30 @@ class WalletApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetTransactionResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getTransactionWithHttpInfo($transaction_id = null, string $contentType = self::contentTypes['getTransaction'][0])
+    public function getTransactionWithHttpInfo($transaction_id = null, string $contentType = self::contentTypes['getTransaction'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->getTransactionRequest($transaction_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getTransactionRequest($transaction_id, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->getTransactionWithHttpInfo(
+                        $transaction_id,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -819,8 +975,15 @@ class WalletApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getTransactionAsync($transaction_id = null, string $contentType = self::contentTypes['getTransaction'][0])
+    public function getTransactionAsync(
+        $transaction_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getTransaction'][0]
+
+    )
     {
+
         return $this->getTransactionAsyncWithHttpInfo($transaction_id, $contentType)
             ->then(
                 function ($response) {
@@ -840,10 +1003,13 @@ class WalletApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getTransactionAsyncWithHttpInfo($transaction_id = null, string $contentType = self::contentTypes['getTransaction'][0])
+    public function getTransactionAsyncWithHttpInfo($transaction_id = null, string $contentType = self::contentTypes['getTransaction'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetTransactionResponse';
-        $request = $this->getTransactionRequest($transaction_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getTransactionRequest($transaction_id, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -890,9 +1056,13 @@ class WalletApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getTransactionRequest($transaction_id = null, string $contentType = self::contentTypes['getTransaction'][0])
+    public function getTransactionRequest($transaction_id = SENTINEL_VALUE, string $contentType = self::contentTypes['getTransaction'][0])
     {
 
+        // Check if $transaction_id is a string
+        if ($transaction_id !== SENTINEL_VALUE && !is_string($transaction_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($transaction_id, true), gettype($transaction_id)));
+        }
 
 
         $resourcePath = '/v1/wallet/ngn/transaction';
@@ -902,15 +1072,17 @@ class WalletApi
         $httpBody = '';
         $multipart = false;
 
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $transaction_id,
-            'transaction_id', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
+        if ($transaction_id !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $transaction_id,
+                'transaction_id', // param base name
+                'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
 
 
 
@@ -968,14 +1140,20 @@ class WalletApi
             $headers
         );
 
+        $method = 'GET';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'GET',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -990,8 +1168,15 @@ class WalletApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\GetWalletResponse
      */
-    public function getWallet($wallet_id = null, string $contentType = self::contentTypes['getWallet'][0])
+    public function getWallet(
+        $wallet_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getWallet'][0]
+
+    )
     {
+
         list($response) = $this->getWalletWithHttpInfo($wallet_id, $contentType);
         return $response;
     }
@@ -1008,15 +1193,30 @@ class WalletApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetWalletResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getWalletWithHttpInfo($wallet_id = null, string $contentType = self::contentTypes['getWallet'][0])
+    public function getWalletWithHttpInfo($wallet_id = null, string $contentType = self::contentTypes['getWallet'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->getWalletRequest($wallet_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getWalletRequest($wallet_id, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->getWalletWithHttpInfo(
+                        $wallet_id,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -1107,8 +1307,15 @@ class WalletApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getWalletAsync($wallet_id = null, string $contentType = self::contentTypes['getWallet'][0])
+    public function getWalletAsync(
+        $wallet_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getWallet'][0]
+
+    )
     {
+
         return $this->getWalletAsyncWithHttpInfo($wallet_id, $contentType)
             ->then(
                 function ($response) {
@@ -1128,10 +1335,13 @@ class WalletApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getWalletAsyncWithHttpInfo($wallet_id = null, string $contentType = self::contentTypes['getWallet'][0])
+    public function getWalletAsyncWithHttpInfo($wallet_id = null, string $contentType = self::contentTypes['getWallet'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetWalletResponse';
-        $request = $this->getWalletRequest($wallet_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getWalletRequest($wallet_id, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -1178,9 +1388,13 @@ class WalletApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getWalletRequest($wallet_id = null, string $contentType = self::contentTypes['getWallet'][0])
+    public function getWalletRequest($wallet_id = SENTINEL_VALUE, string $contentType = self::contentTypes['getWallet'][0])
     {
 
+        // Check if $wallet_id is a string
+        if ($wallet_id !== SENTINEL_VALUE && !is_string($wallet_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($wallet_id, true), gettype($wallet_id)));
+        }
 
 
         $resourcePath = '/v1/wallet/ngn/retrieve';
@@ -1190,15 +1404,17 @@ class WalletApi
         $httpBody = '';
         $multipart = false;
 
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $wallet_id,
-            'wallet_id', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
+        if ($wallet_id !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $wallet_id,
+                'wallet_id', // param base name
+                'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
 
 
 
@@ -1256,14 +1472,20 @@ class WalletApi
             $headers
         );
 
+        $method = 'GET';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'GET',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -1278,8 +1500,15 @@ class WalletApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\GetWalletsResponse
      */
-    public function getWallets($app_id = null, string $contentType = self::contentTypes['getWallets'][0])
+    public function getWallets(
+        $app_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getWallets'][0]
+
+    )
     {
+
         list($response) = $this->getWalletsWithHttpInfo($app_id, $contentType);
         return $response;
     }
@@ -1296,15 +1525,30 @@ class WalletApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetWalletsResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getWalletsWithHttpInfo($app_id = null, string $contentType = self::contentTypes['getWallets'][0])
+    public function getWalletsWithHttpInfo($app_id = null, string $contentType = self::contentTypes['getWallets'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->getWalletsRequest($app_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getWalletsRequest($app_id, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->getWalletsWithHttpInfo(
+                        $app_id,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -1395,8 +1639,15 @@ class WalletApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getWalletsAsync($app_id = null, string $contentType = self::contentTypes['getWallets'][0])
+    public function getWalletsAsync(
+        $app_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getWallets'][0]
+
+    )
     {
+
         return $this->getWalletsAsyncWithHttpInfo($app_id, $contentType)
             ->then(
                 function ($response) {
@@ -1416,10 +1667,13 @@ class WalletApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getWalletsAsyncWithHttpInfo($app_id = null, string $contentType = self::contentTypes['getWallets'][0])
+    public function getWalletsAsyncWithHttpInfo($app_id = null, string $contentType = self::contentTypes['getWallets'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetWalletsResponse';
-        $request = $this->getWalletsRequest($app_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getWalletsRequest($app_id, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -1466,9 +1720,13 @@ class WalletApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getWalletsRequest($app_id = null, string $contentType = self::contentTypes['getWallets'][0])
+    public function getWalletsRequest($app_id = SENTINEL_VALUE, string $contentType = self::contentTypes['getWallets'][0])
     {
 
+        // Check if $app_id is a string
+        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
+        }
 
 
         $resourcePath = '/v1/wallet/ngn/accounts';
@@ -1478,15 +1736,17 @@ class WalletApi
         $httpBody = '';
         $multipart = false;
 
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $app_id,
-            'app_id', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
+        if ($app_id !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $app_id,
+                'app_id', // param base name
+                'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
 
 
 
@@ -1544,14 +1804,20 @@ class WalletApi
             $headers
         );
 
+        $method = 'GET';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'GET',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -1566,8 +1832,24 @@ class WalletApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\TransferFundsResponse
      */
-    public function transferFunds($transfer_funds_request = null, string $contentType = self::contentTypes['transferFunds'][0])
+    public function transferFunds(
+        $amount = SENTINEL_VALUE,
+        $recipient_bank_code = SENTINEL_VALUE,
+        $recipient_account_number = SENTINEL_VALUE,
+        $wallet_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['transferFunds'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "amount", $amount);
+        $this->setRequestBodyProperty($_body, "recipient_bank_code", $recipient_bank_code);
+        $this->setRequestBodyProperty($_body, "recipient_account_number", $recipient_account_number);
+        $this->setRequestBodyProperty($_body, "wallet_id", $wallet_id);
+        $transfer_funds_request = $_body;
+
         list($response) = $this->transferFundsWithHttpInfo($transfer_funds_request, $contentType);
         return $response;
     }
@@ -1584,15 +1866,30 @@ class WalletApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\TransferFundsResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function transferFundsWithHttpInfo($transfer_funds_request = null, string $contentType = self::contentTypes['transferFunds'][0])
+    public function transferFundsWithHttpInfo($transfer_funds_request = null, string $contentType = self::contentTypes['transferFunds'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->transferFundsRequest($transfer_funds_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->transferFundsRequest($transfer_funds_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->transferFundsWithHttpInfo(
+                        $transfer_funds_request,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -1683,8 +1980,24 @@ class WalletApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function transferFundsAsync($transfer_funds_request = null, string $contentType = self::contentTypes['transferFunds'][0])
+    public function transferFundsAsync(
+        $amount = SENTINEL_VALUE,
+        $recipient_bank_code = SENTINEL_VALUE,
+        $recipient_account_number = SENTINEL_VALUE,
+        $wallet_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['transferFunds'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "amount", $amount);
+        $this->setRequestBodyProperty($_body, "recipient_bank_code", $recipient_bank_code);
+        $this->setRequestBodyProperty($_body, "recipient_account_number", $recipient_account_number);
+        $this->setRequestBodyProperty($_body, "wallet_id", $wallet_id);
+        $transfer_funds_request = $_body;
+
         return $this->transferFundsAsyncWithHttpInfo($transfer_funds_request, $contentType)
             ->then(
                 function ($response) {
@@ -1704,10 +2017,13 @@ class WalletApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function transferFundsAsyncWithHttpInfo($transfer_funds_request = null, string $contentType = self::contentTypes['transferFunds'][0])
+    public function transferFundsAsyncWithHttpInfo($transfer_funds_request = null, string $contentType = self::contentTypes['transferFunds'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\TransferFundsResponse';
-        $request = $this->transferFundsRequest($transfer_funds_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->transferFundsRequest($transfer_funds_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -1754,9 +2070,17 @@ class WalletApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function transferFundsRequest($transfer_funds_request = null, string $contentType = self::contentTypes['transferFunds'][0])
+    public function transferFundsRequest($transfer_funds_request = SENTINEL_VALUE, string $contentType = self::contentTypes['transferFunds'][0])
     {
 
+        if ($transfer_funds_request !== SENTINEL_VALUE) {
+            if (!($transfer_funds_request instanceof \Dojah\Model\TransferFundsRequest)) {
+                if (!is_array($transfer_funds_request))
+                    throw new \InvalidArgumentException('"transfer_funds_request" must be associative array or an instance of \Dojah\Model\TransferFundsRequest WalletApi.transferFunds.');
+                else
+                    $transfer_funds_request = new \Dojah\Model\TransferFundsRequest($transfer_funds_request);
+            }
+        }
 
 
         $resourcePath = '/v1/wallet/ngn/transfer';
@@ -1830,14 +2154,20 @@ class WalletApi
             $headers
         );
 
+        $method = 'POST';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'POST',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**

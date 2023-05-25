@@ -24,24 +24,9 @@ KYC - Get CAC Advanced
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
 
-// Configure API key authorization: apikeyAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
-
-// Configure API key authorization: appIdAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('AppId', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('AppId', 'Bearer');
-
-// Setting host path is optional and defaults to https://api.dojah.io
-// Dojah\Configuration::getDefaultConfiguration()->setHost("https://api.dojah.io");
-
-$apiInstance = new Dojah\Api\KYBApi(
-    // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
-    // This is optional, `GuzzleHttp\Client` will be used as default.
-    // new GuzzleHttp\Client(),
-    $config
+$dojah = new \Dojah\Client(
+    Authorization: YOUR_AUTHORIZATION,
+    AppId: YOUR_APP_ID,
 );
 
 $rc = 1432074;
@@ -49,7 +34,7 @@ $type = "co";
 $class = "advance";
 
 try {
-    $result = $apiInstance->getAdvancedCac(
+    $result = $dojah->kYB->getAdvancedCac(
         rc: $rc, 
         type: $type, 
         class: $class
@@ -99,31 +84,16 @@ KYB - Get CAC 2
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
 
-// Configure API key authorization: apikeyAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
-
-// Configure API key authorization: appIdAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('AppId', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('AppId', 'Bearer');
-
-// Setting host path is optional and defaults to https://api.dojah.io
-// Dojah\Configuration::getDefaultConfiguration()->setHost("https://api.dojah.io");
-
-$apiInstance = new Dojah\Api\KYBApi(
-    // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
-    // This is optional, `GuzzleHttp\Client` will be used as default.
-    // new GuzzleHttp\Client(),
-    $config
+$dojah = new \Dojah\Client(
+    Authorization: YOUR_AUTHORIZATION,
+    AppId: YOUR_APP_ID,
 );
 
 $rc = 3330883;
 $type = "bn";
 
 try {
-    $result = $apiInstance->getBasicCac(
+    $result = $dojah->kYB->getBasicCac(
         rc: $rc, 
         type: $type
     );
@@ -171,31 +141,16 @@ KYC - Get CAC
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
 
-// Configure API key authorization: apikeyAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
-
-// Configure API key authorization: appIdAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('AppId', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('AppId', 'Bearer');
-
-// Setting host path is optional and defaults to https://api.dojah.io
-// Dojah\Configuration::getDefaultConfiguration()->setHost("https://api.dojah.io");
-
-$apiInstance = new Dojah\Api\KYBApi(
-    // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
-    // This is optional, `GuzzleHttp\Client` will be used as default.
-    // new GuzzleHttp\Client(),
-    $config
+$dojah = new \Dojah\Client(
+    Authorization: YOUR_AUTHORIZATION,
+    AppId: YOUR_APP_ID,
 );
 
 $rc_number = 1432074;
 $company_name = "ELTA SOLUTIONS LIMITED";
 
 try {
-    $result = $apiInstance->getCac(
+    $result = $dojah->kYB->getCac(
         rc_number: $rc_number, 
         company_name: $company_name
     );
@@ -243,30 +198,15 @@ KYC - Fetch Tin
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
 
-// Configure API key authorization: apikeyAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
-
-// Configure API key authorization: appIdAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('AppId', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('AppId', 'Bearer');
-
-// Setting host path is optional and defaults to https://api.dojah.io
-// Dojah\Configuration::getDefaultConfiguration()->setHost("https://api.dojah.io");
-
-$apiInstance = new Dojah\Api\KYBApi(
-    // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
-    // This is optional, `GuzzleHttp\Client` will be used as default.
-    // new GuzzleHttp\Client(),
-    $config
+$dojah = new \Dojah\Client(
+    Authorization: YOUR_AUTHORIZATION,
+    AppId: YOUR_APP_ID,
 );
 
 $tin = "21148119-0001";
 
 try {
-    $result = $apiInstance->getTin(
+    $result = $dojah->kYB->getTin(
         tin: $tin
     );
     print_r($result->$getEntity());

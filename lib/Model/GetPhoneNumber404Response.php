@@ -49,7 +49,7 @@ class GetPhoneNumber404Response implements ModelInterface, ArrayAccess, \JsonSer
       * @var string[]
       */
     protected static $openAPITypes = [
-        'entity' => '\Dojah\Model\GetPhoneNumberResponseEntity'
+        'entity' => '\Dojah\Model\GetPhoneNumber404ResponseEntity'
     ];
 
     /**
@@ -284,7 +284,7 @@ class GetPhoneNumber404Response implements ModelInterface, ArrayAccess, \JsonSer
     /**
      * Gets entity
      *
-     * @return \Dojah\Model\GetPhoneNumberResponseEntity|null
+     * @return \Dojah\Model\GetPhoneNumber404ResponseEntity|null
      */
     public function getEntity()
     {
@@ -294,7 +294,7 @@ class GetPhoneNumber404Response implements ModelInterface, ArrayAccess, \JsonSer
     /**
      * Sets entity
      *
-     * @param \Dojah\Model\GetPhoneNumberResponseEntity|null $entity entity
+     * @param \Dojah\Model\GetPhoneNumber404ResponseEntity|null $entity entity
      *
      * @return self
      */

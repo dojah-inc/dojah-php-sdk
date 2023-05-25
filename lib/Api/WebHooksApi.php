@@ -33,7 +33,7 @@ use Dojah\Configuration;
 use Dojah\HeaderSelector;
 use Dojah\ObjectSerializer;
 
-class WebHooksApi
+class WebHooksApi extends \Dojah\CustomApi
 {
     /**
      * @var ClientInterface
@@ -118,6 +118,16 @@ class WebHooksApi
     }
 
     /**
+     * For initializing request body parameter
+     */
+    private function setRequestBodyProperty(&$body, $property, $value) {
+        if ($body === null) $body = [];
+        // user did not pass in a value for this parameter
+        if ($value === SENTINEL_VALUE) return;
+        $body[$property] = $value;
+    }
+
+    /**
      * Operation deleteWebhook
      *
      * Delete Webhook
@@ -128,8 +138,14 @@ class WebHooksApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\DeleteWebhookResponse
      */
-    public function deleteWebhook(string $contentType = self::contentTypes['deleteWebhook'][0])
+    public function deleteWebhook(
+
+
+        string $contentType = self::contentTypes['deleteWebhook'][0]
+
+    )
     {
+
         list($response) = $this->deleteWebhookWithHttpInfo($contentType);
         return $response;
     }
@@ -145,15 +161,29 @@ class WebHooksApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\DeleteWebhookResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function deleteWebhookWithHttpInfo(string $contentType = self::contentTypes['deleteWebhook'][0])
+    public function deleteWebhookWithHttpInfo(string $contentType = self::contentTypes['deleteWebhook'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->deleteWebhookRequest($contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->deleteWebhookRequest($contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->deleteWebhookWithHttpInfo(
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -243,8 +273,14 @@ class WebHooksApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function deleteWebhookAsync(string $contentType = self::contentTypes['deleteWebhook'][0])
+    public function deleteWebhookAsync(
+
+
+        string $contentType = self::contentTypes['deleteWebhook'][0]
+
+    )
     {
+
         return $this->deleteWebhookAsyncWithHttpInfo($contentType)
             ->then(
                 function ($response) {
@@ -263,10 +299,13 @@ class WebHooksApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function deleteWebhookAsyncWithHttpInfo(string $contentType = self::contentTypes['deleteWebhook'][0])
+    public function deleteWebhookAsyncWithHttpInfo(string $contentType = self::contentTypes['deleteWebhook'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\DeleteWebhookResponse';
-        $request = $this->deleteWebhookRequest($contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->deleteWebhookRequest($contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -314,6 +353,7 @@ class WebHooksApi
      */
     public function deleteWebhookRequest(string $contentType = self::contentTypes['deleteWebhook'][0])
     {
+
 
 
         $resourcePath = '/api/v1/webhook/delete';
@@ -380,14 +420,20 @@ class WebHooksApi
             $headers
         );
 
+        $method = 'DELETE';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'DELETE',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -401,8 +447,14 @@ class WebHooksApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\GetWebhooksResponse
      */
-    public function getWebhooks(string $contentType = self::contentTypes['getWebhooks'][0])
+    public function getWebhooks(
+
+
+        string $contentType = self::contentTypes['getWebhooks'][0]
+
+    )
     {
+
         list($response) = $this->getWebhooksWithHttpInfo($contentType);
         return $response;
     }
@@ -418,15 +470,29 @@ class WebHooksApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetWebhooksResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getWebhooksWithHttpInfo(string $contentType = self::contentTypes['getWebhooks'][0])
+    public function getWebhooksWithHttpInfo(string $contentType = self::contentTypes['getWebhooks'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->getWebhooksRequest($contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getWebhooksRequest($contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->getWebhooksWithHttpInfo(
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -516,8 +582,14 @@ class WebHooksApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getWebhooksAsync(string $contentType = self::contentTypes['getWebhooks'][0])
+    public function getWebhooksAsync(
+
+
+        string $contentType = self::contentTypes['getWebhooks'][0]
+
+    )
     {
+
         return $this->getWebhooksAsyncWithHttpInfo($contentType)
             ->then(
                 function ($response) {
@@ -536,10 +608,13 @@ class WebHooksApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getWebhooksAsyncWithHttpInfo(string $contentType = self::contentTypes['getWebhooks'][0])
+    public function getWebhooksAsyncWithHttpInfo(string $contentType = self::contentTypes['getWebhooks'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetWebhooksResponse';
-        $request = $this->getWebhooksRequest($contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getWebhooksRequest($contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -587,6 +662,7 @@ class WebHooksApi
      */
     public function getWebhooksRequest(string $contentType = self::contentTypes['getWebhooks'][0])
     {
+
 
 
         $resourcePath = '/api/v1/webhook/fetch';
@@ -653,14 +729,20 @@ class WebHooksApi
             $headers
         );
 
+        $method = 'GET';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'GET',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -675,8 +757,20 @@ class WebHooksApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\NotifyWebhookResponse
      */
-    public function notifyWebhook($notify_webhook_request = null, string $contentType = self::contentTypes['notifyWebhook'][0])
+    public function notifyWebhook(
+        $subject = SENTINEL_VALUE,
+        $data = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['notifyWebhook'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "subject", $subject);
+        $this->setRequestBodyProperty($_body, "data", $data);
+        $notify_webhook_request = $_body;
+
         list($response) = $this->notifyWebhookWithHttpInfo($notify_webhook_request, $contentType);
         return $response;
     }
@@ -693,15 +787,30 @@ class WebHooksApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\NotifyWebhookResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function notifyWebhookWithHttpInfo($notify_webhook_request = null, string $contentType = self::contentTypes['notifyWebhook'][0])
+    public function notifyWebhookWithHttpInfo($notify_webhook_request = null, string $contentType = self::contentTypes['notifyWebhook'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->notifyWebhookRequest($notify_webhook_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->notifyWebhookRequest($notify_webhook_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->notifyWebhookWithHttpInfo(
+                        $notify_webhook_request,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -792,8 +901,20 @@ class WebHooksApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function notifyWebhookAsync($notify_webhook_request = null, string $contentType = self::contentTypes['notifyWebhook'][0])
+    public function notifyWebhookAsync(
+        $subject = SENTINEL_VALUE,
+        $data = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['notifyWebhook'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "subject", $subject);
+        $this->setRequestBodyProperty($_body, "data", $data);
+        $notify_webhook_request = $_body;
+
         return $this->notifyWebhookAsyncWithHttpInfo($notify_webhook_request, $contentType)
             ->then(
                 function ($response) {
@@ -813,10 +934,13 @@ class WebHooksApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function notifyWebhookAsyncWithHttpInfo($notify_webhook_request = null, string $contentType = self::contentTypes['notifyWebhook'][0])
+    public function notifyWebhookAsyncWithHttpInfo($notify_webhook_request = null, string $contentType = self::contentTypes['notifyWebhook'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\NotifyWebhookResponse';
-        $request = $this->notifyWebhookRequest($notify_webhook_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->notifyWebhookRequest($notify_webhook_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -863,9 +987,17 @@ class WebHooksApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function notifyWebhookRequest($notify_webhook_request = null, string $contentType = self::contentTypes['notifyWebhook'][0])
+    public function notifyWebhookRequest($notify_webhook_request = SENTINEL_VALUE, string $contentType = self::contentTypes['notifyWebhook'][0])
     {
 
+        if ($notify_webhook_request !== SENTINEL_VALUE) {
+            if (!($notify_webhook_request instanceof \Dojah\Model\NotifyWebhookRequest)) {
+                if (!is_array($notify_webhook_request))
+                    throw new \InvalidArgumentException('"notify_webhook_request" must be associative array or an instance of \Dojah\Model\NotifyWebhookRequest WebHooksApi.notifyWebhook.');
+                else
+                    $notify_webhook_request = new \Dojah\Model\NotifyWebhookRequest($notify_webhook_request);
+            }
+        }
 
 
         $resourcePath = '/api/v1/webhook/notify';
@@ -939,14 +1071,20 @@ class WebHooksApi
             $headers
         );
 
+        $method = 'POST';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'POST',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -961,8 +1099,20 @@ class WebHooksApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\SubscribeServiceResponse
      */
-    public function subscribeService($subscribe_service_request = null, string $contentType = self::contentTypes['subscribeService'][0])
+    public function subscribeService(
+        $webhook = SENTINEL_VALUE,
+        $service = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['subscribeService'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "webhook", $webhook);
+        $this->setRequestBodyProperty($_body, "service", $service);
+        $subscribe_service_request = $_body;
+
         list($response) = $this->subscribeServiceWithHttpInfo($subscribe_service_request, $contentType);
         return $response;
     }
@@ -979,15 +1129,30 @@ class WebHooksApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\SubscribeServiceResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function subscribeServiceWithHttpInfo($subscribe_service_request = null, string $contentType = self::contentTypes['subscribeService'][0])
+    public function subscribeServiceWithHttpInfo($subscribe_service_request = null, string $contentType = self::contentTypes['subscribeService'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->subscribeServiceRequest($subscribe_service_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->subscribeServiceRequest($subscribe_service_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->subscribeServiceWithHttpInfo(
+                        $subscribe_service_request,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -1078,8 +1243,20 @@ class WebHooksApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function subscribeServiceAsync($subscribe_service_request = null, string $contentType = self::contentTypes['subscribeService'][0])
+    public function subscribeServiceAsync(
+        $webhook = SENTINEL_VALUE,
+        $service = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['subscribeService'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "webhook", $webhook);
+        $this->setRequestBodyProperty($_body, "service", $service);
+        $subscribe_service_request = $_body;
+
         return $this->subscribeServiceAsyncWithHttpInfo($subscribe_service_request, $contentType)
             ->then(
                 function ($response) {
@@ -1099,10 +1276,13 @@ class WebHooksApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function subscribeServiceAsyncWithHttpInfo($subscribe_service_request = null, string $contentType = self::contentTypes['subscribeService'][0])
+    public function subscribeServiceAsyncWithHttpInfo($subscribe_service_request = null, string $contentType = self::contentTypes['subscribeService'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\SubscribeServiceResponse';
-        $request = $this->subscribeServiceRequest($subscribe_service_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->subscribeServiceRequest($subscribe_service_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -1149,9 +1329,17 @@ class WebHooksApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function subscribeServiceRequest($subscribe_service_request = null, string $contentType = self::contentTypes['subscribeService'][0])
+    public function subscribeServiceRequest($subscribe_service_request = SENTINEL_VALUE, string $contentType = self::contentTypes['subscribeService'][0])
     {
 
+        if ($subscribe_service_request !== SENTINEL_VALUE) {
+            if (!($subscribe_service_request instanceof \Dojah\Model\SubscribeServiceRequest)) {
+                if (!is_array($subscribe_service_request))
+                    throw new \InvalidArgumentException('"subscribe_service_request" must be associative array or an instance of \Dojah\Model\SubscribeServiceRequest WebHooksApi.subscribeService.');
+                else
+                    $subscribe_service_request = new \Dojah\Model\SubscribeServiceRequest($subscribe_service_request);
+            }
+        }
 
 
         $resourcePath = '/api/v1/webhook/subscribe';
@@ -1225,14 +1413,20 @@ class WebHooksApi
             $headers
         );
 
+        $method = 'POST';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'POST',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**

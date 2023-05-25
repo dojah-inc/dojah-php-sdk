@@ -27,29 +27,14 @@ General - Get Banks
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
 
-// Configure API key authorization: apikeyAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
-
-// Configure API key authorization: appIdAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('AppId', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('AppId', 'Bearer');
-
-// Setting host path is optional and defaults to https://api.dojah.io
-// Dojah\Configuration::getDefaultConfiguration()->setHost("https://api.dojah.io");
-
-$apiInstance = new Dojah\Api\GeneralApi(
-    // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
-    // This is optional, `GuzzleHttp\Client` will be used as default.
-    // new GuzzleHttp\Client(),
-    $config
+$dojah = new \Dojah\Client(
+    Authorization: YOUR_AUTHORIZATION,
+    AppId: YOUR_APP_ID,
 );
 
 
 try {
-    $result = $apiInstance->getBanks();
+    $result = $dojah->general->getBanks();
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling GeneralApi->getBanks: ', $e->getMessage(), PHP_EOL;
@@ -91,30 +76,15 @@ General Resolve BIN
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
 
-// Configure API key authorization: apikeyAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
-
-// Configure API key authorization: appIdAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('AppId', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('AppId', 'Bearer');
-
-// Setting host path is optional and defaults to https://api.dojah.io
-// Dojah\Configuration::getDefaultConfiguration()->setHost("https://api.dojah.io");
-
-$apiInstance = new Dojah\Api\GeneralApi(
-    // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
-    // This is optional, `GuzzleHttp\Client` will be used as default.
-    // new GuzzleHttp\Client(),
-    $config
+$dojah = new \Dojah\Client(
+    Authorization: YOUR_AUTHORIZATION,
+    AppId: YOUR_APP_ID,
 );
 
 $card_bin = 506118;
 
 try {
-    $result = $apiInstance->getBin(
+    $result = $dojah->general->getBin(
         card_bin: $card_bin
     );
     print_r($result->$getEntity());
@@ -160,29 +130,14 @@ Purchase - Get Data Plans
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
 
-// Configure API key authorization: apikeyAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
-
-// Configure API key authorization: appIdAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('AppId', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('AppId', 'Bearer');
-
-// Setting host path is optional and defaults to https://api.dojah.io
-// Dojah\Configuration::getDefaultConfiguration()->setHost("https://api.dojah.io");
-
-$apiInstance = new Dojah\Api\GeneralApi(
-    // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
-    // This is optional, `GuzzleHttp\Client` will be used as default.
-    // new GuzzleHttp\Client(),
-    $config
+$dojah = new \Dojah\Client(
+    Authorization: YOUR_AUTHORIZATION,
+    AppId: YOUR_APP_ID,
 );
 
 
 try {
-    $result = $apiInstance->getDataPlans();
+    $result = $dojah->general->getDataPlans();
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling GeneralApi->getDataPlans: ', $e->getMessage(), PHP_EOL;
@@ -224,31 +179,16 @@ General Resolve NUBAN
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
 
-// Configure API key authorization: apikeyAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
-
-// Configure API key authorization: appIdAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('AppId', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('AppId', 'Bearer');
-
-// Setting host path is optional and defaults to https://api.dojah.io
-// Dojah\Configuration::getDefaultConfiguration()->setHost("https://api.dojah.io");
-
-$apiInstance = new Dojah\Api\GeneralApi(
-    // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
-    // This is optional, `GuzzleHttp\Client` will be used as default.
-    // new GuzzleHttp\Client(),
-    $config
+$dojah = new \Dojah\Client(
+    Authorization: YOUR_AUTHORIZATION,
+    AppId: YOUR_APP_ID,
 );
 
 $bank_code = 58;
 $account_number = 37466959;
 
 try {
-    $result = $apiInstance->getNuban(
+    $result = $dojah->general->getNuban(
         bank_code: $bank_code, 
         account_number: $account_number
     );
@@ -296,29 +236,14 @@ Get Dojah Wallet Balance
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
 
-// Configure API key authorization: apikeyAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
-
-// Configure API key authorization: appIdAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('AppId', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('AppId', 'Bearer');
-
-// Setting host path is optional and defaults to https://api.dojah.io
-// Dojah\Configuration::getDefaultConfiguration()->setHost("https://api.dojah.io");
-
-$apiInstance = new Dojah\Api\GeneralApi(
-    // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
-    // This is optional, `GuzzleHttp\Client` will be used as default.
-    // new GuzzleHttp\Client(),
-    $config
+$dojah = new \Dojah\Client(
+    Authorization: YOUR_AUTHORIZATION,
+    AppId: YOUR_APP_ID,
 );
 
 
 try {
-    $result = $apiInstance->getWalletBalance();
+    $result = $dojah->general->getWalletBalance();
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling GeneralApi->getWalletBalance: ', $e->getMessage(), PHP_EOL;
@@ -360,34 +285,18 @@ Purchase - Send Airtime
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
 
-// Configure API key authorization: apikeyAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
-
-// Configure API key authorization: appIdAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('AppId', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('AppId', 'Bearer');
-
-// Setting host path is optional and defaults to https://api.dojah.io
-// Dojah\Configuration::getDefaultConfiguration()->setHost("https://api.dojah.io");
-
-$apiInstance = new Dojah\Api\GeneralApi(
-    // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
-    // This is optional, `GuzzleHttp\Client` will be used as default.
-    // new GuzzleHttp\Client(),
-    $config
+$dojah = new \Dojah\Client(
+    Authorization: YOUR_AUTHORIZATION,
+    AppId: YOUR_APP_ID,
 );
 
-$purchase_airtime_request = [
-        "destination" => "08068810228",
-        "amount" => "100",
-    ];
+$destination = "08068810228";
+$amount = "100";
 
 try {
-    $result = $apiInstance->purchaseAirtime(
-        purchase_airtime_request: $purchase_airtime_request
+    $result = $dojah->general->purchaseAirtime(
+        destination: $destination, 
+        amount: $amount
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
@@ -432,34 +341,18 @@ Purchase - Buy Data
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
 
-// Configure API key authorization: apikeyAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
-
-// Configure API key authorization: appIdAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('AppId', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('AppId', 'Bearer');
-
-// Setting host path is optional and defaults to https://api.dojah.io
-// Dojah\Configuration::getDefaultConfiguration()->setHost("https://api.dojah.io");
-
-$apiInstance = new Dojah\Api\GeneralApi(
-    // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
-    // This is optional, `GuzzleHttp\Client` will be used as default.
-    // new GuzzleHttp\Client(),
-    $config
+$dojah = new \Dojah\Client(
+    Authorization: YOUR_AUTHORIZATION,
+    AppId: YOUR_APP_ID,
 );
 
-$purchase_data_request = [
-        "plan" => "9MOBILE_1.5GB",
-        "destination" => "09090577941",
-    ];
+$plan = "9MOBILE_1.5GB";
+$destination = "09090577941";
 
 try {
-    $result = $apiInstance->purchaseData(
-        purchase_data_request: $purchase_data_request
+    $result = $dojah->general->purchaseData(
+        plan: $plan, 
+        destination: $destination
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {

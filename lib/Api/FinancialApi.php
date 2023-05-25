@@ -33,7 +33,7 @@ use Dojah\Configuration;
 use Dojah\HeaderSelector;
 use Dojah\ObjectSerializer;
 
-class FinancialApi
+class FinancialApi extends \Dojah\CustomApi
 {
     /**
      * @var ClientInterface
@@ -136,6 +136,16 @@ class FinancialApi
     }
 
     /**
+     * For initializing request body parameter
+     */
+    private function setRequestBodyProperty(&$body, $property, $value) {
+        if ($body === null) $body = [];
+        // user did not pass in a value for this parameter
+        if ($value === SENTINEL_VALUE) return;
+        $body[$property] = $value;
+    }
+
+    /**
      * Operation collectStatusFromPdf
      *
      * Collect Status via PDF Statement
@@ -148,8 +158,16 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\CollectStatusFromPdfResponse
      */
-    public function collectStatusFromPdf($statement = null, $bank_code = null, string $contentType = self::contentTypes['collectStatusFromPdf'][0])
+    public function collectStatusFromPdf(
+        $statement = SENTINEL_VALUE,
+        $bank_code = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['collectStatusFromPdf'][0]
+
+    )
     {
+
         list($response) = $this->collectStatusFromPdfWithHttpInfo($statement, $bank_code, $contentType);
         return $response;
     }
@@ -167,15 +185,31 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\CollectStatusFromPdfResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function collectStatusFromPdfWithHttpInfo($statement = null, $bank_code = null, string $contentType = self::contentTypes['collectStatusFromPdf'][0])
+    public function collectStatusFromPdfWithHttpInfo($statement = null, $bank_code = null, string $contentType = self::contentTypes['collectStatusFromPdf'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->collectStatusFromPdfRequest($statement, $bank_code, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->collectStatusFromPdfRequest($statement, $bank_code, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->collectStatusFromPdfWithHttpInfo(
+                        $statement,
+                        $bank_code,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -267,8 +301,16 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function collectStatusFromPdfAsync($statement = null, $bank_code = null, string $contentType = self::contentTypes['collectStatusFromPdf'][0])
+    public function collectStatusFromPdfAsync(
+        $statement = SENTINEL_VALUE,
+        $bank_code = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['collectStatusFromPdf'][0]
+
+    )
     {
+
         return $this->collectStatusFromPdfAsyncWithHttpInfo($statement, $bank_code, $contentType)
             ->then(
                 function ($response) {
@@ -289,10 +331,13 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function collectStatusFromPdfAsyncWithHttpInfo($statement = null, $bank_code = null, string $contentType = self::contentTypes['collectStatusFromPdf'][0])
+    public function collectStatusFromPdfAsyncWithHttpInfo($statement = null, $bank_code = null, string $contentType = self::contentTypes['collectStatusFromPdf'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\CollectStatusFromPdfResponse';
-        $request = $this->collectStatusFromPdfRequest($statement, $bank_code, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->collectStatusFromPdfRequest($statement, $bank_code, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -340,9 +385,8 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function collectStatusFromPdfRequest($statement = null, $bank_code = null, string $contentType = self::contentTypes['collectStatusFromPdf'][0])
+    public function collectStatusFromPdfRequest($statement = SENTINEL_VALUE, $bank_code = SENTINEL_VALUE, string $contentType = self::contentTypes['collectStatusFromPdf'][0])
     {
-
 
 
 
@@ -357,7 +401,7 @@ class FinancialApi
 
 
         // form params
-        if ($statement !== null) {
+        if ($statement !== SENTINEL_VALUE) {
             $multipart = true;
             $formParams['statement'] = [];
             $paramFiles = is_array($statement) ? $statement : [$statement];
@@ -369,7 +413,7 @@ class FinancialApi
             }
         }
         // form params
-        if ($bank_code !== null) {
+        if ($bank_code !== SENTINEL_VALUE) {
             $formParams['bank_code'] = ObjectSerializer::toFormValue($bank_code);
         }
 
@@ -426,14 +470,20 @@ class FinancialApi
             $headers
         );
 
+        $method = 'POST';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'POST',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -448,8 +498,20 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\CollectTransactionsResponse
      */
-    public function collectTransactions($collect_transactions_request = null, string $contentType = self::contentTypes['collectTransactions'][0])
+    public function collectTransactions(
+        $transactions = SENTINEL_VALUE,
+        $app_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['collectTransactions'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "transactions", $transactions);
+        $this->setRequestBodyProperty($_body, "app_id", $app_id);
+        $collect_transactions_request = $_body;
+
         list($response) = $this->collectTransactionsWithHttpInfo($collect_transactions_request, $contentType);
         return $response;
     }
@@ -466,15 +528,30 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\CollectTransactionsResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function collectTransactionsWithHttpInfo($collect_transactions_request = null, string $contentType = self::contentTypes['collectTransactions'][0])
+    public function collectTransactionsWithHttpInfo($collect_transactions_request = null, string $contentType = self::contentTypes['collectTransactions'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->collectTransactionsRequest($collect_transactions_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->collectTransactionsRequest($collect_transactions_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->collectTransactionsWithHttpInfo(
+                        $collect_transactions_request,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -565,8 +642,20 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function collectTransactionsAsync($collect_transactions_request = null, string $contentType = self::contentTypes['collectTransactions'][0])
+    public function collectTransactionsAsync(
+        $transactions = SENTINEL_VALUE,
+        $app_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['collectTransactions'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "transactions", $transactions);
+        $this->setRequestBodyProperty($_body, "app_id", $app_id);
+        $collect_transactions_request = $_body;
+
         return $this->collectTransactionsAsyncWithHttpInfo($collect_transactions_request, $contentType)
             ->then(
                 function ($response) {
@@ -586,10 +675,13 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function collectTransactionsAsyncWithHttpInfo($collect_transactions_request = null, string $contentType = self::contentTypes['collectTransactions'][0])
+    public function collectTransactionsAsyncWithHttpInfo($collect_transactions_request = null, string $contentType = self::contentTypes['collectTransactions'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\CollectTransactionsResponse';
-        $request = $this->collectTransactionsRequest($collect_transactions_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->collectTransactionsRequest($collect_transactions_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -636,9 +728,17 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function collectTransactionsRequest($collect_transactions_request = null, string $contentType = self::contentTypes['collectTransactions'][0])
+    public function collectTransactionsRequest($collect_transactions_request = SENTINEL_VALUE, string $contentType = self::contentTypes['collectTransactions'][0])
     {
 
+        if ($collect_transactions_request !== SENTINEL_VALUE) {
+            if (!($collect_transactions_request instanceof \Dojah\Model\CollectTransactionsRequest)) {
+                if (!is_array($collect_transactions_request))
+                    throw new \InvalidArgumentException('"collect_transactions_request" must be associative array or an instance of \Dojah\Model\CollectTransactionsRequest FinancialApi.collectTransactions.');
+                else
+                    $collect_transactions_request = new \Dojah\Model\CollectTransactionsRequest($collect_transactions_request);
+            }
+        }
 
 
         $resourcePath = '/v1/financial/transactions';
@@ -712,14 +812,20 @@ class FinancialApi
             $headers
         );
 
+        $method = 'POST';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'POST',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -734,8 +840,15 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\GetAccountResponse
      */
-    public function getAccount($account_id = null, string $contentType = self::contentTypes['getAccount'][0])
+    public function getAccount(
+        $account_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getAccount'][0]
+
+    )
     {
+
         list($response) = $this->getAccountWithHttpInfo($account_id, $contentType);
         return $response;
     }
@@ -752,15 +865,30 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetAccountResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getAccountWithHttpInfo($account_id = null, string $contentType = self::contentTypes['getAccount'][0])
+    public function getAccountWithHttpInfo($account_id = null, string $contentType = self::contentTypes['getAccount'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->getAccountRequest($account_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getAccountRequest($account_id, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->getAccountWithHttpInfo(
+                        $account_id,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -851,8 +979,15 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getAccountAsync($account_id = null, string $contentType = self::contentTypes['getAccount'][0])
+    public function getAccountAsync(
+        $account_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getAccount'][0]
+
+    )
     {
+
         return $this->getAccountAsyncWithHttpInfo($account_id, $contentType)
             ->then(
                 function ($response) {
@@ -872,10 +1007,13 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getAccountAsyncWithHttpInfo($account_id = null, string $contentType = self::contentTypes['getAccount'][0])
+    public function getAccountAsyncWithHttpInfo($account_id = null, string $contentType = self::contentTypes['getAccount'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetAccountResponse';
-        $request = $this->getAccountRequest($account_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getAccountRequest($account_id, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -922,9 +1060,13 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getAccountRequest($account_id = null, string $contentType = self::contentTypes['getAccount'][0])
+    public function getAccountRequest($account_id = SENTINEL_VALUE, string $contentType = self::contentTypes['getAccount'][0])
     {
 
+        // Check if $account_id is a string
+        if ($account_id !== SENTINEL_VALUE && !is_string($account_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($account_id, true), gettype($account_id)));
+        }
 
 
         $resourcePath = '/api/v1/financial/account_information';
@@ -934,15 +1076,17 @@ class FinancialApi
         $httpBody = '';
         $multipart = false;
 
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $account_id,
-            'account_id', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
+        if ($account_id !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $account_id,
+                'account_id', // param base name
+                'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
 
 
 
@@ -1000,14 +1144,20 @@ class FinancialApi
             $headers
         );
 
+        $method = 'GET';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'GET',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -1021,8 +1171,14 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\GetAccountAnalysisResponse
      */
-    public function getAccountAnalysis(string $contentType = self::contentTypes['getAccountAnalysis'][0])
+    public function getAccountAnalysis(
+
+
+        string $contentType = self::contentTypes['getAccountAnalysis'][0]
+
+    )
     {
+
         list($response) = $this->getAccountAnalysisWithHttpInfo($contentType);
         return $response;
     }
@@ -1038,15 +1194,29 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetAccountAnalysisResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getAccountAnalysisWithHttpInfo(string $contentType = self::contentTypes['getAccountAnalysis'][0])
+    public function getAccountAnalysisWithHttpInfo(string $contentType = self::contentTypes['getAccountAnalysis'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->getAccountAnalysisRequest($contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getAccountAnalysisRequest($contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->getAccountAnalysisWithHttpInfo(
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -1136,8 +1306,14 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getAccountAnalysisAsync(string $contentType = self::contentTypes['getAccountAnalysis'][0])
+    public function getAccountAnalysisAsync(
+
+
+        string $contentType = self::contentTypes['getAccountAnalysis'][0]
+
+    )
     {
+
         return $this->getAccountAnalysisAsyncWithHttpInfo($contentType)
             ->then(
                 function ($response) {
@@ -1156,10 +1332,13 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getAccountAnalysisAsyncWithHttpInfo(string $contentType = self::contentTypes['getAccountAnalysis'][0])
+    public function getAccountAnalysisAsyncWithHttpInfo(string $contentType = self::contentTypes['getAccountAnalysis'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetAccountAnalysisResponse';
-        $request = $this->getAccountAnalysisRequest($contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getAccountAnalysisRequest($contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -1207,6 +1386,7 @@ class FinancialApi
      */
     public function getAccountAnalysisRequest(string $contentType = self::contentTypes['getAccountAnalysis'][0])
     {
+
 
 
         $resourcePath = '/api/v1/financial/analysis';
@@ -1273,14 +1453,20 @@ class FinancialApi
             $headers
         );
 
+        $method = 'GET';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'GET',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -1295,8 +1481,15 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\GetAccountSubscriptionsResponse
      */
-    public function getAccountSubscriptions($account_id = null, string $contentType = self::contentTypes['getAccountSubscriptions'][0])
+    public function getAccountSubscriptions(
+        $account_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getAccountSubscriptions'][0]
+
+    )
     {
+
         list($response) = $this->getAccountSubscriptionsWithHttpInfo($account_id, $contentType);
         return $response;
     }
@@ -1313,15 +1506,30 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetAccountSubscriptionsResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getAccountSubscriptionsWithHttpInfo($account_id = null, string $contentType = self::contentTypes['getAccountSubscriptions'][0])
+    public function getAccountSubscriptionsWithHttpInfo($account_id = null, string $contentType = self::contentTypes['getAccountSubscriptions'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->getAccountSubscriptionsRequest($account_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getAccountSubscriptionsRequest($account_id, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->getAccountSubscriptionsWithHttpInfo(
+                        $account_id,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -1412,8 +1620,15 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getAccountSubscriptionsAsync($account_id = null, string $contentType = self::contentTypes['getAccountSubscriptions'][0])
+    public function getAccountSubscriptionsAsync(
+        $account_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getAccountSubscriptions'][0]
+
+    )
     {
+
         return $this->getAccountSubscriptionsAsyncWithHttpInfo($account_id, $contentType)
             ->then(
                 function ($response) {
@@ -1433,10 +1648,13 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getAccountSubscriptionsAsyncWithHttpInfo($account_id = null, string $contentType = self::contentTypes['getAccountSubscriptions'][0])
+    public function getAccountSubscriptionsAsyncWithHttpInfo($account_id = null, string $contentType = self::contentTypes['getAccountSubscriptions'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetAccountSubscriptionsResponse';
-        $request = $this->getAccountSubscriptionsRequest($account_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getAccountSubscriptionsRequest($account_id, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -1483,9 +1701,13 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getAccountSubscriptionsRequest($account_id = null, string $contentType = self::contentTypes['getAccountSubscriptions'][0])
+    public function getAccountSubscriptionsRequest($account_id = SENTINEL_VALUE, string $contentType = self::contentTypes['getAccountSubscriptions'][0])
     {
 
+        // Check if $account_id is a string
+        if ($account_id !== SENTINEL_VALUE && !is_string($account_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($account_id, true), gettype($account_id)));
+        }
 
 
         $resourcePath = '/v1/financial/account_subscription';
@@ -1495,15 +1717,17 @@ class FinancialApi
         $httpBody = '';
         $multipart = false;
 
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $account_id,
-            'account_id', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
+        if ($account_id !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $account_id,
+                'account_id', // param base name
+                'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
 
 
 
@@ -1561,14 +1785,20 @@ class FinancialApi
             $headers
         );
 
+        $method = 'GET';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'GET',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -1584,8 +1814,16 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\GetAccountTransactionsResponse
      */
-    public function getAccountTransactions($account_id = null, $length = null, string $contentType = self::contentTypes['getAccountTransactions'][0])
+    public function getAccountTransactions(
+        $account_id = SENTINEL_VALUE,
+        $length = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getAccountTransactions'][0]
+
+    )
     {
+
         list($response) = $this->getAccountTransactionsWithHttpInfo($account_id, $length, $contentType);
         return $response;
     }
@@ -1603,15 +1841,31 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetAccountTransactionsResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getAccountTransactionsWithHttpInfo($account_id = null, $length = null, string $contentType = self::contentTypes['getAccountTransactions'][0])
+    public function getAccountTransactionsWithHttpInfo($account_id = null, $length = null, string $contentType = self::contentTypes['getAccountTransactions'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->getAccountTransactionsRequest($account_id, $length, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getAccountTransactionsRequest($account_id, $length, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->getAccountTransactionsWithHttpInfo(
+                        $account_id,
+                        $length,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -1703,8 +1957,16 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getAccountTransactionsAsync($account_id = null, $length = null, string $contentType = self::contentTypes['getAccountTransactions'][0])
+    public function getAccountTransactionsAsync(
+        $account_id = SENTINEL_VALUE,
+        $length = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getAccountTransactions'][0]
+
+    )
     {
+
         return $this->getAccountTransactionsAsyncWithHttpInfo($account_id, $length, $contentType)
             ->then(
                 function ($response) {
@@ -1725,10 +1987,13 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getAccountTransactionsAsyncWithHttpInfo($account_id = null, $length = null, string $contentType = self::contentTypes['getAccountTransactions'][0])
+    public function getAccountTransactionsAsyncWithHttpInfo($account_id = null, $length = null, string $contentType = self::contentTypes['getAccountTransactions'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetAccountTransactionsResponse';
-        $request = $this->getAccountTransactionsRequest($account_id, $length, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getAccountTransactionsRequest($account_id, $length, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -1776,10 +2041,13 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getAccountTransactionsRequest($account_id = null, $length = null, string $contentType = self::contentTypes['getAccountTransactions'][0])
+    public function getAccountTransactionsRequest($account_id = SENTINEL_VALUE, $length = SENTINEL_VALUE, string $contentType = self::contentTypes['getAccountTransactions'][0])
     {
 
-
+        // Check if $account_id is a string
+        if ($account_id !== SENTINEL_VALUE && !is_string($account_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($account_id, true), gettype($account_id)));
+        }
 
 
         $resourcePath = '/api/v1/financial/account_transactions';
@@ -1789,24 +2057,28 @@ class FinancialApi
         $httpBody = '';
         $multipart = false;
 
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $account_id,
-            'account_id', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $length,
-            'length', // param base name
-            'integer', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
+        if ($account_id !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $account_id,
+                'account_id', // param base name
+                'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
+        if ($length !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $length,
+                'length', // param base name
+                'integer', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
 
 
 
@@ -1864,14 +2136,20 @@ class FinancialApi
             $headers
         );
 
+        $method = 'GET';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'GET',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -1886,8 +2164,15 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\FinancialGetBasicBvnResponse
      */
-    public function getBasicBvn($account_id = null, string $contentType = self::contentTypes['getBasicBvn'][0])
+    public function getBasicBvn(
+        $account_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getBasicBvn'][0]
+
+    )
     {
+
         list($response) = $this->getBasicBvnWithHttpInfo($account_id, $contentType);
         return $response;
     }
@@ -1904,15 +2189,30 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\FinancialGetBasicBvnResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getBasicBvnWithHttpInfo($account_id = null, string $contentType = self::contentTypes['getBasicBvn'][0])
+    public function getBasicBvnWithHttpInfo($account_id = null, string $contentType = self::contentTypes['getBasicBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->getBasicBvnRequest($account_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBasicBvnRequest($account_id, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->getBasicBvnWithHttpInfo(
+                        $account_id,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -2003,8 +2303,15 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getBasicBvnAsync($account_id = null, string $contentType = self::contentTypes['getBasicBvn'][0])
+    public function getBasicBvnAsync(
+        $account_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getBasicBvn'][0]
+
+    )
     {
+
         return $this->getBasicBvnAsyncWithHttpInfo($account_id, $contentType)
             ->then(
                 function ($response) {
@@ -2024,10 +2331,13 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getBasicBvnAsyncWithHttpInfo($account_id = null, string $contentType = self::contentTypes['getBasicBvn'][0])
+    public function getBasicBvnAsyncWithHttpInfo($account_id = null, string $contentType = self::contentTypes['getBasicBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\FinancialGetBasicBvnResponse';
-        $request = $this->getBasicBvnRequest($account_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBasicBvnRequest($account_id, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -2074,9 +2384,13 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getBasicBvnRequest($account_id = null, string $contentType = self::contentTypes['getBasicBvn'][0])
+    public function getBasicBvnRequest($account_id = SENTINEL_VALUE, string $contentType = self::contentTypes['getBasicBvn'][0])
     {
 
+        // Check if $account_id is a string
+        if ($account_id !== SENTINEL_VALUE && !is_string($account_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($account_id, true), gettype($account_id)));
+        }
 
 
         $resourcePath = '/v1/financial/bvn_information/basic';
@@ -2086,15 +2400,17 @@ class FinancialApi
         $httpBody = '';
         $multipart = false;
 
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $account_id,
-            'account_id', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
+        if ($account_id !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $account_id,
+                'account_id', // param base name
+                'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
 
 
 
@@ -2152,14 +2468,20 @@ class FinancialApi
             $headers
         );
 
+        $method = 'GET';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'GET',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -2174,8 +2496,15 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\GetEarningStructureResponse
      */
-    public function getEarningStructure($account_id = null, string $contentType = self::contentTypes['getEarningStructure'][0])
+    public function getEarningStructure(
+        $account_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getEarningStructure'][0]
+
+    )
     {
+
         list($response) = $this->getEarningStructureWithHttpInfo($account_id, $contentType);
         return $response;
     }
@@ -2192,15 +2521,30 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetEarningStructureResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getEarningStructureWithHttpInfo($account_id = null, string $contentType = self::contentTypes['getEarningStructure'][0])
+    public function getEarningStructureWithHttpInfo($account_id = null, string $contentType = self::contentTypes['getEarningStructure'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->getEarningStructureRequest($account_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getEarningStructureRequest($account_id, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->getEarningStructureWithHttpInfo(
+                        $account_id,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -2291,8 +2635,15 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getEarningStructureAsync($account_id = null, string $contentType = self::contentTypes['getEarningStructure'][0])
+    public function getEarningStructureAsync(
+        $account_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getEarningStructure'][0]
+
+    )
     {
+
         return $this->getEarningStructureAsyncWithHttpInfo($account_id, $contentType)
             ->then(
                 function ($response) {
@@ -2312,10 +2663,13 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getEarningStructureAsyncWithHttpInfo($account_id = null, string $contentType = self::contentTypes['getEarningStructure'][0])
+    public function getEarningStructureAsyncWithHttpInfo($account_id = null, string $contentType = self::contentTypes['getEarningStructure'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetEarningStructureResponse';
-        $request = $this->getEarningStructureRequest($account_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getEarningStructureRequest($account_id, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -2362,9 +2716,13 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getEarningStructureRequest($account_id = null, string $contentType = self::contentTypes['getEarningStructure'][0])
+    public function getEarningStructureRequest($account_id = SENTINEL_VALUE, string $contentType = self::contentTypes['getEarningStructure'][0])
     {
 
+        // Check if $account_id is a string
+        if ($account_id !== SENTINEL_VALUE && !is_string($account_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($account_id, true), gettype($account_id)));
+        }
 
 
         $resourcePath = '/v1/financial/earning_structure';
@@ -2374,15 +2732,17 @@ class FinancialApi
         $httpBody = '';
         $multipart = false;
 
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $account_id,
-            'account_id', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
+        if ($account_id !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $account_id,
+                'account_id', // param base name
+                'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
 
 
 
@@ -2440,14 +2800,20 @@ class FinancialApi
             $headers
         );
 
+        $method = 'GET';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'GET',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -2462,8 +2828,15 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\FinancialGetFullBvnResponse
      */
-    public function getFullBvn($account_id = null, string $contentType = self::contentTypes['getFullBvn'][0])
+    public function getFullBvn(
+        $account_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getFullBvn'][0]
+
+    )
     {
+
         list($response) = $this->getFullBvnWithHttpInfo($account_id, $contentType);
         return $response;
     }
@@ -2480,15 +2853,30 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\FinancialGetFullBvnResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getFullBvnWithHttpInfo($account_id = null, string $contentType = self::contentTypes['getFullBvn'][0])
+    public function getFullBvnWithHttpInfo($account_id = null, string $contentType = self::contentTypes['getFullBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->getFullBvnRequest($account_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getFullBvnRequest($account_id, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->getFullBvnWithHttpInfo(
+                        $account_id,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -2579,8 +2967,15 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getFullBvnAsync($account_id = null, string $contentType = self::contentTypes['getFullBvn'][0])
+    public function getFullBvnAsync(
+        $account_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getFullBvn'][0]
+
+    )
     {
+
         return $this->getFullBvnAsyncWithHttpInfo($account_id, $contentType)
             ->then(
                 function ($response) {
@@ -2600,10 +2995,13 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getFullBvnAsyncWithHttpInfo($account_id = null, string $contentType = self::contentTypes['getFullBvn'][0])
+    public function getFullBvnAsyncWithHttpInfo($account_id = null, string $contentType = self::contentTypes['getFullBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\FinancialGetFullBvnResponse';
-        $request = $this->getFullBvnRequest($account_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getFullBvnRequest($account_id, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -2650,9 +3048,13 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getFullBvnRequest($account_id = null, string $contentType = self::contentTypes['getFullBvn'][0])
+    public function getFullBvnRequest($account_id = SENTINEL_VALUE, string $contentType = self::contentTypes['getFullBvn'][0])
     {
 
+        // Check if $account_id is a string
+        if ($account_id !== SENTINEL_VALUE && !is_string($account_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($account_id, true), gettype($account_id)));
+        }
 
 
         $resourcePath = '/v1/financial/bvn_information/full';
@@ -2662,15 +3064,17 @@ class FinancialApi
         $httpBody = '';
         $multipart = false;
 
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $account_id,
-            'account_id', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
+        if ($account_id !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $account_id,
+                'account_id', // param base name
+                'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
 
 
 
@@ -2728,14 +3132,20 @@ class FinancialApi
             $headers
         );
 
+        $method = 'GET';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'GET',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -2750,8 +3160,15 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\GetSpendingPatternResponse
      */
-    public function getSpendingPattern($account_id = null, string $contentType = self::contentTypes['getSpendingPattern'][0])
+    public function getSpendingPattern(
+        $account_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getSpendingPattern'][0]
+
+    )
     {
+
         list($response) = $this->getSpendingPatternWithHttpInfo($account_id, $contentType);
         return $response;
     }
@@ -2768,15 +3185,30 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetSpendingPatternResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getSpendingPatternWithHttpInfo($account_id = null, string $contentType = self::contentTypes['getSpendingPattern'][0])
+    public function getSpendingPatternWithHttpInfo($account_id = null, string $contentType = self::contentTypes['getSpendingPattern'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->getSpendingPatternRequest($account_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getSpendingPatternRequest($account_id, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->getSpendingPatternWithHttpInfo(
+                        $account_id,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -2867,8 +3299,15 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getSpendingPatternAsync($account_id = null, string $contentType = self::contentTypes['getSpendingPattern'][0])
+    public function getSpendingPatternAsync(
+        $account_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getSpendingPattern'][0]
+
+    )
     {
+
         return $this->getSpendingPatternAsyncWithHttpInfo($account_id, $contentType)
             ->then(
                 function ($response) {
@@ -2888,10 +3327,13 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getSpendingPatternAsyncWithHttpInfo($account_id = null, string $contentType = self::contentTypes['getSpendingPattern'][0])
+    public function getSpendingPatternAsyncWithHttpInfo($account_id = null, string $contentType = self::contentTypes['getSpendingPattern'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetSpendingPatternResponse';
-        $request = $this->getSpendingPatternRequest($account_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getSpendingPatternRequest($account_id, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -2938,9 +3380,13 @@ class FinancialApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getSpendingPatternRequest($account_id = null, string $contentType = self::contentTypes['getSpendingPattern'][0])
+    public function getSpendingPatternRequest($account_id = SENTINEL_VALUE, string $contentType = self::contentTypes['getSpendingPattern'][0])
     {
 
+        // Check if $account_id is a string
+        if ($account_id !== SENTINEL_VALUE && !is_string($account_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($account_id, true), gettype($account_id)));
+        }
 
 
         $resourcePath = '/v1/financial/spending_pattern';
@@ -2950,15 +3396,17 @@ class FinancialApi
         $httpBody = '';
         $multipart = false;
 
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $account_id,
-            'account_id', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
+        if ($account_id !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $account_id,
+                'account_id', // param base name
+                'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
 
 
 
@@ -3016,14 +3464,20 @@ class FinancialApi
             $headers
         );
 
+        $method = 'GET';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'GET',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**

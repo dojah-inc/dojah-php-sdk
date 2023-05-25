@@ -1,6 +1,6 @@
 <?php
 /**
- * UGKYCApi
+ * UgKycApi
  * PHP version 7.4
  *
  * @category Class
@@ -33,7 +33,7 @@ use Dojah\Configuration;
 use Dojah\HeaderSelector;
 use Dojah\ObjectSerializer;
 
-class UGKYCApi
+class UgKycApi extends \Dojah\CustomApi
 {
     /**
      * @var ClientInterface
@@ -109,6 +109,16 @@ class UGKYCApi
     }
 
     /**
+     * For initializing request body parameter
+     */
+    private function setRequestBodyProperty(&$body, $property, $value) {
+        if ($body === null) $body = [];
+        // user did not pass in a value for this parameter
+        if ($value === SENTINEL_VALUE) return;
+        $body[$property] = $value;
+    }
+
+    /**
      * Operation getVoter
      *
      * Voters ID
@@ -122,8 +132,17 @@ class UGKYCApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\GetVoterResponse
      */
-    public function getVoter($id = null, $first_name = null, $last_name = null, string $contentType = self::contentTypes['getVoter'][0])
+    public function getVoter(
+        $id = SENTINEL_VALUE,
+        $first_name = SENTINEL_VALUE,
+        $last_name = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getVoter'][0]
+
+    )
     {
+
         list($response) = $this->getVoterWithHttpInfo($id, $first_name, $last_name, $contentType);
         return $response;
     }
@@ -142,15 +161,32 @@ class UGKYCApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetVoterResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getVoterWithHttpInfo($id = null, $first_name = null, $last_name = null, string $contentType = self::contentTypes['getVoter'][0])
+    public function getVoterWithHttpInfo($id = null, $first_name = null, $last_name = null, string $contentType = self::contentTypes['getVoter'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->getVoterRequest($id, $first_name, $last_name, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getVoterRequest($id, $first_name, $last_name, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->getVoterWithHttpInfo(
+                        $id,
+                        $first_name,
+                        $last_name,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -243,8 +279,17 @@ class UGKYCApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getVoterAsync($id = null, $first_name = null, $last_name = null, string $contentType = self::contentTypes['getVoter'][0])
+    public function getVoterAsync(
+        $id = SENTINEL_VALUE,
+        $first_name = SENTINEL_VALUE,
+        $last_name = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getVoter'][0]
+
+    )
     {
+
         return $this->getVoterAsyncWithHttpInfo($id, $first_name, $last_name, $contentType)
             ->then(
                 function ($response) {
@@ -266,10 +311,13 @@ class UGKYCApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getVoterAsyncWithHttpInfo($id = null, $first_name = null, $last_name = null, string $contentType = self::contentTypes['getVoter'][0])
+    public function getVoterAsyncWithHttpInfo($id = null, $first_name = null, $last_name = null, string $contentType = self::contentTypes['getVoter'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetVoterResponse';
-        $request = $this->getVoterRequest($id, $first_name, $last_name, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getVoterRequest($id, $first_name, $last_name, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -318,11 +366,17 @@ class UGKYCApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getVoterRequest($id = null, $first_name = null, $last_name = null, string $contentType = self::contentTypes['getVoter'][0])
+    public function getVoterRequest($id = SENTINEL_VALUE, $first_name = SENTINEL_VALUE, $last_name = SENTINEL_VALUE, string $contentType = self::contentTypes['getVoter'][0])
     {
 
-
-
+        // Check if $first_name is a string
+        if ($first_name !== SENTINEL_VALUE && !is_string($first_name)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($first_name, true), gettype($first_name)));
+        }
+        // Check if $last_name is a string
+        if ($last_name !== SENTINEL_VALUE && !is_string($last_name)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($last_name, true), gettype($last_name)));
+        }
 
 
         $resourcePath = '/api/v1/ug/kyc/voter';
@@ -332,33 +386,39 @@ class UGKYCApi
         $httpBody = '';
         $multipart = false;
 
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $id,
-            'id', // param base name
-            'integer', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $first_name,
-            'first_name', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $last_name,
-            'last_name', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
+        if ($id !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $id,
+                'id', // param base name
+                'integer', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
+        if ($first_name !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $first_name,
+                'first_name', // param base name
+                'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
+        if ($last_name !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $last_name,
+                'last_name', // param base name
+                'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
 
 
 
@@ -416,14 +476,20 @@ class UGKYCApi
             $headers
         );
 
+        $method = 'GET';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'GET',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**

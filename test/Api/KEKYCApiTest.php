@@ -1,6 +1,6 @@
 <?php
 /**
- * KEKYCApiTest
+ * KeKycApiTest
  * PHP version 7.4
  *
  * @category Class
@@ -26,7 +26,7 @@ use \Dojah\ApiException;
 use \Dojah\ObjectSerializer;
 use PHPUnit\Framework\TestCase;
 
-class KEKYCApiTest extends TestCase
+class KeKycApiTest extends TestCase
 {
 
     /**

@@ -49,7 +49,7 @@ class GetAdvancedCacResponse implements ModelInterface, ArrayAccess, \JsonSerial
       * @var string[]
       */
     protected static $openAPITypes = [
-        'entity' => '\Dojah\Model\GetBasicCacResponseEntity'
+        'entity' => '\Dojah\Model\GetAdvancedCacResponseEntity'
     ];
 
     /**
@@ -284,7 +284,7 @@ class GetAdvancedCacResponse implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Gets entity
      *
-     * @return \Dojah\Model\GetBasicCacResponseEntity|null
+     * @return \Dojah\Model\GetAdvancedCacResponseEntity|null
      */
     public function getEntity()
     {
@@ -294,7 +294,7 @@ class GetAdvancedCacResponse implements ModelInterface, ArrayAccess, \JsonSerial
     /**
      * Sets entity
      *
-     * @param \Dojah\Model\GetBasicCacResponseEntity|null $entity entity
+     * @param \Dojah\Model\GetAdvancedCacResponseEntity|null $entity entity
      *
      * @return self
      */

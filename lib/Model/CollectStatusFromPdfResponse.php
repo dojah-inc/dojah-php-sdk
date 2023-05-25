@@ -49,7 +49,7 @@ class CollectStatusFromPdfResponse implements ModelInterface, ArrayAccess, \Json
       * @var string[]
       */
     protected static $openAPITypes = [
-        'entity' => '\Dojah\Model\CollectTransactionsResponseEntity'
+        'entity' => '\Dojah\Model\CollectStatusFromPdfResponseEntity'
     ];
 
     /**
@@ -284,7 +284,7 @@ class CollectStatusFromPdfResponse implements ModelInterface, ArrayAccess, \Json
     /**
      * Gets entity
      *
-     * @return \Dojah\Model\CollectTransactionsResponseEntity|null
+     * @return \Dojah\Model\CollectStatusFromPdfResponseEntity|null
      */
     public function getEntity()
     {
@@ -294,7 +294,7 @@ class CollectStatusFromPdfResponse implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets entity
      *
-     * @param \Dojah\Model\CollectTransactionsResponseEntity|null $entity entity
+     * @param \Dojah\Model\CollectStatusFromPdfResponseEntity|null $entity entity
      *
      * @return self
      */

@@ -1,6 +1,6 @@
 <?php
 /**
- * KEKYCApi
+ * KeKycApi
  * PHP version 7.4
  *
  * @category Class
@@ -33,7 +33,7 @@ use Dojah\Configuration;
 use Dojah\HeaderSelector;
 use Dojah\ObjectSerializer;
 
-class KEKYCApi
+class KeKycApi extends \Dojah\CustomApi
 {
     /**
      * @var ClientInterface
@@ -109,6 +109,16 @@ class KEKYCApi
     }
 
     /**
+     * For initializing request body parameter
+     */
+    private function setRequestBodyProperty(&$body, $property, $value) {
+        if ($body === null) $body = [];
+        // user did not pass in a value for this parameter
+        if ($value === SENTINEL_VALUE) return;
+        $body[$property] = $value;
+    }
+
+    /**
      * Operation getNationalId
      *
      * KYC - National ID
@@ -125,8 +135,20 @@ class KEKYCApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\GetNationalIdResponse
      */
-    public function getNationalId($id = null, $first_name = null, $last_name = null, $middle_name = null, $date_of_birth = null, $gender = null, string $contentType = self::contentTypes['getNationalId'][0])
+    public function getNationalId(
+        $id = SENTINEL_VALUE,
+        $first_name = SENTINEL_VALUE,
+        $last_name = SENTINEL_VALUE,
+        $middle_name = SENTINEL_VALUE,
+        $date_of_birth = SENTINEL_VALUE,
+        $gender = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getNationalId'][0]
+
+    )
     {
+
         list($response) = $this->getNationalIdWithHttpInfo($id, $first_name, $last_name, $middle_name, $date_of_birth, $gender, $contentType);
         return $response;
     }
@@ -148,15 +170,35 @@ class KEKYCApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetNationalIdResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getNationalIdWithHttpInfo($id = null, $first_name = null, $last_name = null, $middle_name = null, $date_of_birth = null, $gender = null, string $contentType = self::contentTypes['getNationalId'][0])
+    public function getNationalIdWithHttpInfo($id = null, $first_name = null, $last_name = null, $middle_name = null, $date_of_birth = null, $gender = null, string $contentType = self::contentTypes['getNationalId'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->getNationalIdRequest($id, $first_name, $last_name, $middle_name, $date_of_birth, $gender, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getNationalIdRequest($id, $first_name, $last_name, $middle_name, $date_of_birth, $gender, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->getNationalIdWithHttpInfo(
+                        $id,
+                        $first_name,
+                        $last_name,
+                        $middle_name,
+                        $date_of_birth,
+                        $gender,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -252,8 +294,20 @@ class KEKYCApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getNationalIdAsync($id = null, $first_name = null, $last_name = null, $middle_name = null, $date_of_birth = null, $gender = null, string $contentType = self::contentTypes['getNationalId'][0])
+    public function getNationalIdAsync(
+        $id = SENTINEL_VALUE,
+        $first_name = SENTINEL_VALUE,
+        $last_name = SENTINEL_VALUE,
+        $middle_name = SENTINEL_VALUE,
+        $date_of_birth = SENTINEL_VALUE,
+        $gender = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getNationalId'][0]
+
+    )
     {
+
         return $this->getNationalIdAsyncWithHttpInfo($id, $first_name, $last_name, $middle_name, $date_of_birth, $gender, $contentType)
             ->then(
                 function ($response) {
@@ -278,10 +332,13 @@ class KEKYCApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getNationalIdAsyncWithHttpInfo($id = null, $first_name = null, $last_name = null, $middle_name = null, $date_of_birth = null, $gender = null, string $contentType = self::contentTypes['getNationalId'][0])
+    public function getNationalIdAsyncWithHttpInfo($id = null, $first_name = null, $last_name = null, $middle_name = null, $date_of_birth = null, $gender = null, string $contentType = self::contentTypes['getNationalId'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetNationalIdResponse';
-        $request = $this->getNationalIdRequest($id, $first_name, $last_name, $middle_name, $date_of_birth, $gender, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getNationalIdRequest($id, $first_name, $last_name, $middle_name, $date_of_birth, $gender, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -333,14 +390,29 @@ class KEKYCApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getNationalIdRequest($id = null, $first_name = null, $last_name = null, $middle_name = null, $date_of_birth = null, $gender = null, string $contentType = self::contentTypes['getNationalId'][0])
+    public function getNationalIdRequest($id = SENTINEL_VALUE, $first_name = SENTINEL_VALUE, $last_name = SENTINEL_VALUE, $middle_name = SENTINEL_VALUE, $date_of_birth = SENTINEL_VALUE, $gender = SENTINEL_VALUE, string $contentType = self::contentTypes['getNationalId'][0])
     {
 
-
-
-
-
-
+        // Check if $first_name is a string
+        if ($first_name !== SENTINEL_VALUE && !is_string($first_name)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($first_name, true), gettype($first_name)));
+        }
+        // Check if $last_name is a string
+        if ($last_name !== SENTINEL_VALUE && !is_string($last_name)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($last_name, true), gettype($last_name)));
+        }
+        // Check if $middle_name is a string
+        if ($middle_name !== SENTINEL_VALUE && !is_string($middle_name)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($middle_name, true), gettype($middle_name)));
+        }
+        // Check if $date_of_birth is a string
+        if ($date_of_birth !== SENTINEL_VALUE && !is_string($date_of_birth)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($date_of_birth, true), gettype($date_of_birth)));
+        }
+        // Check if $gender is a string
+        if ($gender !== SENTINEL_VALUE && !is_string($gender)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($gender, true), gettype($gender)));
+        }
 
 
         $resourcePath = '/api/v1/ke/kyc/id';
@@ -350,60 +422,72 @@ class KEKYCApi
         $httpBody = '';
         $multipart = false;
 
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $id,
-            'id', // param base name
-            'integer', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $first_name,
-            'first_name', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $last_name,
-            'last_name', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $middle_name,
-            'middle_name', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $date_of_birth,
-            'date_of_birth', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $gender,
-            'gender', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
+        if ($id !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $id,
+                'id', // param base name
+                'integer', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
+        if ($first_name !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $first_name,
+                'first_name', // param base name
+                'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
+        if ($last_name !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $last_name,
+                'last_name', // param base name
+                'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
+        if ($middle_name !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $middle_name,
+                'middle_name', // param base name
+                'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
+        if ($date_of_birth !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $date_of_birth,
+                'date_of_birth', // param base name
+                'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
+        if ($gender !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $gender,
+                'gender', // param base name
+                'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
 
 
 
@@ -461,14 +545,20 @@ class KEKYCApi
             $headers
         );
 
+        $method = 'GET';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'GET',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**

@@ -24,29 +24,14 @@ Delete Webhook
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
 
-// Configure API key authorization: apikeyAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
-
-// Configure API key authorization: appIdAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('AppId', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('AppId', 'Bearer');
-
-// Setting host path is optional and defaults to https://api.dojah.io
-// Dojah\Configuration::getDefaultConfiguration()->setHost("https://api.dojah.io");
-
-$apiInstance = new Dojah\Api\WebHooksApi(
-    // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
-    // This is optional, `GuzzleHttp\Client` will be used as default.
-    // new GuzzleHttp\Client(),
-    $config
+$dojah = new \Dojah\Client(
+    Authorization: YOUR_AUTHORIZATION,
+    AppId: YOUR_APP_ID,
 );
 
 
 try {
-    $result = $apiInstance->deleteWebhook();
+    $result = $dojah->webHooks->deleteWebhook();
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling WebHooksApi->deleteWebhook: ', $e->getMessage(), PHP_EOL;
@@ -88,29 +73,14 @@ Fetch All Webhooks
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
 
-// Configure API key authorization: apikeyAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
-
-// Configure API key authorization: appIdAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('AppId', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('AppId', 'Bearer');
-
-// Setting host path is optional and defaults to https://api.dojah.io
-// Dojah\Configuration::getDefaultConfiguration()->setHost("https://api.dojah.io");
-
-$apiInstance = new Dojah\Api\WebHooksApi(
-    // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
-    // This is optional, `GuzzleHttp\Client` will be used as default.
-    // new GuzzleHttp\Client(),
-    $config
+$dojah = new \Dojah\Client(
+    Authorization: YOUR_AUTHORIZATION,
+    AppId: YOUR_APP_ID,
 );
 
 
 try {
-    $result = $apiInstance->getWebhooks();
+    $result = $dojah->webHooks->getWebhooks();
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling WebHooksApi->getWebhooks: ', $e->getMessage(), PHP_EOL;
@@ -152,33 +122,20 @@ Post Hook
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
 
-// Configure API key authorization: apikeyAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
-
-// Configure API key authorization: appIdAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('AppId', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('AppId', 'Bearer');
-
-// Setting host path is optional and defaults to https://api.dojah.io
-// Dojah\Configuration::getDefaultConfiguration()->setHost("https://api.dojah.io");
-
-$apiInstance = new Dojah\Api\WebHooksApi(
-    // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
-    // This is optional, `GuzzleHttp\Client` will be used as default.
-    // new GuzzleHttp\Client(),
-    $config
+$dojah = new \Dojah\Client(
+    Authorization: YOUR_AUTHORIZATION,
+    AppId: YOUR_APP_ID,
 );
 
-$notify_webhook_request = [
-        "subject" => "kyc_widget",
+$subject = "kyc_widget";
+$data = [
+        "stuff" => "12345678",
     ];
 
 try {
-    $result = $apiInstance->notifyWebhook(
-        notify_webhook_request: $notify_webhook_request
+    $result = $dojah->webHooks->notifyWebhook(
+        subject: $subject, 
+        data: $data
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
@@ -223,34 +180,18 @@ Subscribe to service
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
 
-// Configure API key authorization: apikeyAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
-
-// Configure API key authorization: appIdAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('AppId', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('AppId', 'Bearer');
-
-// Setting host path is optional and defaults to https://api.dojah.io
-// Dojah\Configuration::getDefaultConfiguration()->setHost("https://api.dojah.io");
-
-$apiInstance = new Dojah\Api\WebHooksApi(
-    // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
-    // This is optional, `GuzzleHttp\Client` will be used as default.
-    // new GuzzleHttp\Client(),
-    $config
+$dojah = new \Dojah\Client(
+    Authorization: YOUR_AUTHORIZATION,
+    AppId: YOUR_APP_ID,
 );
 
-$subscribe_service_request = [
-        "webhook" => "https://webhook.site/c587711d-d9f2-4982-9107-b1f9789a5dfe",
-        "service" => "kyc_widget",
-    ];
+$webhook = "https://webhook.site/c587711d-d9f2-4982-9107-b1f9789a5dfe";
+$service = "kyc_widget";
 
 try {
-    $result = $apiInstance->subscribeService(
-        subscribe_service_request: $subscribe_service_request
+    $result = $dojah->webHooks->subscribeService(
+        webhook: $webhook, 
+        service: $service
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {

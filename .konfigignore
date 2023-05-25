@@ -1,2 +1,2 @@
 test/Api/GHKYCApiTest.php
-test/Api/KYCApiTest.php
+test/Api/GHKYCApiTest-v4.0.0.php

@@ -49,7 +49,7 @@ class GetDataPlansResponse implements ModelInterface, ArrayAccess, \JsonSerializ
       * @var string[]
       */
     protected static $openAPITypes = [
-        'entity' => '\Dojah\Model\PurchaseDataResponseEntityInner[]'
+        'entity' => '\Dojah\Model\GetDataPlansResponseEntityInner[]'
     ];
 
     /**
@@ -284,7 +284,7 @@ class GetDataPlansResponse implements ModelInterface, ArrayAccess, \JsonSerializ
     /**
      * Gets entity
      *
-     * @return \Dojah\Model\PurchaseDataResponseEntityInner[]|null
+     * @return \Dojah\Model\GetDataPlansResponseEntityInner[]|null
      */
     public function getEntity()
     {
@@ -294,7 +294,7 @@ class GetDataPlansResponse implements ModelInterface, ArrayAccess, \JsonSerializ
     /**
      * Sets entity
      *
-     * @param \Dojah\Model\PurchaseDataResponseEntityInner[]|null $entity entity
+     * @param \Dojah\Model\GetDataPlansResponseEntityInner[]|null $entity entity
      *
      * @return self
      */

@@ -33,7 +33,7 @@ use Dojah\Configuration;
 use Dojah\HeaderSelector;
 use Dojah\ObjectSerializer;
 
-class GeneralApi
+class GeneralApi extends \Dojah\CustomApi
 {
     /**
      * @var ClientInterface
@@ -127,6 +127,16 @@ class GeneralApi
     }
 
     /**
+     * For initializing request body parameter
+     */
+    private function setRequestBodyProperty(&$body, $property, $value) {
+        if ($body === null) $body = [];
+        // user did not pass in a value for this parameter
+        if ($value === SENTINEL_VALUE) return;
+        $body[$property] = $value;
+    }
+
+    /**
      * Operation getBanks
      *
      * General - Get Banks
@@ -137,8 +147,14 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\GetBanksResponse
      */
-    public function getBanks(string $contentType = self::contentTypes['getBanks'][0])
+    public function getBanks(
+
+
+        string $contentType = self::contentTypes['getBanks'][0]
+
+    )
     {
+
         list($response) = $this->getBanksWithHttpInfo($contentType);
         return $response;
     }
@@ -154,15 +170,29 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetBanksResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getBanksWithHttpInfo(string $contentType = self::contentTypes['getBanks'][0])
+    public function getBanksWithHttpInfo(string $contentType = self::contentTypes['getBanks'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->getBanksRequest($contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBanksRequest($contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->getBanksWithHttpInfo(
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -252,8 +282,14 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getBanksAsync(string $contentType = self::contentTypes['getBanks'][0])
+    public function getBanksAsync(
+
+
+        string $contentType = self::contentTypes['getBanks'][0]
+
+    )
     {
+
         return $this->getBanksAsyncWithHttpInfo($contentType)
             ->then(
                 function ($response) {
@@ -272,10 +308,13 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getBanksAsyncWithHttpInfo(string $contentType = self::contentTypes['getBanks'][0])
+    public function getBanksAsyncWithHttpInfo(string $contentType = self::contentTypes['getBanks'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetBanksResponse';
-        $request = $this->getBanksRequest($contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBanksRequest($contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -323,6 +362,7 @@ class GeneralApi
      */
     public function getBanksRequest(string $contentType = self::contentTypes['getBanks'][0])
     {
+
 
 
         $resourcePath = '/v1/general/banks';
@@ -389,14 +429,20 @@ class GeneralApi
             $headers
         );
 
+        $method = 'GET';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'GET',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -411,8 +457,15 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\GetBinResponse
      */
-    public function getBin($card_bin = null, string $contentType = self::contentTypes['getBin'][0])
+    public function getBin(
+        $card_bin = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getBin'][0]
+
+    )
     {
+
         list($response) = $this->getBinWithHttpInfo($card_bin, $contentType);
         return $response;
     }
@@ -429,15 +482,30 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetBinResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getBinWithHttpInfo($card_bin = null, string $contentType = self::contentTypes['getBin'][0])
+    public function getBinWithHttpInfo($card_bin = null, string $contentType = self::contentTypes['getBin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->getBinRequest($card_bin, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBinRequest($card_bin, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->getBinWithHttpInfo(
+                        $card_bin,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -528,8 +596,15 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getBinAsync($card_bin = null, string $contentType = self::contentTypes['getBin'][0])
+    public function getBinAsync(
+        $card_bin = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getBin'][0]
+
+    )
     {
+
         return $this->getBinAsyncWithHttpInfo($card_bin, $contentType)
             ->then(
                 function ($response) {
@@ -549,10 +624,13 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getBinAsyncWithHttpInfo($card_bin = null, string $contentType = self::contentTypes['getBin'][0])
+    public function getBinAsyncWithHttpInfo($card_bin = null, string $contentType = self::contentTypes['getBin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetBinResponse';
-        $request = $this->getBinRequest($card_bin, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBinRequest($card_bin, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -599,7 +677,7 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getBinRequest($card_bin = null, string $contentType = self::contentTypes['getBin'][0])
+    public function getBinRequest($card_bin = SENTINEL_VALUE, string $contentType = self::contentTypes['getBin'][0])
     {
 
 
@@ -611,15 +689,17 @@ class GeneralApi
         $httpBody = '';
         $multipart = false;
 
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $card_bin,
-            'card_bin', // param base name
-            'integer', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
+        if ($card_bin !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $card_bin,
+                'card_bin', // param base name
+                'integer', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
 
 
 
@@ -677,14 +757,20 @@ class GeneralApi
             $headers
         );
 
+        $method = 'GET';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'GET',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -698,8 +784,14 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\GetDataPlansResponse
      */
-    public function getDataPlans(string $contentType = self::contentTypes['getDataPlans'][0])
+    public function getDataPlans(
+
+
+        string $contentType = self::contentTypes['getDataPlans'][0]
+
+    )
     {
+
         list($response) = $this->getDataPlansWithHttpInfo($contentType);
         return $response;
     }
@@ -715,15 +807,29 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetDataPlansResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getDataPlansWithHttpInfo(string $contentType = self::contentTypes['getDataPlans'][0])
+    public function getDataPlansWithHttpInfo(string $contentType = self::contentTypes['getDataPlans'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->getDataPlansRequest($contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getDataPlansRequest($contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->getDataPlansWithHttpInfo(
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -813,8 +919,14 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getDataPlansAsync(string $contentType = self::contentTypes['getDataPlans'][0])
+    public function getDataPlansAsync(
+
+
+        string $contentType = self::contentTypes['getDataPlans'][0]
+
+    )
     {
+
         return $this->getDataPlansAsyncWithHttpInfo($contentType)
             ->then(
                 function ($response) {
@@ -833,10 +945,13 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getDataPlansAsyncWithHttpInfo(string $contentType = self::contentTypes['getDataPlans'][0])
+    public function getDataPlansAsyncWithHttpInfo(string $contentType = self::contentTypes['getDataPlans'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetDataPlansResponse';
-        $request = $this->getDataPlansRequest($contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getDataPlansRequest($contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -884,6 +999,7 @@ class GeneralApi
      */
     public function getDataPlansRequest(string $contentType = self::contentTypes['getDataPlans'][0])
     {
+
 
 
         $resourcePath = '/v1/purchase/data/plans';
@@ -950,14 +1066,20 @@ class GeneralApi
             $headers
         );
 
+        $method = 'GET';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'GET',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -973,8 +1095,16 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\GeneralGetNubanResponse
      */
-    public function getNuban($bank_code = null, $account_number = null, string $contentType = self::contentTypes['getNuban'][0])
+    public function getNuban(
+        $bank_code = SENTINEL_VALUE,
+        $account_number = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getNuban'][0]
+
+    )
     {
+
         list($response) = $this->getNubanWithHttpInfo($bank_code, $account_number, $contentType);
         return $response;
     }
@@ -992,15 +1122,31 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GeneralGetNubanResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getNubanWithHttpInfo($bank_code = null, $account_number = null, string $contentType = self::contentTypes['getNuban'][0])
+    public function getNubanWithHttpInfo($bank_code = null, $account_number = null, string $contentType = self::contentTypes['getNuban'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->getNubanRequest($bank_code, $account_number, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getNubanRequest($bank_code, $account_number, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->getNubanWithHttpInfo(
+                        $bank_code,
+                        $account_number,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -1092,8 +1238,16 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getNubanAsync($bank_code = null, $account_number = null, string $contentType = self::contentTypes['getNuban'][0])
+    public function getNubanAsync(
+        $bank_code = SENTINEL_VALUE,
+        $account_number = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getNuban'][0]
+
+    )
     {
+
         return $this->getNubanAsyncWithHttpInfo($bank_code, $account_number, $contentType)
             ->then(
                 function ($response) {
@@ -1114,10 +1268,13 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getNubanAsyncWithHttpInfo($bank_code = null, $account_number = null, string $contentType = self::contentTypes['getNuban'][0])
+    public function getNubanAsyncWithHttpInfo($bank_code = null, $account_number = null, string $contentType = self::contentTypes['getNuban'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GeneralGetNubanResponse';
-        $request = $this->getNubanRequest($bank_code, $account_number, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getNubanRequest($bank_code, $account_number, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -1165,9 +1322,8 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getNubanRequest($bank_code = null, $account_number = null, string $contentType = self::contentTypes['getNuban'][0])
+    public function getNubanRequest($bank_code = SENTINEL_VALUE, $account_number = SENTINEL_VALUE, string $contentType = self::contentTypes['getNuban'][0])
     {
-
 
 
 
@@ -1178,24 +1334,28 @@ class GeneralApi
         $httpBody = '';
         $multipart = false;
 
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $bank_code,
-            'bank_code', // param base name
-            'integer', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $account_number,
-            'account_number', // param base name
-            'integer', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
+        if ($bank_code !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $bank_code,
+                'bank_code', // param base name
+                'integer', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
+        if ($account_number !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $account_number,
+                'account_number', // param base name
+                'integer', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
 
 
 
@@ -1253,14 +1413,20 @@ class GeneralApi
             $headers
         );
 
+        $method = 'GET';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'GET',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -1274,8 +1440,14 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\GetWalletBalanceResponse|\Dojah\Model\GeneralGetWalletBalanceResponse
      */
-    public function getWalletBalance(string $contentType = self::contentTypes['getWalletBalance'][0])
+    public function getWalletBalance(
+
+
+        string $contentType = self::contentTypes['getWalletBalance'][0]
+
+    )
     {
+
         list($response) = $this->getWalletBalanceWithHttpInfo($contentType);
         return $response;
     }
@@ -1291,15 +1463,29 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetWalletBalanceResponse|\Dojah\Model\GeneralGetWalletBalanceResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getWalletBalanceWithHttpInfo(string $contentType = self::contentTypes['getWalletBalance'][0])
+    public function getWalletBalanceWithHttpInfo(string $contentType = self::contentTypes['getWalletBalance'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->getWalletBalanceRequest($contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getWalletBalanceRequest($contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->getWalletBalanceWithHttpInfo(
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -1412,8 +1598,14 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getWalletBalanceAsync(string $contentType = self::contentTypes['getWalletBalance'][0])
+    public function getWalletBalanceAsync(
+
+
+        string $contentType = self::contentTypes['getWalletBalance'][0]
+
+    )
     {
+
         return $this->getWalletBalanceAsyncWithHttpInfo($contentType)
             ->then(
                 function ($response) {
@@ -1432,10 +1624,13 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getWalletBalanceAsyncWithHttpInfo(string $contentType = self::contentTypes['getWalletBalance'][0])
+    public function getWalletBalanceAsyncWithHttpInfo(string $contentType = self::contentTypes['getWalletBalance'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetWalletBalanceResponse';
-        $request = $this->getWalletBalanceRequest($contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getWalletBalanceRequest($contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -1483,6 +1678,7 @@ class GeneralApi
      */
     public function getWalletBalanceRequest(string $contentType = self::contentTypes['getWalletBalance'][0])
     {
+
 
 
         $resourcePath = '/api/v1/balance';
@@ -1549,14 +1745,20 @@ class GeneralApi
             $headers
         );
 
+        $method = 'GET';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'GET',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -1571,8 +1773,20 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\PurchaseAirtimeResponse
      */
-    public function purchaseAirtime($purchase_airtime_request = null, string $contentType = self::contentTypes['purchaseAirtime'][0])
+    public function purchaseAirtime(
+        $destination = SENTINEL_VALUE,
+        $amount = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['purchaseAirtime'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "destination", $destination);
+        $this->setRequestBodyProperty($_body, "amount", $amount);
+        $purchase_airtime_request = $_body;
+
         list($response) = $this->purchaseAirtimeWithHttpInfo($purchase_airtime_request, $contentType);
         return $response;
     }
@@ -1589,15 +1803,30 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\PurchaseAirtimeResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function purchaseAirtimeWithHttpInfo($purchase_airtime_request = null, string $contentType = self::contentTypes['purchaseAirtime'][0])
+    public function purchaseAirtimeWithHttpInfo($purchase_airtime_request = null, string $contentType = self::contentTypes['purchaseAirtime'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->purchaseAirtimeRequest($purchase_airtime_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->purchaseAirtimeRequest($purchase_airtime_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->purchaseAirtimeWithHttpInfo(
+                        $purchase_airtime_request,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -1688,8 +1917,20 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function purchaseAirtimeAsync($purchase_airtime_request = null, string $contentType = self::contentTypes['purchaseAirtime'][0])
+    public function purchaseAirtimeAsync(
+        $destination = SENTINEL_VALUE,
+        $amount = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['purchaseAirtime'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "destination", $destination);
+        $this->setRequestBodyProperty($_body, "amount", $amount);
+        $purchase_airtime_request = $_body;
+
         return $this->purchaseAirtimeAsyncWithHttpInfo($purchase_airtime_request, $contentType)
             ->then(
                 function ($response) {
@@ -1709,10 +1950,13 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function purchaseAirtimeAsyncWithHttpInfo($purchase_airtime_request = null, string $contentType = self::contentTypes['purchaseAirtime'][0])
+    public function purchaseAirtimeAsyncWithHttpInfo($purchase_airtime_request = null, string $contentType = self::contentTypes['purchaseAirtime'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\PurchaseAirtimeResponse';
-        $request = $this->purchaseAirtimeRequest($purchase_airtime_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->purchaseAirtimeRequest($purchase_airtime_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -1759,9 +2003,17 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function purchaseAirtimeRequest($purchase_airtime_request = null, string $contentType = self::contentTypes['purchaseAirtime'][0])
+    public function purchaseAirtimeRequest($purchase_airtime_request = SENTINEL_VALUE, string $contentType = self::contentTypes['purchaseAirtime'][0])
     {
 
+        if ($purchase_airtime_request !== SENTINEL_VALUE) {
+            if (!($purchase_airtime_request instanceof \Dojah\Model\PurchaseAirtimeRequest)) {
+                if (!is_array($purchase_airtime_request))
+                    throw new \InvalidArgumentException('"purchase_airtime_request" must be associative array or an instance of \Dojah\Model\PurchaseAirtimeRequest GeneralApi.purchaseAirtime.');
+                else
+                    $purchase_airtime_request = new \Dojah\Model\PurchaseAirtimeRequest($purchase_airtime_request);
+            }
+        }
 
 
         $resourcePath = '/v1/purchase/airtime';
@@ -1835,14 +2087,20 @@ class GeneralApi
             $headers
         );
 
+        $method = 'POST';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'POST',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -1857,8 +2115,20 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\PurchaseDataResponse
      */
-    public function purchaseData($purchase_data_request = null, string $contentType = self::contentTypes['purchaseData'][0])
+    public function purchaseData(
+        $plan = SENTINEL_VALUE,
+        $destination = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['purchaseData'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "plan", $plan);
+        $this->setRequestBodyProperty($_body, "destination", $destination);
+        $purchase_data_request = $_body;
+
         list($response) = $this->purchaseDataWithHttpInfo($purchase_data_request, $contentType);
         return $response;
     }
@@ -1875,15 +2145,30 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\PurchaseDataResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function purchaseDataWithHttpInfo($purchase_data_request = null, string $contentType = self::contentTypes['purchaseData'][0])
+    public function purchaseDataWithHttpInfo($purchase_data_request = null, string $contentType = self::contentTypes['purchaseData'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->purchaseDataRequest($purchase_data_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->purchaseDataRequest($purchase_data_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->purchaseDataWithHttpInfo(
+                        $purchase_data_request,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -1974,8 +2259,20 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function purchaseDataAsync($purchase_data_request = null, string $contentType = self::contentTypes['purchaseData'][0])
+    public function purchaseDataAsync(
+        $plan = SENTINEL_VALUE,
+        $destination = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['purchaseData'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "plan", $plan);
+        $this->setRequestBodyProperty($_body, "destination", $destination);
+        $purchase_data_request = $_body;
+
         return $this->purchaseDataAsyncWithHttpInfo($purchase_data_request, $contentType)
             ->then(
                 function ($response) {
@@ -1995,10 +2292,13 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function purchaseDataAsyncWithHttpInfo($purchase_data_request = null, string $contentType = self::contentTypes['purchaseData'][0])
+    public function purchaseDataAsyncWithHttpInfo($purchase_data_request = null, string $contentType = self::contentTypes['purchaseData'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\PurchaseDataResponse';
-        $request = $this->purchaseDataRequest($purchase_data_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->purchaseDataRequest($purchase_data_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -2045,9 +2345,17 @@ class GeneralApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function purchaseDataRequest($purchase_data_request = null, string $contentType = self::contentTypes['purchaseData'][0])
+    public function purchaseDataRequest($purchase_data_request = SENTINEL_VALUE, string $contentType = self::contentTypes['purchaseData'][0])
     {
 
+        if ($purchase_data_request !== SENTINEL_VALUE) {
+            if (!($purchase_data_request instanceof \Dojah\Model\PurchaseDataRequest)) {
+                if (!is_array($purchase_data_request))
+                    throw new \InvalidArgumentException('"purchase_data_request" must be associative array or an instance of \Dojah\Model\PurchaseDataRequest GeneralApi.purchaseData.');
+                else
+                    $purchase_data_request = new \Dojah\Model\PurchaseDataRequest($purchase_data_request);
+            }
+        }
 
 
         $resourcePath = '/v1/purchase/data';
@@ -2121,14 +2429,20 @@ class GeneralApi
             $headers
         );
 
+        $method = 'POST';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'POST',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**

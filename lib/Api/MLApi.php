@@ -33,7 +33,7 @@ use Dojah\Configuration;
 use Dojah\HeaderSelector;
 use Dojah\ObjectSerializer;
 
-class MLApi
+class MLApi extends \Dojah\CustomApi
 {
     /**
      * @var ClientInterface
@@ -118,6 +118,16 @@ class MLApi
     }
 
     /**
+     * For initializing request body parameter
+     */
+    private function setRequestBodyProperty(&$body, $property, $value) {
+        if ($body === null) $body = [];
+        // user did not pass in a value for this parameter
+        if ($value === SENTINEL_VALUE) return;
+        $body[$property] = $value;
+    }
+
+    /**
      * Operation getDocumentAnalysis
      *
      * Document Analysis Drivers License
@@ -129,8 +139,18 @@ class MLApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\GetDocumentAnalysisResponse
      */
-    public function getDocumentAnalysis($get_document_analysis_request = null, string $contentType = self::contentTypes['getDocumentAnalysis'][0])
+    public function getDocumentAnalysis(
+        $img = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getDocumentAnalysis'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "img", $img);
+        $get_document_analysis_request = $_body;
+
         list($response) = $this->getDocumentAnalysisWithHttpInfo($get_document_analysis_request, $contentType);
         return $response;
     }
@@ -147,15 +167,30 @@ class MLApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetDocumentAnalysisResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getDocumentAnalysisWithHttpInfo($get_document_analysis_request = null, string $contentType = self::contentTypes['getDocumentAnalysis'][0])
+    public function getDocumentAnalysisWithHttpInfo($get_document_analysis_request = null, string $contentType = self::contentTypes['getDocumentAnalysis'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->getDocumentAnalysisRequest($get_document_analysis_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getDocumentAnalysisRequest($get_document_analysis_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->getDocumentAnalysisWithHttpInfo(
+                        $get_document_analysis_request,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -246,8 +281,18 @@ class MLApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getDocumentAnalysisAsync($get_document_analysis_request = null, string $contentType = self::contentTypes['getDocumentAnalysis'][0])
+    public function getDocumentAnalysisAsync(
+        $img = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getDocumentAnalysis'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "img", $img);
+        $get_document_analysis_request = $_body;
+
         return $this->getDocumentAnalysisAsyncWithHttpInfo($get_document_analysis_request, $contentType)
             ->then(
                 function ($response) {
@@ -267,10 +312,13 @@ class MLApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getDocumentAnalysisAsyncWithHttpInfo($get_document_analysis_request = null, string $contentType = self::contentTypes['getDocumentAnalysis'][0])
+    public function getDocumentAnalysisAsyncWithHttpInfo($get_document_analysis_request = null, string $contentType = self::contentTypes['getDocumentAnalysis'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetDocumentAnalysisResponse';
-        $request = $this->getDocumentAnalysisRequest($get_document_analysis_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getDocumentAnalysisRequest($get_document_analysis_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -317,9 +365,17 @@ class MLApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getDocumentAnalysisRequest($get_document_analysis_request = null, string $contentType = self::contentTypes['getDocumentAnalysis'][0])
+    public function getDocumentAnalysisRequest($get_document_analysis_request = SENTINEL_VALUE, string $contentType = self::contentTypes['getDocumentAnalysis'][0])
     {
 
+        if ($get_document_analysis_request !== SENTINEL_VALUE) {
+            if (!($get_document_analysis_request instanceof \Dojah\Model\GetDocumentAnalysisRequest)) {
+                if (!is_array($get_document_analysis_request))
+                    throw new \InvalidArgumentException('"get_document_analysis_request" must be associative array or an instance of \Dojah\Model\GetDocumentAnalysisRequest MLApi.getDocumentAnalysis.');
+                else
+                    $get_document_analysis_request = new \Dojah\Model\GetDocumentAnalysisRequest($get_document_analysis_request);
+            }
+        }
 
 
         $resourcePath = '/v1/document/analysis/dl';
@@ -393,14 +449,20 @@ class MLApi
             $headers
         );
 
+        $method = 'POST';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'POST',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -415,8 +477,18 @@ class MLApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\GetGenericOcrTextResponse
      */
-    public function getGenericOcrText($get_generic_ocr_text_request = null, string $contentType = self::contentTypes['getGenericOcrText'][0])
+    public function getGenericOcrText(
+        $img = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getGenericOcrText'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "img", $img);
+        $get_generic_ocr_text_request = $_body;
+
         list($response) = $this->getGenericOcrTextWithHttpInfo($get_generic_ocr_text_request, $contentType);
         return $response;
     }
@@ -433,15 +505,30 @@ class MLApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetGenericOcrTextResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getGenericOcrTextWithHttpInfo($get_generic_ocr_text_request = null, string $contentType = self::contentTypes['getGenericOcrText'][0])
+    public function getGenericOcrTextWithHttpInfo($get_generic_ocr_text_request = null, string $contentType = self::contentTypes['getGenericOcrText'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->getGenericOcrTextRequest($get_generic_ocr_text_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getGenericOcrTextRequest($get_generic_ocr_text_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->getGenericOcrTextWithHttpInfo(
+                        $get_generic_ocr_text_request,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -532,8 +619,18 @@ class MLApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getGenericOcrTextAsync($get_generic_ocr_text_request = null, string $contentType = self::contentTypes['getGenericOcrText'][0])
+    public function getGenericOcrTextAsync(
+        $img = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getGenericOcrText'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "img", $img);
+        $get_generic_ocr_text_request = $_body;
+
         return $this->getGenericOcrTextAsyncWithHttpInfo($get_generic_ocr_text_request, $contentType)
             ->then(
                 function ($response) {
@@ -553,10 +650,13 @@ class MLApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getGenericOcrTextAsyncWithHttpInfo($get_generic_ocr_text_request = null, string $contentType = self::contentTypes['getGenericOcrText'][0])
+    public function getGenericOcrTextAsyncWithHttpInfo($get_generic_ocr_text_request = null, string $contentType = self::contentTypes['getGenericOcrText'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetGenericOcrTextResponse';
-        $request = $this->getGenericOcrTextRequest($get_generic_ocr_text_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getGenericOcrTextRequest($get_generic_ocr_text_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -603,9 +703,17 @@ class MLApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getGenericOcrTextRequest($get_generic_ocr_text_request = null, string $contentType = self::contentTypes['getGenericOcrText'][0])
+    public function getGenericOcrTextRequest($get_generic_ocr_text_request = SENTINEL_VALUE, string $contentType = self::contentTypes['getGenericOcrText'][0])
     {
 
+        if ($get_generic_ocr_text_request !== SENTINEL_VALUE) {
+            if (!($get_generic_ocr_text_request instanceof \Dojah\Model\GetGenericOcrTextRequest)) {
+                if (!is_array($get_generic_ocr_text_request))
+                    throw new \InvalidArgumentException('"get_generic_ocr_text_request" must be associative array or an instance of \Dojah\Model\GetGenericOcrTextRequest MLApi.getGenericOcrText.');
+                else
+                    $get_generic_ocr_text_request = new \Dojah\Model\GetGenericOcrTextRequest($get_generic_ocr_text_request);
+            }
+        }
 
 
         $resourcePath = '/v1/ml/ocr/generic';
@@ -679,14 +787,20 @@ class MLApi
             $headers
         );
 
+        $method = 'POST';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'POST',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -701,8 +815,18 @@ class MLApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\GetOcrTextResponse
      */
-    public function getOcrText($get_ocr_text_request = null, string $contentType = self::contentTypes['getOcrText'][0])
+    public function getOcrText(
+        $image = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getOcrText'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "image", $image);
+        $get_ocr_text_request = $_body;
+
         list($response) = $this->getOcrTextWithHttpInfo($get_ocr_text_request, $contentType);
         return $response;
     }
@@ -719,15 +843,30 @@ class MLApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetOcrTextResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getOcrTextWithHttpInfo($get_ocr_text_request = null, string $contentType = self::contentTypes['getOcrText'][0])
+    public function getOcrTextWithHttpInfo($get_ocr_text_request = null, string $contentType = self::contentTypes['getOcrText'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->getOcrTextRequest($get_ocr_text_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getOcrTextRequest($get_ocr_text_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->getOcrTextWithHttpInfo(
+                        $get_ocr_text_request,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -818,8 +957,18 @@ class MLApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getOcrTextAsync($get_ocr_text_request = null, string $contentType = self::contentTypes['getOcrText'][0])
+    public function getOcrTextAsync(
+        $image = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getOcrText'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "image", $image);
+        $get_ocr_text_request = $_body;
+
         return $this->getOcrTextAsyncWithHttpInfo($get_ocr_text_request, $contentType)
             ->then(
                 function ($response) {
@@ -839,10 +988,13 @@ class MLApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getOcrTextAsyncWithHttpInfo($get_ocr_text_request = null, string $contentType = self::contentTypes['getOcrText'][0])
+    public function getOcrTextAsyncWithHttpInfo($get_ocr_text_request = null, string $contentType = self::contentTypes['getOcrText'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetOcrTextResponse';
-        $request = $this->getOcrTextRequest($get_ocr_text_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getOcrTextRequest($get_ocr_text_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -889,9 +1041,17 @@ class MLApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getOcrTextRequest($get_ocr_text_request = null, string $contentType = self::contentTypes['getOcrText'][0])
+    public function getOcrTextRequest($get_ocr_text_request = SENTINEL_VALUE, string $contentType = self::contentTypes['getOcrText'][0])
     {
 
+        if ($get_ocr_text_request !== SENTINEL_VALUE) {
+            if (!($get_ocr_text_request instanceof \Dojah\Model\GetOcrTextRequest)) {
+                if (!is_array($get_ocr_text_request))
+                    throw new \InvalidArgumentException('"get_ocr_text_request" must be associative array or an instance of \Dojah\Model\GetOcrTextRequest MLApi.getOcrText.');
+                else
+                    $get_ocr_text_request = new \Dojah\Model\GetOcrTextRequest($get_ocr_text_request);
+            }
+        }
 
 
         $resourcePath = '/v1/ml/ocr';
@@ -965,14 +1125,20 @@ class MLApi
             $headers
         );
 
+        $method = 'POST';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'POST',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -987,8 +1153,20 @@ class MLApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\VerifyPhotoIdWithSelfieResponse
      */
-    public function verifyPhotoIdWithSelfie($verify_photo_id_with_selfie_request = null, string $contentType = self::contentTypes['verifyPhotoIdWithSelfie'][0])
+    public function verifyPhotoIdWithSelfie(
+        $selfie_image = SENTINEL_VALUE,
+        $photoid_image = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['verifyPhotoIdWithSelfie'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "selfie_image", $selfie_image);
+        $this->setRequestBodyProperty($_body, "photoid_image", $photoid_image);
+        $verify_photo_id_with_selfie_request = $_body;
+
         list($response) = $this->verifyPhotoIdWithSelfieWithHttpInfo($verify_photo_id_with_selfie_request, $contentType);
         return $response;
     }
@@ -1005,15 +1183,30 @@ class MLApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\VerifyPhotoIdWithSelfieResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function verifyPhotoIdWithSelfieWithHttpInfo($verify_photo_id_with_selfie_request = null, string $contentType = self::contentTypes['verifyPhotoIdWithSelfie'][0])
+    public function verifyPhotoIdWithSelfieWithHttpInfo($verify_photo_id_with_selfie_request = null, string $contentType = self::contentTypes['verifyPhotoIdWithSelfie'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->verifyPhotoIdWithSelfieRequest($verify_photo_id_with_selfie_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifyPhotoIdWithSelfieRequest($verify_photo_id_with_selfie_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->verifyPhotoIdWithSelfieWithHttpInfo(
+                        $verify_photo_id_with_selfie_request,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -1104,8 +1297,20 @@ class MLApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function verifyPhotoIdWithSelfieAsync($verify_photo_id_with_selfie_request = null, string $contentType = self::contentTypes['verifyPhotoIdWithSelfie'][0])
+    public function verifyPhotoIdWithSelfieAsync(
+        $selfie_image = SENTINEL_VALUE,
+        $photoid_image = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['verifyPhotoIdWithSelfie'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "selfie_image", $selfie_image);
+        $this->setRequestBodyProperty($_body, "photoid_image", $photoid_image);
+        $verify_photo_id_with_selfie_request = $_body;
+
         return $this->verifyPhotoIdWithSelfieAsyncWithHttpInfo($verify_photo_id_with_selfie_request, $contentType)
             ->then(
                 function ($response) {
@@ -1125,10 +1330,13 @@ class MLApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function verifyPhotoIdWithSelfieAsyncWithHttpInfo($verify_photo_id_with_selfie_request = null, string $contentType = self::contentTypes['verifyPhotoIdWithSelfie'][0])
+    public function verifyPhotoIdWithSelfieAsyncWithHttpInfo($verify_photo_id_with_selfie_request = null, string $contentType = self::contentTypes['verifyPhotoIdWithSelfie'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\VerifyPhotoIdWithSelfieResponse';
-        $request = $this->verifyPhotoIdWithSelfieRequest($verify_photo_id_with_selfie_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifyPhotoIdWithSelfieRequest($verify_photo_id_with_selfie_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -1175,9 +1383,17 @@ class MLApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function verifyPhotoIdWithSelfieRequest($verify_photo_id_with_selfie_request = null, string $contentType = self::contentTypes['verifyPhotoIdWithSelfie'][0])
+    public function verifyPhotoIdWithSelfieRequest($verify_photo_id_with_selfie_request = SENTINEL_VALUE, string $contentType = self::contentTypes['verifyPhotoIdWithSelfie'][0])
     {
 
+        if ($verify_photo_id_with_selfie_request !== SENTINEL_VALUE) {
+            if (!($verify_photo_id_with_selfie_request instanceof \Dojah\Model\VerifyPhotoIdWithSelfieRequest)) {
+                if (!is_array($verify_photo_id_with_selfie_request))
+                    throw new \InvalidArgumentException('"verify_photo_id_with_selfie_request" must be associative array or an instance of \Dojah\Model\VerifyPhotoIdWithSelfieRequest MLApi.verifyPhotoIdWithSelfie.');
+                else
+                    $verify_photo_id_with_selfie_request = new \Dojah\Model\VerifyPhotoIdWithSelfieRequest($verify_photo_id_with_selfie_request);
+            }
+        }
 
 
         $resourcePath = '/v1/kyc/photoid/verify';
@@ -1251,14 +1467,20 @@ class MLApi
             $headers
         );
 
+        $method = 'POST';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'POST',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**

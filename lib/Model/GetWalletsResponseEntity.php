@@ -51,7 +51,7 @@ class GetWalletsResponseEntity implements ModelInterface, ArrayAccess, \JsonSeri
     protected static $openAPITypes = [
         'app_id' => 'string',
         'total_amount' => 'float',
-        'client_wallets' => '\Dojah\Model\GetWalletResponseEntity[]'
+        'client_wallets' => '\Dojah\Model\GetWalletsResponseEntityClientWalletsInner[]'
     ];
 
     /**
@@ -356,7 +356,7 @@ class GetWalletsResponseEntity implements ModelInterface, ArrayAccess, \JsonSeri
     /**
      * Gets client_wallets
      *
-     * @return \Dojah\Model\GetWalletResponseEntity[]|null
+     * @return \Dojah\Model\GetWalletsResponseEntityClientWalletsInner[]|null
      */
     public function getClientWallets()
     {
@@ -366,7 +366,7 @@ class GetWalletsResponseEntity implements ModelInterface, ArrayAccess, \JsonSeri
     /**
      * Sets client_wallets
      *
-     * @param \Dojah\Model\GetWalletResponseEntity[]|null $client_wallets client_wallets
+     * @param \Dojah\Model\GetWalletsResponseEntityClientWalletsInner[]|null $client_wallets client_wallets
      *
      * @return self
      */

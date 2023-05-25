@@ -33,7 +33,7 @@ use Dojah\Configuration;
 use Dojah\HeaderSelector;
 use Dojah\ObjectSerializer;
 
-class AuthenticationApi
+class AuthenticationApi extends \Dojah\CustomApi
 {
     /**
      * @var ClientInterface
@@ -124,6 +124,16 @@ class AuthenticationApi
     }
 
     /**
+     * For initializing request body parameter
+     */
+    private function setRequestBodyProperty(&$body, $property, $value) {
+        if ($body === null) $body = [];
+        // user did not pass in a value for this parameter
+        if ($value === SENTINEL_VALUE) return;
+        $body[$property] = $value;
+    }
+
+    /**
      * Operation getSenderId
      *
      * Messaging - Get Sender IDs
@@ -134,8 +144,14 @@ class AuthenticationApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\GetSenderIdResponse
      */
-    public function getSenderId(string $contentType = self::contentTypes['getSenderId'][0])
+    public function getSenderId(
+
+
+        string $contentType = self::contentTypes['getSenderId'][0]
+
+    )
     {
+
         list($response) = $this->getSenderIdWithHttpInfo($contentType);
         return $response;
     }
@@ -151,15 +167,29 @@ class AuthenticationApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetSenderIdResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getSenderIdWithHttpInfo(string $contentType = self::contentTypes['getSenderId'][0])
+    public function getSenderIdWithHttpInfo(string $contentType = self::contentTypes['getSenderId'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->getSenderIdRequest($contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getSenderIdRequest($contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->getSenderIdWithHttpInfo(
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -249,8 +279,14 @@ class AuthenticationApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getSenderIdAsync(string $contentType = self::contentTypes['getSenderId'][0])
+    public function getSenderIdAsync(
+
+
+        string $contentType = self::contentTypes['getSenderId'][0]
+
+    )
     {
+
         return $this->getSenderIdAsyncWithHttpInfo($contentType)
             ->then(
                 function ($response) {
@@ -269,10 +305,13 @@ class AuthenticationApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getSenderIdAsyncWithHttpInfo(string $contentType = self::contentTypes['getSenderId'][0])
+    public function getSenderIdAsyncWithHttpInfo(string $contentType = self::contentTypes['getSenderId'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetSenderIdResponse';
-        $request = $this->getSenderIdRequest($contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getSenderIdRequest($contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -320,6 +359,7 @@ class AuthenticationApi
      */
     public function getSenderIdRequest(string $contentType = self::contentTypes['getSenderId'][0])
     {
+
 
 
         $resourcePath = '/api/v1/messaging/sender_ids';
@@ -386,14 +426,20 @@ class AuthenticationApi
             $headers
         );
 
+        $method = 'GET';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'GET',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -408,8 +454,15 @@ class AuthenticationApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\GetSmsStatusResponse
      */
-    public function getSmsStatus($message_id = null, string $contentType = self::contentTypes['getSmsStatus'][0])
+    public function getSmsStatus(
+        $message_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getSmsStatus'][0]
+
+    )
     {
+
         list($response) = $this->getSmsStatusWithHttpInfo($message_id, $contentType);
         return $response;
     }
@@ -426,15 +479,30 @@ class AuthenticationApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetSmsStatusResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getSmsStatusWithHttpInfo($message_id = null, string $contentType = self::contentTypes['getSmsStatus'][0])
+    public function getSmsStatusWithHttpInfo($message_id = null, string $contentType = self::contentTypes['getSmsStatus'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->getSmsStatusRequest($message_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getSmsStatusRequest($message_id, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->getSmsStatusWithHttpInfo(
+                        $message_id,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -525,8 +593,15 @@ class AuthenticationApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getSmsStatusAsync($message_id = null, string $contentType = self::contentTypes['getSmsStatus'][0])
+    public function getSmsStatusAsync(
+        $message_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['getSmsStatus'][0]
+
+    )
     {
+
         return $this->getSmsStatusAsyncWithHttpInfo($message_id, $contentType)
             ->then(
                 function ($response) {
@@ -546,10 +621,13 @@ class AuthenticationApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getSmsStatusAsyncWithHttpInfo($message_id = null, string $contentType = self::contentTypes['getSmsStatus'][0])
+    public function getSmsStatusAsyncWithHttpInfo($message_id = null, string $contentType = self::contentTypes['getSmsStatus'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetSmsStatusResponse';
-        $request = $this->getSmsStatusRequest($message_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getSmsStatusRequest($message_id, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -596,9 +674,13 @@ class AuthenticationApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getSmsStatusRequest($message_id = null, string $contentType = self::contentTypes['getSmsStatus'][0])
+    public function getSmsStatusRequest($message_id = SENTINEL_VALUE, string $contentType = self::contentTypes['getSmsStatus'][0])
     {
 
+        // Check if $message_id is a string
+        if ($message_id !== SENTINEL_VALUE && !is_string($message_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($message_id, true), gettype($message_id)));
+        }
 
 
         $resourcePath = '/v1/messaging/sms/get_status';
@@ -608,15 +690,17 @@ class AuthenticationApi
         $httpBody = '';
         $multipart = false;
 
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $message_id,
-            'message_id', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
+        if ($message_id !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $message_id,
+                'message_id', // param base name
+                'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
 
 
 
@@ -674,14 +758,20 @@ class AuthenticationApi
             $headers
         );
 
+        $method = 'GET';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'GET',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -696,8 +786,18 @@ class AuthenticationApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\RequestSenderIdResponse
      */
-    public function requestSenderId($request_sender_id_request = null, string $contentType = self::contentTypes['requestSenderId'][0])
+    public function requestSenderId(
+        $sender_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['requestSenderId'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "sender_id", $sender_id);
+        $request_sender_id_request = $_body;
+
         list($response) = $this->requestSenderIdWithHttpInfo($request_sender_id_request, $contentType);
         return $response;
     }
@@ -714,15 +814,30 @@ class AuthenticationApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\RequestSenderIdResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function requestSenderIdWithHttpInfo($request_sender_id_request = null, string $contentType = self::contentTypes['requestSenderId'][0])
+    public function requestSenderIdWithHttpInfo($request_sender_id_request = null, string $contentType = self::contentTypes['requestSenderId'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->requestSenderIdRequest($request_sender_id_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->requestSenderIdRequest($request_sender_id_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->requestSenderIdWithHttpInfo(
+                        $request_sender_id_request,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -813,8 +928,18 @@ class AuthenticationApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function requestSenderIdAsync($request_sender_id_request = null, string $contentType = self::contentTypes['requestSenderId'][0])
+    public function requestSenderIdAsync(
+        $sender_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['requestSenderId'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "sender_id", $sender_id);
+        $request_sender_id_request = $_body;
+
         return $this->requestSenderIdAsyncWithHttpInfo($request_sender_id_request, $contentType)
             ->then(
                 function ($response) {
@@ -834,10 +959,13 @@ class AuthenticationApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function requestSenderIdAsyncWithHttpInfo($request_sender_id_request = null, string $contentType = self::contentTypes['requestSenderId'][0])
+    public function requestSenderIdAsyncWithHttpInfo($request_sender_id_request = null, string $contentType = self::contentTypes['requestSenderId'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\RequestSenderIdResponse';
-        $request = $this->requestSenderIdRequest($request_sender_id_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->requestSenderIdRequest($request_sender_id_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -884,9 +1012,17 @@ class AuthenticationApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function requestSenderIdRequest($request_sender_id_request = null, string $contentType = self::contentTypes['requestSenderId'][0])
+    public function requestSenderIdRequest($request_sender_id_request = SENTINEL_VALUE, string $contentType = self::contentTypes['requestSenderId'][0])
     {
 
+        if ($request_sender_id_request !== SENTINEL_VALUE) {
+            if (!($request_sender_id_request instanceof \Dojah\Model\RequestSenderIdRequest)) {
+                if (!is_array($request_sender_id_request))
+                    throw new \InvalidArgumentException('"request_sender_id_request" must be associative array or an instance of \Dojah\Model\RequestSenderIdRequest AuthenticationApi.requestSenderId.');
+                else
+                    $request_sender_id_request = new \Dojah\Model\RequestSenderIdRequest($request_sender_id_request);
+            }
+        }
 
 
         $resourcePath = '/api/v1/messaging/sender_id';
@@ -960,14 +1096,20 @@ class AuthenticationApi
             $headers
         );
 
+        $method = 'POST';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'POST',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -982,8 +1124,26 @@ class AuthenticationApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\SendOtpResponse
      */
-    public function sendOtp($send_otp_request = null, string $contentType = self::contentTypes['sendOtp'][0])
+    public function sendOtp(
+        $destination = SENTINEL_VALUE,
+        $length = SENTINEL_VALUE,
+        $channel = SENTINEL_VALUE,
+        $sender_id = SENTINEL_VALUE,
+        $priority = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['sendOtp'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "destination", $destination);
+        $this->setRequestBodyProperty($_body, "length", $length);
+        $this->setRequestBodyProperty($_body, "channel", $channel);
+        $this->setRequestBodyProperty($_body, "sender_id", $sender_id);
+        $this->setRequestBodyProperty($_body, "priority", $priority);
+        $send_otp_request = $_body;
+
         list($response) = $this->sendOtpWithHttpInfo($send_otp_request, $contentType);
         return $response;
     }
@@ -1000,15 +1160,30 @@ class AuthenticationApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\SendOtpResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function sendOtpWithHttpInfo($send_otp_request = null, string $contentType = self::contentTypes['sendOtp'][0])
+    public function sendOtpWithHttpInfo($send_otp_request = null, string $contentType = self::contentTypes['sendOtp'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->sendOtpRequest($send_otp_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->sendOtpRequest($send_otp_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->sendOtpWithHttpInfo(
+                        $send_otp_request,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -1099,8 +1274,26 @@ class AuthenticationApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function sendOtpAsync($send_otp_request = null, string $contentType = self::contentTypes['sendOtp'][0])
+    public function sendOtpAsync(
+        $destination = SENTINEL_VALUE,
+        $length = SENTINEL_VALUE,
+        $channel = SENTINEL_VALUE,
+        $sender_id = SENTINEL_VALUE,
+        $priority = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['sendOtp'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "destination", $destination);
+        $this->setRequestBodyProperty($_body, "length", $length);
+        $this->setRequestBodyProperty($_body, "channel", $channel);
+        $this->setRequestBodyProperty($_body, "sender_id", $sender_id);
+        $this->setRequestBodyProperty($_body, "priority", $priority);
+        $send_otp_request = $_body;
+
         return $this->sendOtpAsyncWithHttpInfo($send_otp_request, $contentType)
             ->then(
                 function ($response) {
@@ -1120,10 +1313,13 @@ class AuthenticationApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function sendOtpAsyncWithHttpInfo($send_otp_request = null, string $contentType = self::contentTypes['sendOtp'][0])
+    public function sendOtpAsyncWithHttpInfo($send_otp_request = null, string $contentType = self::contentTypes['sendOtp'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\SendOtpResponse';
-        $request = $this->sendOtpRequest($send_otp_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->sendOtpRequest($send_otp_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -1170,9 +1366,17 @@ class AuthenticationApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function sendOtpRequest($send_otp_request = null, string $contentType = self::contentTypes['sendOtp'][0])
+    public function sendOtpRequest($send_otp_request = SENTINEL_VALUE, string $contentType = self::contentTypes['sendOtp'][0])
     {
 
+        if ($send_otp_request !== SENTINEL_VALUE) {
+            if (!($send_otp_request instanceof \Dojah\Model\SendOtpRequest)) {
+                if (!is_array($send_otp_request))
+                    throw new \InvalidArgumentException('"send_otp_request" must be associative array or an instance of \Dojah\Model\SendOtpRequest AuthenticationApi.sendOtp.');
+                else
+                    $send_otp_request = new \Dojah\Model\SendOtpRequest($send_otp_request);
+            }
+        }
 
 
         $resourcePath = '/v1/messaging/otp';
@@ -1246,14 +1450,20 @@ class AuthenticationApi
             $headers
         );
 
+        $method = 'POST';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'POST',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -1268,8 +1478,24 @@ class AuthenticationApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\SendSmsResponse
      */
-    public function sendSms($send_sms_request = null, string $contentType = self::contentTypes['sendSms'][0])
+    public function sendSms(
+        $destination = SENTINEL_VALUE,
+        $message = SENTINEL_VALUE,
+        $channel = SENTINEL_VALUE,
+        $sender_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['sendSms'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "destination", $destination);
+        $this->setRequestBodyProperty($_body, "message", $message);
+        $this->setRequestBodyProperty($_body, "channel", $channel);
+        $this->setRequestBodyProperty($_body, "sender_id", $sender_id);
+        $send_sms_request = $_body;
+
         list($response) = $this->sendSmsWithHttpInfo($send_sms_request, $contentType);
         return $response;
     }
@@ -1286,15 +1512,30 @@ class AuthenticationApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\SendSmsResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function sendSmsWithHttpInfo($send_sms_request = null, string $contentType = self::contentTypes['sendSms'][0])
+    public function sendSmsWithHttpInfo($send_sms_request = null, string $contentType = self::contentTypes['sendSms'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->sendSmsRequest($send_sms_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->sendSmsRequest($send_sms_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->sendSmsWithHttpInfo(
+                        $send_sms_request,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -1385,8 +1626,24 @@ class AuthenticationApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function sendSmsAsync($send_sms_request = null, string $contentType = self::contentTypes['sendSms'][0])
+    public function sendSmsAsync(
+        $destination = SENTINEL_VALUE,
+        $message = SENTINEL_VALUE,
+        $channel = SENTINEL_VALUE,
+        $sender_id = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['sendSms'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "destination", $destination);
+        $this->setRequestBodyProperty($_body, "message", $message);
+        $this->setRequestBodyProperty($_body, "channel", $channel);
+        $this->setRequestBodyProperty($_body, "sender_id", $sender_id);
+        $send_sms_request = $_body;
+
         return $this->sendSmsAsyncWithHttpInfo($send_sms_request, $contentType)
             ->then(
                 function ($response) {
@@ -1406,10 +1663,13 @@ class AuthenticationApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function sendSmsAsyncWithHttpInfo($send_sms_request = null, string $contentType = self::contentTypes['sendSms'][0])
+    public function sendSmsAsyncWithHttpInfo($send_sms_request = null, string $contentType = self::contentTypes['sendSms'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\SendSmsResponse';
-        $request = $this->sendSmsRequest($send_sms_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->sendSmsRequest($send_sms_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -1456,9 +1716,17 @@ class AuthenticationApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function sendSmsRequest($send_sms_request = null, string $contentType = self::contentTypes['sendSms'][0])
+    public function sendSmsRequest($send_sms_request = SENTINEL_VALUE, string $contentType = self::contentTypes['sendSms'][0])
     {
 
+        if ($send_sms_request !== SENTINEL_VALUE) {
+            if (!($send_sms_request instanceof \Dojah\Model\SendSmsRequest)) {
+                if (!is_array($send_sms_request))
+                    throw new \InvalidArgumentException('"send_sms_request" must be associative array or an instance of \Dojah\Model\SendSmsRequest AuthenticationApi.sendSms.');
+                else
+                    $send_sms_request = new \Dojah\Model\SendSmsRequest($send_sms_request);
+            }
+        }
 
 
         $resourcePath = '/api/v1/messaging/sms';
@@ -1532,14 +1800,20 @@ class AuthenticationApi
             $headers
         );
 
+        $method = 'POST';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'POST',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**
@@ -1555,8 +1829,16 @@ class AuthenticationApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\ValidateOtpResponse
      */
-    public function validateOtp($reference_id = null, $code = null, string $contentType = self::contentTypes['validateOtp'][0])
+    public function validateOtp(
+        $reference_id = SENTINEL_VALUE,
+        $code = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['validateOtp'][0]
+
+    )
     {
+
         list($response) = $this->validateOtpWithHttpInfo($reference_id, $code, $contentType);
         return $response;
     }
@@ -1574,15 +1856,31 @@ class AuthenticationApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\ValidateOtpResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function validateOtpWithHttpInfo($reference_id = null, $code = null, string $contentType = self::contentTypes['validateOtp'][0])
+    public function validateOtpWithHttpInfo($reference_id = null, $code = null, string $contentType = self::contentTypes['validateOtp'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->validateOtpRequest($reference_id, $code, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->validateOtpRequest($reference_id, $code, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->validateOtpWithHttpInfo(
+                        $reference_id,
+                        $code,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -1674,8 +1972,16 @@ class AuthenticationApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function validateOtpAsync($reference_id = null, $code = null, string $contentType = self::contentTypes['validateOtp'][0])
+    public function validateOtpAsync(
+        $reference_id = SENTINEL_VALUE,
+        $code = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['validateOtp'][0]
+
+    )
     {
+
         return $this->validateOtpAsyncWithHttpInfo($reference_id, $code, $contentType)
             ->then(
                 function ($response) {
@@ -1696,10 +2002,13 @@ class AuthenticationApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function validateOtpAsyncWithHttpInfo($reference_id = null, $code = null, string $contentType = self::contentTypes['validateOtp'][0])
+    public function validateOtpAsyncWithHttpInfo($reference_id = null, $code = null, string $contentType = self::contentTypes['validateOtp'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\ValidateOtpResponse';
-        $request = $this->validateOtpRequest($reference_id, $code, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->validateOtpRequest($reference_id, $code, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -1747,10 +2056,13 @@ class AuthenticationApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function validateOtpRequest($reference_id = null, $code = null, string $contentType = self::contentTypes['validateOtp'][0])
+    public function validateOtpRequest($reference_id = SENTINEL_VALUE, $code = SENTINEL_VALUE, string $contentType = self::contentTypes['validateOtp'][0])
     {
 
-
+        // Check if $reference_id is a string
+        if ($reference_id !== SENTINEL_VALUE && !is_string($reference_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($reference_id, true), gettype($reference_id)));
+        }
 
 
         $resourcePath = '/v1/messaging/otp/validate';
@@ -1760,24 +2072,28 @@ class AuthenticationApi
         $httpBody = '';
         $multipart = false;
 
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $reference_id,
-            'reference_id', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $code,
-            'code', // param base name
-            'integer', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
+        if ($reference_id !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $reference_id,
+                'reference_id', // param base name
+                'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
+        if ($code !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $code,
+                'code', // param base name
+                'integer', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
 
 
 
@@ -1835,14 +2151,20 @@ class AuthenticationApi
             $headers
         );
 
+        $method = 'GET';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'GET',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**

@@ -7,8 +7,7 @@ Use Dojah to verify, onboard and manage user identity across Africa!
 
 ### Requirements
 
-PHP 7.4 and later.
-Should also work with PHP 8.0.
+This library requires `PHP ^8.0`
 
 ### Composer
 
@@ -23,7 +22,7 @@ To install the bindings via [Composer](https://getcomposer.org/), add the follow
     }
   ],
   "require": {
-    "dojah-inc/dojah-php-sdk": "2.0.0"
+    "konfig/dojah-php-sdk": "4.0.0"
   }
 }
 ```
@@ -47,30 +46,15 @@ Please follow the [installation procedure](#installation--usage) and then run th
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
 
-// Configure API key authorization: apikeyAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
-
-// Configure API key authorization: appIdAuth
-$config = Dojah\Configuration::getDefaultConfiguration()->setApiKey('AppId', 'YOUR_API_KEY');
-// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = Dojah\Configuration::getDefaultConfiguration()->setApiKeyPrefix('AppId', 'Bearer');
-
-// Setting host path is optional and defaults to https://api.dojah.io
-// Dojah\Configuration::getDefaultConfiguration()->setHost("https://api.dojah.io");
-
-$apiInstance = new Dojah\Api\AMLApi(
-    // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
-    // This is optional, `GuzzleHttp\Client` will be used as default.
-    // new GuzzleHttp\Client(),
-    $config
+$dojah = new \Dojah\Client(
+    Authorization: YOUR_AUTHORIZATION,
+    AppId: YOUR_APP_ID,
 );
 
 $reference_id = "c574a3c8-dc27-4013-8bbc-462e7ed87d55";
 
 try {
-    $result = $apiInstance->getScreeningInfo(
+    $result = $dojah->aML->getScreeningInfo(
         reference_id: $reference_id
     );
     print_r($result->$getEntity());
@@ -103,9 +87,9 @@ Class | Method | HTTP request | Description
 *FinancialApi* | [**getEarningStructure**](docs/Api/FinancialApi.md#getearningstructure) | **GET** /v1/financial/earning_structure | Get Earning Structure
 *FinancialApi* | [**getFullBvn**](docs/Api/FinancialApi.md#getfullbvn) | **GET** /v1/financial/bvn_information/full | Get BVN Information Full
 *FinancialApi* | [**getSpendingPattern**](docs/Api/FinancialApi.md#getspendingpattern) | **GET** /v1/financial/spending_pattern | Get Spending Pattern
-*GHKYCApi* | [**getDriversLicense**](docs/Api/GHKYCApi.md#getdriverslicense) | **GET** /api/v1/gh/kyc/dl | Driver&#39;s License
-*GHKYCApi* | [**getPassport**](docs/Api/GHKYCApi.md#getpassport) | **GET** /api/v1/gh/kyc/passport | Passport
-*GHKYCApi* | [**getSsnit**](docs/Api/GHKYCApi.md#getssnit) | **GET** /api/v1/gh/kyc/ssnit | SSNIT
+*GhKycApi* | [**getDriversLicense**](docs/Api/GhKycApi.md#getdriverslicense) | **GET** /api/v1/gh/kyc/dl | Driver&#39;s License
+*GhKycApi* | [**getPassport**](docs/Api/GhKycApi.md#getpassport) | **GET** /api/v1/gh/kyc/passport | Passport
+*GhKycApi* | [**getSsnit**](docs/Api/GhKycApi.md#getssnit) | **GET** /api/v1/gh/kyc/ssnit | SSNIT
 *GeneralApi* | [**getBanks**](docs/Api/GeneralApi.md#getbanks) | **GET** /v1/general/banks | General - Get Banks
 *GeneralApi* | [**getBin**](docs/Api/GeneralApi.md#getbin) | **GET** /v1/general/bin | General Resolve BIN
 *GeneralApi* | [**getDataPlans**](docs/Api/GeneralApi.md#getdataplans) | **GET** /v1/purchase/data/plans | Purchase - Get Data Plans
@@ -113,7 +97,7 @@ Class | Method | HTTP request | Description
 *GeneralApi* | [**getWalletBalance**](docs/Api/GeneralApi.md#getwalletbalance) | **GET** /api/v1/balance | Get Dojah Wallet Balance
 *GeneralApi* | [**purchaseAirtime**](docs/Api/GeneralApi.md#purchaseairtime) | **POST** /v1/purchase/airtime | Purchase - Send Airtime
 *GeneralApi* | [**purchaseData**](docs/Api/GeneralApi.md#purchasedata) | **POST** /v1/purchase/data | Purchase - Buy Data
-*KEKYCApi* | [**getNationalId**](docs/Api/KEKYCApi.md#getnationalid) | **GET** /api/v1/ke/kyc/id | KYC - National ID
+*KeKycApi* | [**getNationalId**](docs/Api/KeKycApi.md#getnationalid) | **GET** /api/v1/ke/kyc/id | KYC - National ID
 *KYBApi* | [**getAdvancedCac**](docs/Api/KYBApi.md#getadvancedcac) | **GET** /v1/kyc/cac/advance | KYC - Get CAC Advanced
 *KYBApi* | [**getBasicCac**](docs/Api/KYBApi.md#getbasiccac) | **GET** /v1/kyc/cac/basic | KYB - Get CAC 2
 *KYBApi* | [**getCac**](docs/Api/KYBApi.md#getcac) | **GET** /v1/kyc/cac | KYC - Get CAC
@@ -139,7 +123,7 @@ Class | Method | HTTP request | Description
 *MLApi* | [**getOcrText**](docs/Api/MLApi.md#getocrtext) | **POST** /v1/ml/ocr | BVN Ocr
 *MLApi* | [**verifyPhotoIdWithSelfie**](docs/Api/MLApi.md#verifyphotoidwithselfie) | **POST** /v1/kyc/photoid/verify | KYC - Selfie Photo ID Verification
 *ServicesApi* | [**categorizeTransactions**](docs/Api/ServicesApi.md#categorizetransactions) | **POST** /v1/ml/categorize_transaction | Categorize Transactions
-*UGKYCApi* | [**getVoter**](docs/Api/UGKYCApi.md#getvoter) | **GET** /api/v1/ug/kyc/voter | Voters ID
+*UgKycApi* | [**getVoter**](docs/Api/UgKycApi.md#getvoter) | **GET** /api/v1/ug/kyc/voter | Voters ID
 *WalletApi* | [**createWallet**](docs/Api/WalletApi.md#createwallet) | **POST** /v1/wallet/ngn/create | Create NGN Wallet
 *WalletApi* | [**creditSubwallet**](docs/Api/WalletApi.md#creditsubwallet) | **POST** /v1/wallet/ngn/credit | Credit Sub-wallet
 *WalletApi* | [**getTransaction**](docs/Api/WalletApi.md#gettransaction) | **GET** /v1/wallet/ngn/transaction | Retrieve Transaction Details
@@ -164,6 +148,7 @@ Class | Method | HTTP request | Description
 - [CategorizeTransactionsResponseEntity](docs/Model/CategorizeTransactionsResponseEntity.md)
 - [CollectStatusFromPdfRequest](docs/Model/CollectStatusFromPdfRequest.md)
 - [CollectStatusFromPdfResponse](docs/Model/CollectStatusFromPdfResponse.md)
+- [CollectStatusFromPdfResponseEntity](docs/Model/CollectStatusFromPdfResponseEntity.md)
 - [CollectTransactionsRequest](docs/Model/CollectTransactionsRequest.md)
 - [CollectTransactionsRequestTransactionsInner](docs/Model/CollectTransactionsRequestTransactionsInner.md)
 - [CollectTransactionsResponse](docs/Model/CollectTransactionsResponse.md)
@@ -182,6 +167,7 @@ Class | Method | HTTP request | Description
 - [GeneralGetNubanResponse](docs/Model/GeneralGetNubanResponse.md)
 - [GeneralGetNubanResponseEntity](docs/Model/GeneralGetNubanResponseEntity.md)
 - [GeneralGetWalletBalanceResponse](docs/Model/GeneralGetWalletBalanceResponse.md)
+- [GeneralGetWalletBalanceResponseEntity](docs/Model/GeneralGetWalletBalanceResponseEntity.md)
 - [GetAccountAnalysisResponse](docs/Model/GetAccountAnalysisResponse.md)
 - [GetAccountAnalysisResponseEntity](docs/Model/GetAccountAnalysisResponseEntity.md)
 - [GetAccountAnalysisResponseEntityAccountBreakdown](docs/Model/GetAccountAnalysisResponseEntityAccountBreakdown.md)
@@ -196,6 +182,7 @@ Class | Method | HTTP request | Description
 - [GetAccountTransactionsResponseEntity](docs/Model/GetAccountTransactionsResponseEntity.md)
 - [GetAccountTransactionsResponseEntityTransactionsInner](docs/Model/GetAccountTransactionsResponseEntityTransactionsInner.md)
 - [GetAdvancedCacResponse](docs/Model/GetAdvancedCacResponse.md)
+- [GetAdvancedCacResponseEntity](docs/Model/GetAdvancedCacResponseEntity.md)
 - [GetBanksResponse](docs/Model/GetBanksResponse.md)
 - [GetBanksResponseEntityInner](docs/Model/GetBanksResponseEntityInner.md)
 - [GetBasicBvnResponse](docs/Model/GetBasicBvnResponse.md)
@@ -209,6 +196,7 @@ Class | Method | HTTP request | Description
 - [GetCacResponse](docs/Model/GetCacResponse.md)
 - [GetCacResponseEntity](docs/Model/GetCacResponseEntity.md)
 - [GetDataPlansResponse](docs/Model/GetDataPlansResponse.md)
+- [GetDataPlansResponseEntityInner](docs/Model/GetDataPlansResponseEntityInner.md)
 - [GetDocumentAnalysisRequest](docs/Model/GetDocumentAnalysisRequest.md)
 - [GetDocumentAnalysisResponse](docs/Model/GetDocumentAnalysisResponse.md)
 - [GetDocumentAnalysisResponseEntity](docs/Model/GetDocumentAnalysisResponseEntity.md)
@@ -224,6 +212,7 @@ Class | Method | HTTP request | Description
 - [GetFullBvnResponseEntity](docs/Model/GetFullBvnResponseEntity.md)
 - [GetGenericOcrTextRequest](docs/Model/GetGenericOcrTextRequest.md)
 - [GetGenericOcrTextResponse](docs/Model/GetGenericOcrTextResponse.md)
+- [GetGenericOcrTextResponseEntity](docs/Model/GetGenericOcrTextResponseEntity.md)
 - [GetKycDriversLicenseResponse](docs/Model/GetKycDriversLicenseResponse.md)
 - [GetKycDriversLicenseResponseEntity](docs/Model/GetKycDriversLicenseResponseEntity.md)
 - [GetKycDriversLicenseResponseEntityPersonalDetails](docs/Model/GetKycDriversLicenseResponseEntityPersonalDetails.md)
@@ -239,6 +228,7 @@ Class | Method | HTTP request | Description
 - [GetPassportResponse](docs/Model/GetPassportResponse.md)
 - [GetPassportResponseEntity](docs/Model/GetPassportResponseEntity.md)
 - [GetPhoneNumber404Response](docs/Model/GetPhoneNumber404Response.md)
+- [GetPhoneNumber404ResponseEntity](docs/Model/GetPhoneNumber404ResponseEntity.md)
 - [GetPhoneNumberResponse](docs/Model/GetPhoneNumberResponse.md)
 - [GetPhoneNumberResponseEntity](docs/Model/GetPhoneNumberResponseEntity.md)
 - [GetPremiumBvnResponse](docs/Model/GetPremiumBvnResponse.md)
@@ -276,6 +266,7 @@ Class | Method | HTTP request | Description
 - [GetWalletResponseEntity](docs/Model/GetWalletResponseEntity.md)
 - [GetWalletsResponse](docs/Model/GetWalletsResponse.md)
 - [GetWalletsResponseEntity](docs/Model/GetWalletsResponseEntity.md)
+- [GetWalletsResponseEntityClientWalletsInner](docs/Model/GetWalletsResponseEntityClientWalletsInner.md)
 - [GetWebhooksResponse](docs/Model/GetWebhooksResponse.md)
 - [GetWebhooksResponseEntityInner](docs/Model/GetWebhooksResponseEntityInner.md)
 - [NotifyWebhookRequest](docs/Model/NotifyWebhookRequest.md)
@@ -326,39 +317,6 @@ Class | Method | HTTP request | Description
 - [VerifySelfieNinResponseEntity](docs/Model/VerifySelfieNinResponseEntity.md)
 - [VerifySelfieNinResponseEntitySelfieVerification](docs/Model/VerifySelfieNinResponseEntitySelfieVerification.md)
 
-## Authorization
-
-### apikeyAuth
-
-- **Type**: API key
-- **API key parameter name**: Authorization
-- **Location**: HTTP header
-
-
-
-### appIdAuth
-
-- **Type**: API key
-- **API key parameter name**: AppId
-- **Location**: HTTP header
-
-
-## Tests
-
-To run the tests, use:
-
-```bash
-composer install
-vendor/bin/phpunit
-```
-
 ## Author
 
-
-
-## About this package
-
 This PHP package is automatically generated by [Konfig](https://konfigthis.com):
-
-- API version: `1.0.0`
-    - Package version: `2.0.0`

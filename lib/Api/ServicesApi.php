@@ -33,7 +33,7 @@ use Dojah\Configuration;
 use Dojah\HeaderSelector;
 use Dojah\ObjectSerializer;
 
-class ServicesApi
+class ServicesApi extends \Dojah\CustomApi
 {
     /**
      * @var ClientInterface
@@ -109,6 +109,16 @@ class ServicesApi
     }
 
     /**
+     * For initializing request body parameter
+     */
+    private function setRequestBodyProperty(&$body, $property, $value) {
+        if ($body === null) $body = [];
+        // user did not pass in a value for this parameter
+        if ($value === SENTINEL_VALUE) return;
+        $body[$property] = $value;
+    }
+
+    /**
      * Operation categorizeTransactions
      *
      * Categorize Transactions
@@ -120,8 +130,20 @@ class ServicesApi
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\CategorizeTransactionsResponse
      */
-    public function categorizeTransactions($categorize_transactions_request = null, string $contentType = self::contentTypes['categorizeTransactions'][0])
+    public function categorizeTransactions(
+        $description = SENTINEL_VALUE,
+        $trans_type = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['categorizeTransactions'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "description", $description);
+        $this->setRequestBodyProperty($_body, "trans_type", $trans_type);
+        $categorize_transactions_request = $_body;
+
         list($response) = $this->categorizeTransactionsWithHttpInfo($categorize_transactions_request, $contentType);
         return $response;
     }
@@ -138,15 +160,30 @@ class ServicesApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\CategorizeTransactionsResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function categorizeTransactionsWithHttpInfo($categorize_transactions_request = null, string $contentType = self::contentTypes['categorizeTransactions'][0])
+    public function categorizeTransactionsWithHttpInfo($categorize_transactions_request = null, string $contentType = self::contentTypes['categorizeTransactions'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $request = $this->categorizeTransactionsRequest($categorize_transactions_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->categorizeTransactionsRequest($categorize_transactions_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         try {
             $options = $this->createHttpClientOption();
             try {
                 $response = $this->client->send($request, $options);
             } catch (RequestException $e) {
+                if (
+                    ($e->getCode() == 401 || $e->getCode() == 403) &&
+                    !empty($this->getConfig()->getAccessToken()) &&
+                    $requestOptions->shouldRetryOAuth()
+                ) {
+                    return $this->categorizeTransactionsWithHttpInfo(
+                        $categorize_transactions_request,
+                        $contentType,
+                        $requestOptions->setRetryOAuth(false)
+                    );
+                }
+
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
                     (int) $e->getCode(),
@@ -237,8 +274,20 @@ class ServicesApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function categorizeTransactionsAsync($categorize_transactions_request = null, string $contentType = self::contentTypes['categorizeTransactions'][0])
+    public function categorizeTransactionsAsync(
+        $description = SENTINEL_VALUE,
+        $trans_type = SENTINEL_VALUE,
+
+
+        string $contentType = self::contentTypes['categorizeTransactions'][0]
+
+    )
     {
+        $_body = null;
+        $this->setRequestBodyProperty($_body, "description", $description);
+        $this->setRequestBodyProperty($_body, "trans_type", $trans_type);
+        $categorize_transactions_request = $_body;
+
         return $this->categorizeTransactionsAsyncWithHttpInfo($categorize_transactions_request, $contentType)
             ->then(
                 function ($response) {
@@ -258,10 +307,13 @@ class ServicesApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function categorizeTransactionsAsyncWithHttpInfo($categorize_transactions_request = null, string $contentType = self::contentTypes['categorizeTransactions'][0])
+    public function categorizeTransactionsAsyncWithHttpInfo($categorize_transactions_request = null, string $contentType = self::contentTypes['categorizeTransactions'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\CategorizeTransactionsResponse';
-        $request = $this->categorizeTransactionsRequest($categorize_transactions_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->categorizeTransactionsRequest($categorize_transactions_request, $contentType);
+
+        // Customization hook
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -308,9 +360,17 @@ class ServicesApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function categorizeTransactionsRequest($categorize_transactions_request = null, string $contentType = self::contentTypes['categorizeTransactions'][0])
+    public function categorizeTransactionsRequest($categorize_transactions_request = SENTINEL_VALUE, string $contentType = self::contentTypes['categorizeTransactions'][0])
     {
 
+        if ($categorize_transactions_request !== SENTINEL_VALUE) {
+            if (!($categorize_transactions_request instanceof \Dojah\Model\CategorizeTransactionsRequest)) {
+                if (!is_array($categorize_transactions_request))
+                    throw new \InvalidArgumentException('"categorize_transactions_request" must be associative array or an instance of \Dojah\Model\CategorizeTransactionsRequest ServicesApi.categorizeTransactions.');
+                else
+                    $categorize_transactions_request = new \Dojah\Model\CategorizeTransactionsRequest($categorize_transactions_request);
+            }
+        }
 
 
         $resourcePath = '/v1/ml/categorize_transaction';
@@ -384,14 +444,20 @@ class ServicesApi
             $headers
         );
 
+        $method = 'POST';
+        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
+
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'POST',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
+        return [
+            "request" => new Request(
+                $method,
+                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+                $headers,
+                $httpBody
+            ),
+            "serializedBody" => $httpBody
+        ];
     }
 
     /**

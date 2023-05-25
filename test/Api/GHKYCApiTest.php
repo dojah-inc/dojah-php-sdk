@@ -91,7 +91,7 @@ class GHKYCApiTest extends TestCase
      */
     public function testGetPassport()
     {
-        $response = $this->api->getDriversLicense("V0000000", "John", "Doe", "", "1988-09-01");
+        $response = $this->api->getPassport("V0000000", "John", "Doe", "", "1988-09-01");
         $this->assertNotNull(
             $response,
             "response is null"
