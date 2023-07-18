@@ -10,7 +10,7 @@
  */
 
 /**
- * DOJAH APIs
+ * DOJAH Publilc APIs
  *
  * Use Dojah to verify, onboard and manage user identity across Africa!
  *
@@ -64,6 +64,18 @@ class KeKycApiTest extends TestCase
      *
      */
     public function testGetNationalId()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test case for getPassport
+     *
+     * KYC - Passport.
+     *
+     */
+    public function testGetPassport()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');

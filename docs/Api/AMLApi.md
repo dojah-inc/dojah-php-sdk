@@ -4,14 +4,14 @@ All URIs are relative to https://api.dojah.io, except if the operation defines a
 
 | Method | HTTP request | Description |
 | ------------- | ------------- | ------------- |
-| [**getScreeningInfo()**](AMLApi.md#getScreeningInfo) | **GET** /v1/aml/screening/info | Get AML Info |
-| [**screenAml()**](AMLApi.md#screenAml) | **POST** /api/v1/aml/screening | AML Screening |
+| [**getScreeningInfo()**](AMLApi.md#getScreeningInfo) | **GET** /api/v1/aml/screening/info | Get AML Info |
+| [**screenAml()**](AMLApi.md#screenAml) | **POST** /api/v1/aml/screening/platform | AML Screening |
 
 
 ## `getScreeningInfo()`
 
 ```php
-getScreeningInfo($reference_id): \Dojah\Model\GetScreeningInfoResponse
+getScreeningInfo($profile_id): object
 ```
 
 Get AML Info
@@ -23,35 +23,34 @@ Get AML Info
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    Authorization: YOUR_AUTHORIZATION,
-    AppId: YOUR_APP_ID,
+    Appid: YOUR_APPID,
 );
 
-$reference_id = "c574a3c8-dc27-4013-8bbc-462e7ed87d55";
+$profile_id = "WC7117469";
 
 try {
     $result = $dojah->aML->getScreeningInfo(
-        reference_id: $reference_id
+        profile_id: $profile_id
     );
-    print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling AMLApi->getScreeningInfo: ', $e->getMessage(), PHP_EOL;
 }
+
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **reference_id** | **string**|  | [optional] |
+| **profile_id** | **string**|  | [optional] |
 
 ### Return type
 
-[**\Dojah\Model\GetScreeningInfoResponse**](../Model/GetScreeningInfoResponse.md)
+**object**
 
 ### Authorization
 
-[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
+[appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -65,7 +64,7 @@ try {
 ## `screenAml()`
 
 ```php
-screenAml($screen_aml_request): \Dojah\Model\ScreenAmlResponse
+screenAml($aml_screen_aml_request): \Dojah\Model\AmlScreenAmlResponse
 ```
 
 AML Screening
@@ -77,39 +76,41 @@ AML Screening
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    Authorization: YOUR_AUTHORIZATION,
-    AppId: YOUR_APP_ID,
+    Appid: YOUR_APPID,
 );
 
-$first_name = "Obama ";
-$last_name = " ";
+$first_name = "Tinubu ";
+$last_name = "Bola";
 $date_of_birth = "1997-08-18";
+$name_query_match_threshold = "80";
 
 try {
     $result = $dojah->aML->screenAml(
         first_name: $first_name, 
         last_name: $last_name, 
-        date_of_birth: $date_of_birth
+        date_of_birth: $date_of_birth, 
+        name_query_match_threshold: $name_query_match_threshold
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling AMLApi->screenAml: ', $e->getMessage(), PHP_EOL;
 }
+
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **screen_aml_request** | [**\Dojah\Model\ScreenAmlRequest**](../Model/ScreenAmlRequest.md)|  | [optional] |
+| **aml_screen_aml_request** | [**\Dojah\Model\AmlScreenAmlRequest**](../Model/AmlScreenAmlRequest.md)|  | |
 
 ### Return type
 
-[**\Dojah\Model\ScreenAmlResponse**](../Model/ScreenAmlResponse.md)
+[**\Dojah\Model\AmlScreenAmlResponse**](../Model/AmlScreenAmlResponse.md)
 
 ### Authorization
 
-[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
+[appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 

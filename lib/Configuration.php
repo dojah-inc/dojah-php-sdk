@@ -10,7 +10,7 @@
  */
 
 /**
- * DOJAH APIs
+ * DOJAH Publilc APIs
  *
  * Use Dojah to verify, onboard and manage user identity across Africa!
  *
@@ -61,7 +61,7 @@ class Configuration
      *
      * @var string
      */
-    protected $booleanFormatForQueryString = self::BOOLEAN_FORMAT_INT;
+    protected $booleanFormatForQueryString = self::BOOLEAN_FORMAT_STRING;
 
     /**
      * Username for HTTP basic authentication
@@ -76,6 +76,13 @@ class Configuration
      * @var string
      */
     protected $password = '';
+
+    /**
+     * Set to false if you want to skip SSL verification in HTTP request
+     *
+     * @var bool
+     */
+    protected $verifySsl = true;
 
     /**
      * The host
@@ -116,13 +123,11 @@ class Configuration
      * Constructor
      */
     public function __construct(
-        string $Authorization = null,
-        string $AppId = null,
+        string $Appid = null,
     )
     {
         $this->tempFolderPath = sys_get_temp_dir();
-        $this->setApiKey("Authorization", $Authorization);
-        $this->setApiKey("AppId", $AppId);
+        $this->setApiKey("Appid", $Appid);
     }
 
     /**
@@ -268,6 +273,29 @@ class Configuration
     public function getPassword()
     {
         return $this->password;
+    }
+
+    /**
+     * Set verifySsl
+     *
+     * @param bool $verifySsl
+     *
+     * @return $this
+     */
+    public function setVerifySsl($verifySsl)
+    {
+        $this->verifySsl = $verifySsl;
+        return $this;
+    }
+
+    /**
+     * Gets the verifySsl
+     *
+     * @return bool verifySsl
+     */
+    public function getVerifySsl()
+    {
+        return $this->verifySsl;
     }
 
     /**

@@ -13,7 +13,7 @@ All URIs are relative to https://api.dojah.io, except if the operation defines a
 ## `deleteWebhook()`
 
 ```php
-deleteWebhook(): \Dojah\Model\DeleteWebhookResponse
+deleteWebhook($app_id): \Dojah\Model\DeleteWebhookResponse
 ```
 
 Delete Webhook
@@ -25,22 +25,26 @@ Delete Webhook
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    Authorization: YOUR_AUTHORIZATION,
-    AppId: YOUR_APP_ID,
 );
 
+$app_id = "{{app_id}}";
 
 try {
-    $result = $dojah->webHooks->deleteWebhook();
+    $result = $dojah->webHooks->deleteWebhook(
+        app_id: $app_id
+    );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling WebHooksApi->deleteWebhook: ', $e->getMessage(), PHP_EOL;
 }
+
 ```
 
 ### Parameters
 
-This endpoint does not need any parameter.
+| Name | Type | Description  | Notes |
+| ------------- | ------------- | ------------- | ------------- |
+| **app_id** | **string**|  | [optional] |
 
 ### Return type
 
@@ -48,7 +52,7 @@ This endpoint does not need any parameter.
 
 ### Authorization
 
-[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
+[apikeyAuth](../../README.md#apikeyAuth)
 
 ### HTTP request headers
 
@@ -62,7 +66,7 @@ This endpoint does not need any parameter.
 ## `getWebhooks()`
 
 ```php
-getWebhooks(): \Dojah\Model\GetWebhooksResponse
+getWebhooks($app_id): \Dojah\Model\GetWebhooksResponse
 ```
 
 Fetch All Webhooks
@@ -74,22 +78,26 @@ Fetch All Webhooks
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    Authorization: YOUR_AUTHORIZATION,
-    AppId: YOUR_APP_ID,
 );
 
+$app_id = "{{app_id}}";
 
 try {
-    $result = $dojah->webHooks->getWebhooks();
+    $result = $dojah->webHooks->getWebhooks(
+        app_id: $app_id
+    );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling WebHooksApi->getWebhooks: ', $e->getMessage(), PHP_EOL;
 }
+
 ```
 
 ### Parameters
 
-This endpoint does not need any parameter.
+| Name | Type | Description  | Notes |
+| ------------- | ------------- | ------------- | ------------- |
+| **app_id** | **string**|  | [optional] |
 
 ### Return type
 
@@ -97,7 +105,7 @@ This endpoint does not need any parameter.
 
 ### Authorization
 
-[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
+[apikeyAuth](../../README.md#apikeyAuth)
 
 ### HTTP request headers
 
@@ -111,7 +119,7 @@ This endpoint does not need any parameter.
 ## `notifyWebhook()`
 
 ```php
-notifyWebhook($notify_webhook_request): \Dojah\Model\NotifyWebhookResponse
+notifyWebhook($notify_webhook_request, $app_id): \Dojah\Model\NotifyWebhookResponse
 ```
 
 Post Hook
@@ -123,31 +131,33 @@ Post Hook
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    Authorization: YOUR_AUTHORIZATION,
-    AppId: YOUR_APP_ID,
 );
 
 $subject = "kyc_widget";
 $data = [
         "stuff" => "12345678",
     ];
+$app_id = "{{app_id}}";
 
 try {
     $result = $dojah->webHooks->notifyWebhook(
         subject: $subject, 
-        data: $data
+        data: $data, 
+        app_id: $app_id
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling WebHooksApi->notifyWebhook: ', $e->getMessage(), PHP_EOL;
 }
+
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **notify_webhook_request** | [**\Dojah\Model\NotifyWebhookRequest**](../Model/NotifyWebhookRequest.md)|  | [optional] |
+| **notify_webhook_request** | [**\Dojah\Model\NotifyWebhookRequest**](../Model/NotifyWebhookRequest.md)|  | |
+| **app_id** | **string**|  | [optional] |
 
 ### Return type
 
@@ -155,7 +165,7 @@ try {
 
 ### Authorization
 
-[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
+No authorization required
 
 ### HTTP request headers
 
@@ -169,7 +179,7 @@ try {
 ## `subscribeService()`
 
 ```php
-subscribeService($subscribe_service_request): \Dojah\Model\SubscribeServiceResponse
+subscribeService($subscribe_service_request, $app_id): \Dojah\Model\SubscribeServiceResponse
 ```
 
 Subscribe to service
@@ -181,29 +191,31 @@ Subscribe to service
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    Authorization: YOUR_AUTHORIZATION,
-    AppId: YOUR_APP_ID,
 );
 
-$webhook = "https://webhook.site/c587711d-d9f2-4982-9107-b1f9789a5dfe";
-$service = "kyc_widget";
+$webhook = "https://webhook.site/bc33b503-bf38-4b65-88e5-349d86378d4a";
+$service = "sms";
+$app_id = "{{app_id}}";
 
 try {
     $result = $dojah->webHooks->subscribeService(
         webhook: $webhook, 
-        service: $service
+        service: $service, 
+        app_id: $app_id
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling WebHooksApi->subscribeService: ', $e->getMessage(), PHP_EOL;
 }
+
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **subscribe_service_request** | [**\Dojah\Model\SubscribeServiceRequest**](../Model/SubscribeServiceRequest.md)|  | [optional] |
+| **subscribe_service_request** | [**\Dojah\Model\SubscribeServiceRequest**](../Model/SubscribeServiceRequest.md)|  | |
+| **app_id** | **string**|  | [optional] |
 
 ### Return type
 
@@ -211,7 +223,7 @@ try {
 
 ### Authorization
 
-[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
+[noauthAuth](../../README.md#noauthAuth)
 
 ### HTTP request headers
 

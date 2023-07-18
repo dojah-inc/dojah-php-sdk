@@ -10,7 +10,7 @@
  */
 
 /**
- * DOJAH APIs
+ * DOJAH Publilc APIs
  *
  * Use Dojah to verify, onboard and manage user identity across Africa!
  *
@@ -82,60 +82,12 @@ class GeneralApiTest extends TestCase
     }
 
     /**
-     * Test case for getDataPlans
-     *
-     * Purchase - Get Data Plans.
-     *
-     */
-    public function testGetDataPlans()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
      * Test case for getNuban
      *
      * General Resolve NUBAN.
      *
      */
     public function testGetNuban()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test case for getWalletBalance
-     *
-     * Get Dojah Wallet Balance.
-     *
-     */
-    public function testGetWalletBalance()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test case for purchaseAirtime
-     *
-     * Purchase - Send Airtime.
-     *
-     */
-    public function testPurchaseAirtime()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test case for purchaseData
-     *
-     * Purchase - Buy Data.
-     *
-     */
-    public function testPurchaseData()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');

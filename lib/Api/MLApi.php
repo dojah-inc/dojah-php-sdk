@@ -10,7 +10,7 @@
  */
 
 /**
- * DOJAH APIs
+ * DOJAH Publilc APIs
  *
  * Use Dojah to verify, onboard and manage user identity across Africa!
  *
@@ -28,6 +28,10 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\MultipartStream;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
+use GuzzleHttp\BodySummarizer;
+use GuzzleHttp\Middleware;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Utils;
 use Dojah\ApiException;
 use Dojah\Configuration;
 use Dojah\HeaderSelector;
@@ -57,15 +61,6 @@ class MLApi extends \Dojah\CustomApi
 
     /** @var string[] $contentTypes **/
     public const contentTypes = [
-        'getDocumentAnalysis' => [
-            'application/json',
-        ],
-        'getGenericOcrText' => [
-            'application/json',
-        ],
-        'getOcrText' => [
-            'application/json',
-        ],
         'verifyPhotoIdWithSelfie' => [
             'application/json',
         ],
@@ -83,7 +78,19 @@ class MLApi extends \Dojah\CustomApi
         HeaderSelector $selector = null,
         $hostIndex = 0
     ) {
-        $this->client = $client ?: new Client();
+        $clientOptions = [];
+        if (!$config->getVerifySsl()) $clientOptions["verify"] = false;
+
+        // Do not truncate error messages
+        // https://github.com/guzzle/guzzle/issues/2185#issuecomment-800293420
+        $stack = new HandlerStack(Utils::chooseHandler());
+        $stack->push(Middleware::httpErrors(new BodySummarizer(10000)), 'http_errors');
+        $stack->push(Middleware::redirect(), 'allow_redirects');
+        $stack->push(Middleware::cookies(), 'cookies');
+        $stack->push(Middleware::prepareBody(), 'prepare_body');
+        $clientOptions["handler"] = $stack;
+
+        $this->client = $client ?: new Client($clientOptions);
         $this->config = $config ?: new Configuration();
         $this->headerSelector = $selector ?: new HeaderSelector();
         $this->hostIndex = $hostIndex;
@@ -128,1046 +135,34 @@ class MLApi extends \Dojah\CustomApi
     }
 
     /**
-     * Operation getDocumentAnalysis
-     *
-     * Document Analysis Drivers License
-     *
-     * @param  \Dojah\Model\GetDocumentAnalysisRequest $get_document_analysis_request get_document_analysis_request (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getDocumentAnalysis'] to see the possible values for this operation
-     *
-     * @throws \Dojah\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
-     * @return \Dojah\Model\GetDocumentAnalysisResponse
-     */
-    public function getDocumentAnalysis(
-        $img = SENTINEL_VALUE,
-
-
-        string $contentType = self::contentTypes['getDocumentAnalysis'][0]
-
-    )
-    {
-        $_body = null;
-        $this->setRequestBodyProperty($_body, "img", $img);
-        $get_document_analysis_request = $_body;
-
-        list($response) = $this->getDocumentAnalysisWithHttpInfo($get_document_analysis_request, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation getDocumentAnalysisWithHttpInfo
-     *
-     * Document Analysis Drivers License
-     *
-     * @param  \Dojah\Model\GetDocumentAnalysisRequest $get_document_analysis_request (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getDocumentAnalysis'] to see the possible values for this operation
-     *
-     * @throws \Dojah\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
-     * @return array of \Dojah\Model\GetDocumentAnalysisResponse, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function getDocumentAnalysisWithHttpInfo($get_document_analysis_request = null, string $contentType = self::contentTypes['getDocumentAnalysis'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
-    {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getDocumentAnalysisRequest($get_document_analysis_request, $contentType);
-
-        // Customization hook
-        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
-
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                if (
-                    ($e->getCode() == 401 || $e->getCode() == 403) &&
-                    !empty($this->getConfig()->getAccessToken()) &&
-                    $requestOptions->shouldRetryOAuth()
-                ) {
-                    return $this->getDocumentAnalysisWithHttpInfo(
-                        $get_document_analysis_request,
-                        $contentType,
-                        $requestOptions->setRetryOAuth(false)
-                    );
-                }
-
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Dojah\Model\GetDocumentAnalysisResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Dojah\Model\GetDocumentAnalysisResponse' !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Dojah\Model\GetDocumentAnalysisResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            $returnType = '\Dojah\Model\GetDocumentAnalysisResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    $content = json_decode($content);
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Dojah\Model\GetDocumentAnalysisResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation getDocumentAnalysisAsync
-     *
-     * Document Analysis Drivers License
-     *
-     * @param  \Dojah\Model\GetDocumentAnalysisRequest $get_document_analysis_request (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getDocumentAnalysis'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function getDocumentAnalysisAsync(
-        $img = SENTINEL_VALUE,
-
-
-        string $contentType = self::contentTypes['getDocumentAnalysis'][0]
-
-    )
-    {
-        $_body = null;
-        $this->setRequestBodyProperty($_body, "img", $img);
-        $get_document_analysis_request = $_body;
-
-        return $this->getDocumentAnalysisAsyncWithHttpInfo($get_document_analysis_request, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation getDocumentAnalysisAsyncWithHttpInfo
-     *
-     * Document Analysis Drivers License
-     *
-     * @param  \Dojah\Model\GetDocumentAnalysisRequest $get_document_analysis_request (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getDocumentAnalysis'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function getDocumentAnalysisAsyncWithHttpInfo($get_document_analysis_request = null, string $contentType = self::contentTypes['getDocumentAnalysis'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
-    {
-        $returnType = '\Dojah\Model\GetDocumentAnalysisResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getDocumentAnalysisRequest($get_document_analysis_request, $contentType);
-
-        // Customization hook
-        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
-    }
-
-    /**
-     * Create request for operation 'getDocumentAnalysis'
-     *
-     * @param  \Dojah\Model\GetDocumentAnalysisRequest $get_document_analysis_request (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getDocumentAnalysis'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Psr7\Request
-     */
-    public function getDocumentAnalysisRequest($get_document_analysis_request = SENTINEL_VALUE, string $contentType = self::contentTypes['getDocumentAnalysis'][0])
-    {
-
-        if ($get_document_analysis_request !== SENTINEL_VALUE) {
-            if (!($get_document_analysis_request instanceof \Dojah\Model\GetDocumentAnalysisRequest)) {
-                if (!is_array($get_document_analysis_request))
-                    throw new \InvalidArgumentException('"get_document_analysis_request" must be associative array or an instance of \Dojah\Model\GetDocumentAnalysisRequest MLApi.getDocumentAnalysis.');
-                else
-                    $get_document_analysis_request = new \Dojah\Model\GetDocumentAnalysisRequest($get_document_analysis_request);
-            }
-        }
-
-
-        $resourcePath = '/v1/document/analysis/dl';
-        $formParams = [];
-        $queryParams = [];
-        $headerParams = [];
-        $httpBody = '';
-        $multipart = false;
-
-
-
-
-
-        $headers = $this->headerSelector->selectHeaders(
-            ['application/json', ],
-            $contentType,
-            $multipart
-        );
-
-        // for model (json/xml)
-        if (isset($get_document_analysis_request)) {
-            if (stripos($headers['Content-Type'], 'application/json') !== false) {
-                # if Content-Type contains "application/json", json_encode the body
-                $httpBody = \GuzzleHttp\json_encode(ObjectSerializer::sanitizeForSerialization($get_document_analysis_request));
-            } else {
-                $httpBody = $get_document_analysis_request;
-            }
-        } elseif (count($formParams) > 0) {
-            if ($multipart) {
-                $multipartContents = [];
-                foreach ($formParams as $formParamName => $formParamValue) {
-                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
-                    foreach ($formParamValueItems as $formParamValueItem) {
-                        $multipartContents[] = [
-                            'name' => $formParamName,
-                            'contents' => $formParamValueItem
-                        ];
-                    }
-                }
-                // for HTTP post (form)
-                $httpBody = new MultipartStream($multipartContents);
-
-            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
-                # if Content-Type contains "application/json", json_encode the form parameters
-                $httpBody = \GuzzleHttp\json_encode($formParams);
-            } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
-            }
-        }
-
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
-
-        $defaultHeaders = [];
-        if ($this->config->getUserAgent()) {
-            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
-        }
-
-        $headers = array_merge(
-            $defaultHeaders,
-            $headerParams,
-            $headers
-        );
-
-        $method = 'POST';
-        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
-
-        $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
-        return [
-            "request" => new Request(
-                $method,
-                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-                $headers,
-                $httpBody
-            ),
-            "serializedBody" => $httpBody
-        ];
-    }
-
-    /**
-     * Operation getGenericOcrText
-     *
-     * Generic OCR Service
-     *
-     * @param  \Dojah\Model\GetGenericOcrTextRequest $get_generic_ocr_text_request get_generic_ocr_text_request (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getGenericOcrText'] to see the possible values for this operation
-     *
-     * @throws \Dojah\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
-     * @return \Dojah\Model\GetGenericOcrTextResponse
-     */
-    public function getGenericOcrText(
-        $img = SENTINEL_VALUE,
-
-
-        string $contentType = self::contentTypes['getGenericOcrText'][0]
-
-    )
-    {
-        $_body = null;
-        $this->setRequestBodyProperty($_body, "img", $img);
-        $get_generic_ocr_text_request = $_body;
-
-        list($response) = $this->getGenericOcrTextWithHttpInfo($get_generic_ocr_text_request, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation getGenericOcrTextWithHttpInfo
-     *
-     * Generic OCR Service
-     *
-     * @param  \Dojah\Model\GetGenericOcrTextRequest $get_generic_ocr_text_request (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getGenericOcrText'] to see the possible values for this operation
-     *
-     * @throws \Dojah\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
-     * @return array of \Dojah\Model\GetGenericOcrTextResponse, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function getGenericOcrTextWithHttpInfo($get_generic_ocr_text_request = null, string $contentType = self::contentTypes['getGenericOcrText'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
-    {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getGenericOcrTextRequest($get_generic_ocr_text_request, $contentType);
-
-        // Customization hook
-        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
-
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                if (
-                    ($e->getCode() == 401 || $e->getCode() == 403) &&
-                    !empty($this->getConfig()->getAccessToken()) &&
-                    $requestOptions->shouldRetryOAuth()
-                ) {
-                    return $this->getGenericOcrTextWithHttpInfo(
-                        $get_generic_ocr_text_request,
-                        $contentType,
-                        $requestOptions->setRetryOAuth(false)
-                    );
-                }
-
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Dojah\Model\GetGenericOcrTextResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Dojah\Model\GetGenericOcrTextResponse' !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Dojah\Model\GetGenericOcrTextResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            $returnType = '\Dojah\Model\GetGenericOcrTextResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    $content = json_decode($content);
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Dojah\Model\GetGenericOcrTextResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation getGenericOcrTextAsync
-     *
-     * Generic OCR Service
-     *
-     * @param  \Dojah\Model\GetGenericOcrTextRequest $get_generic_ocr_text_request (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getGenericOcrText'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function getGenericOcrTextAsync(
-        $img = SENTINEL_VALUE,
-
-
-        string $contentType = self::contentTypes['getGenericOcrText'][0]
-
-    )
-    {
-        $_body = null;
-        $this->setRequestBodyProperty($_body, "img", $img);
-        $get_generic_ocr_text_request = $_body;
-
-        return $this->getGenericOcrTextAsyncWithHttpInfo($get_generic_ocr_text_request, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation getGenericOcrTextAsyncWithHttpInfo
-     *
-     * Generic OCR Service
-     *
-     * @param  \Dojah\Model\GetGenericOcrTextRequest $get_generic_ocr_text_request (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getGenericOcrText'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function getGenericOcrTextAsyncWithHttpInfo($get_generic_ocr_text_request = null, string $contentType = self::contentTypes['getGenericOcrText'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
-    {
-        $returnType = '\Dojah\Model\GetGenericOcrTextResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getGenericOcrTextRequest($get_generic_ocr_text_request, $contentType);
-
-        // Customization hook
-        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
-    }
-
-    /**
-     * Create request for operation 'getGenericOcrText'
-     *
-     * @param  \Dojah\Model\GetGenericOcrTextRequest $get_generic_ocr_text_request (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getGenericOcrText'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Psr7\Request
-     */
-    public function getGenericOcrTextRequest($get_generic_ocr_text_request = SENTINEL_VALUE, string $contentType = self::contentTypes['getGenericOcrText'][0])
-    {
-
-        if ($get_generic_ocr_text_request !== SENTINEL_VALUE) {
-            if (!($get_generic_ocr_text_request instanceof \Dojah\Model\GetGenericOcrTextRequest)) {
-                if (!is_array($get_generic_ocr_text_request))
-                    throw new \InvalidArgumentException('"get_generic_ocr_text_request" must be associative array or an instance of \Dojah\Model\GetGenericOcrTextRequest MLApi.getGenericOcrText.');
-                else
-                    $get_generic_ocr_text_request = new \Dojah\Model\GetGenericOcrTextRequest($get_generic_ocr_text_request);
-            }
-        }
-
-
-        $resourcePath = '/v1/ml/ocr/generic';
-        $formParams = [];
-        $queryParams = [];
-        $headerParams = [];
-        $httpBody = '';
-        $multipart = false;
-
-
-
-
-
-        $headers = $this->headerSelector->selectHeaders(
-            ['application/json', ],
-            $contentType,
-            $multipart
-        );
-
-        // for model (json/xml)
-        if (isset($get_generic_ocr_text_request)) {
-            if (stripos($headers['Content-Type'], 'application/json') !== false) {
-                # if Content-Type contains "application/json", json_encode the body
-                $httpBody = \GuzzleHttp\json_encode(ObjectSerializer::sanitizeForSerialization($get_generic_ocr_text_request));
-            } else {
-                $httpBody = $get_generic_ocr_text_request;
-            }
-        } elseif (count($formParams) > 0) {
-            if ($multipart) {
-                $multipartContents = [];
-                foreach ($formParams as $formParamName => $formParamValue) {
-                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
-                    foreach ($formParamValueItems as $formParamValueItem) {
-                        $multipartContents[] = [
-                            'name' => $formParamName,
-                            'contents' => $formParamValueItem
-                        ];
-                    }
-                }
-                // for HTTP post (form)
-                $httpBody = new MultipartStream($multipartContents);
-
-            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
-                # if Content-Type contains "application/json", json_encode the form parameters
-                $httpBody = \GuzzleHttp\json_encode($formParams);
-            } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
-            }
-        }
-
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
-
-        $defaultHeaders = [];
-        if ($this->config->getUserAgent()) {
-            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
-        }
-
-        $headers = array_merge(
-            $defaultHeaders,
-            $headerParams,
-            $headers
-        );
-
-        $method = 'POST';
-        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
-
-        $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
-        return [
-            "request" => new Request(
-                $method,
-                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-                $headers,
-                $httpBody
-            ),
-            "serializedBody" => $httpBody
-        ];
-    }
-
-    /**
-     * Operation getOcrText
-     *
-     * BVN Ocr
-     *
-     * @param  \Dojah\Model\GetOcrTextRequest $get_ocr_text_request get_ocr_text_request (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getOcrText'] to see the possible values for this operation
-     *
-     * @throws \Dojah\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
-     * @return \Dojah\Model\GetOcrTextResponse
-     */
-    public function getOcrText(
-        $image = SENTINEL_VALUE,
-
-
-        string $contentType = self::contentTypes['getOcrText'][0]
-
-    )
-    {
-        $_body = null;
-        $this->setRequestBodyProperty($_body, "image", $image);
-        $get_ocr_text_request = $_body;
-
-        list($response) = $this->getOcrTextWithHttpInfo($get_ocr_text_request, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation getOcrTextWithHttpInfo
-     *
-     * BVN Ocr
-     *
-     * @param  \Dojah\Model\GetOcrTextRequest $get_ocr_text_request (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getOcrText'] to see the possible values for this operation
-     *
-     * @throws \Dojah\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
-     * @return array of \Dojah\Model\GetOcrTextResponse, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function getOcrTextWithHttpInfo($get_ocr_text_request = null, string $contentType = self::contentTypes['getOcrText'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
-    {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getOcrTextRequest($get_ocr_text_request, $contentType);
-
-        // Customization hook
-        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
-
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                if (
-                    ($e->getCode() == 401 || $e->getCode() == 403) &&
-                    !empty($this->getConfig()->getAccessToken()) &&
-                    $requestOptions->shouldRetryOAuth()
-                ) {
-                    return $this->getOcrTextWithHttpInfo(
-                        $get_ocr_text_request,
-                        $contentType,
-                        $requestOptions->setRetryOAuth(false)
-                    );
-                }
-
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Dojah\Model\GetOcrTextResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Dojah\Model\GetOcrTextResponse' !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Dojah\Model\GetOcrTextResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            $returnType = '\Dojah\Model\GetOcrTextResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    $content = json_decode($content);
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Dojah\Model\GetOcrTextResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation getOcrTextAsync
-     *
-     * BVN Ocr
-     *
-     * @param  \Dojah\Model\GetOcrTextRequest $get_ocr_text_request (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getOcrText'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function getOcrTextAsync(
-        $image = SENTINEL_VALUE,
-
-
-        string $contentType = self::contentTypes['getOcrText'][0]
-
-    )
-    {
-        $_body = null;
-        $this->setRequestBodyProperty($_body, "image", $image);
-        $get_ocr_text_request = $_body;
-
-        return $this->getOcrTextAsyncWithHttpInfo($get_ocr_text_request, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation getOcrTextAsyncWithHttpInfo
-     *
-     * BVN Ocr
-     *
-     * @param  \Dojah\Model\GetOcrTextRequest $get_ocr_text_request (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getOcrText'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function getOcrTextAsyncWithHttpInfo($get_ocr_text_request = null, string $contentType = self::contentTypes['getOcrText'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
-    {
-        $returnType = '\Dojah\Model\GetOcrTextResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getOcrTextRequest($get_ocr_text_request, $contentType);
-
-        // Customization hook
-        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
-    }
-
-    /**
-     * Create request for operation 'getOcrText'
-     *
-     * @param  \Dojah\Model\GetOcrTextRequest $get_ocr_text_request (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getOcrText'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Psr7\Request
-     */
-    public function getOcrTextRequest($get_ocr_text_request = SENTINEL_VALUE, string $contentType = self::contentTypes['getOcrText'][0])
-    {
-
-        if ($get_ocr_text_request !== SENTINEL_VALUE) {
-            if (!($get_ocr_text_request instanceof \Dojah\Model\GetOcrTextRequest)) {
-                if (!is_array($get_ocr_text_request))
-                    throw new \InvalidArgumentException('"get_ocr_text_request" must be associative array or an instance of \Dojah\Model\GetOcrTextRequest MLApi.getOcrText.');
-                else
-                    $get_ocr_text_request = new \Dojah\Model\GetOcrTextRequest($get_ocr_text_request);
-            }
-        }
-
-
-        $resourcePath = '/v1/ml/ocr';
-        $formParams = [];
-        $queryParams = [];
-        $headerParams = [];
-        $httpBody = '';
-        $multipart = false;
-
-
-
-
-
-        $headers = $this->headerSelector->selectHeaders(
-            ['application/json', ],
-            $contentType,
-            $multipart
-        );
-
-        // for model (json/xml)
-        if (isset($get_ocr_text_request)) {
-            if (stripos($headers['Content-Type'], 'application/json') !== false) {
-                # if Content-Type contains "application/json", json_encode the body
-                $httpBody = \GuzzleHttp\json_encode(ObjectSerializer::sanitizeForSerialization($get_ocr_text_request));
-            } else {
-                $httpBody = $get_ocr_text_request;
-            }
-        } elseif (count($formParams) > 0) {
-            if ($multipart) {
-                $multipartContents = [];
-                foreach ($formParams as $formParamName => $formParamValue) {
-                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
-                    foreach ($formParamValueItems as $formParamValueItem) {
-                        $multipartContents[] = [
-                            'name' => $formParamName,
-                            'contents' => $formParamValueItem
-                        ];
-                    }
-                }
-                // for HTTP post (form)
-                $httpBody = new MultipartStream($multipartContents);
-
-            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
-                # if Content-Type contains "application/json", json_encode the form parameters
-                $httpBody = \GuzzleHttp\json_encode($formParams);
-            } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
-            }
-        }
-
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
-
-        $defaultHeaders = [];
-        if ($this->config->getUserAgent()) {
-            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
-        }
-
-        $headers = array_merge(
-            $defaultHeaders,
-            $headerParams,
-            $headers
-        );
-
-        $method = 'POST';
-        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
-
-        $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
-        return [
-            "request" => new Request(
-                $method,
-                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-                $headers,
-                $httpBody
-            ),
-            "serializedBody" => $httpBody
-        ];
-    }
-
-    /**
      * Operation verifyPhotoIdWithSelfie
      *
      * KYC - Selfie Photo ID Verification
      *
-     * @param  \Dojah\Model\VerifyPhotoIdWithSelfieRequest $verify_photo_id_with_selfie_request verify_photo_id_with_selfie_request (optional)
+     * @param  \Dojah\Model\MlVerifyPhotoIdWithSelfieRequest $ml_verify_photo_id_with_selfie_request ml_verify_photo_id_with_selfie_request (required)
+     * @param  string $app_id app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyPhotoIdWithSelfie'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return \Dojah\Model\VerifyPhotoIdWithSelfieResponse
+     * @return object
      */
     public function verifyPhotoIdWithSelfie(
+
         $selfie_image = SENTINEL_VALUE,
         $photoid_image = SENTINEL_VALUE,
-
+        $app_id = SENTINEL_VALUE,
 
         string $contentType = self::contentTypes['verifyPhotoIdWithSelfie'][0]
 
     )
     {
-        $_body = null;
+        $_body = [];
         $this->setRequestBodyProperty($_body, "selfie_image", $selfie_image);
         $this->setRequestBodyProperty($_body, "photoid_image", $photoid_image);
-        $verify_photo_id_with_selfie_request = $_body;
+        $ml_verify_photo_id_with_selfie_request = $_body;
 
-        list($response) = $this->verifyPhotoIdWithSelfieWithHttpInfo($verify_photo_id_with_selfie_request, $contentType);
+        list($response) = $this->verifyPhotoIdWithSelfieWithHttpInfo($ml_verify_photo_id_with_selfie_request, $app_id, $contentType);
         return $response;
     }
 
@@ -1176,16 +171,17 @@ class MLApi extends \Dojah\CustomApi
      *
      * KYC - Selfie Photo ID Verification
      *
-     * @param  \Dojah\Model\VerifyPhotoIdWithSelfieRequest $verify_photo_id_with_selfie_request (optional)
+     * @param  \Dojah\Model\MlVerifyPhotoIdWithSelfieRequest $ml_verify_photo_id_with_selfie_request (required)
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyPhotoIdWithSelfie'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return array of \Dojah\Model\VerifyPhotoIdWithSelfieResponse, HTTP status code, HTTP response headers (array of strings)
+     * @return array of object, HTTP status code, HTTP response headers (array of strings)
      */
-    public function verifyPhotoIdWithSelfieWithHttpInfo($verify_photo_id_with_selfie_request = null, string $contentType = self::contentTypes['verifyPhotoIdWithSelfie'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function verifyPhotoIdWithSelfieWithHttpInfo($ml_verify_photo_id_with_selfie_request, $app_id = null, string $contentType = self::contentTypes['verifyPhotoIdWithSelfie'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifyPhotoIdWithSelfieRequest($verify_photo_id_with_selfie_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifyPhotoIdWithSelfieRequest($ml_verify_photo_id_with_selfie_request, $app_id, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
@@ -1201,7 +197,8 @@ class MLApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->verifyPhotoIdWithSelfieWithHttpInfo(
-                        $verify_photo_id_with_selfie_request,
+                        $ml_verify_photo_id_with_selfie_request,
+                        $app_id,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
                     );
@@ -1239,23 +236,23 @@ class MLApi extends \Dojah\CustomApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Dojah\Model\VerifyPhotoIdWithSelfieResponse' === '\SplFileObject') {
+                    if ('object' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Dojah\Model\VerifyPhotoIdWithSelfieResponse' !== 'string') {
+                        if ('object' !== 'string') {
                             $content = json_decode($content);
                         }
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Dojah\Model\VerifyPhotoIdWithSelfieResponse', []),
+                        ObjectSerializer::deserialize($content, 'object', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
             }
 
-            $returnType = '\Dojah\Model\VerifyPhotoIdWithSelfieResponse';
+            $returnType = 'object';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -1276,7 +273,7 @@ class MLApi extends \Dojah\CustomApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Dojah\Model\VerifyPhotoIdWithSelfieResponse',
+                        'object',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1291,27 +288,29 @@ class MLApi extends \Dojah\CustomApi
      *
      * KYC - Selfie Photo ID Verification
      *
-     * @param  \Dojah\Model\VerifyPhotoIdWithSelfieRequest $verify_photo_id_with_selfie_request (optional)
+     * @param  \Dojah\Model\MlVerifyPhotoIdWithSelfieRequest $ml_verify_photo_id_with_selfie_request (required)
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyPhotoIdWithSelfie'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function verifyPhotoIdWithSelfieAsync(
+
         $selfie_image = SENTINEL_VALUE,
         $photoid_image = SENTINEL_VALUE,
-
+        $app_id = SENTINEL_VALUE,
 
         string $contentType = self::contentTypes['verifyPhotoIdWithSelfie'][0]
 
     )
     {
-        $_body = null;
+        $_body = [];
         $this->setRequestBodyProperty($_body, "selfie_image", $selfie_image);
         $this->setRequestBodyProperty($_body, "photoid_image", $photoid_image);
-        $verify_photo_id_with_selfie_request = $_body;
+        $ml_verify_photo_id_with_selfie_request = $_body;
 
-        return $this->verifyPhotoIdWithSelfieAsyncWithHttpInfo($verify_photo_id_with_selfie_request, $contentType)
+        return $this->verifyPhotoIdWithSelfieAsyncWithHttpInfo($ml_verify_photo_id_with_selfie_request, $app_id, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -1324,16 +323,17 @@ class MLApi extends \Dojah\CustomApi
      *
      * KYC - Selfie Photo ID Verification
      *
-     * @param  \Dojah\Model\VerifyPhotoIdWithSelfieRequest $verify_photo_id_with_selfie_request (optional)
+     * @param  \Dojah\Model\MlVerifyPhotoIdWithSelfieRequest $ml_verify_photo_id_with_selfie_request (required)
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyPhotoIdWithSelfie'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function verifyPhotoIdWithSelfieAsyncWithHttpInfo($verify_photo_id_with_selfie_request = null, string $contentType = self::contentTypes['verifyPhotoIdWithSelfie'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function verifyPhotoIdWithSelfieAsyncWithHttpInfo($ml_verify_photo_id_with_selfie_request, $app_id = null, string $contentType = self::contentTypes['verifyPhotoIdWithSelfie'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $returnType = '\Dojah\Model\VerifyPhotoIdWithSelfieResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifyPhotoIdWithSelfieRequest($verify_photo_id_with_selfie_request, $contentType);
+        $returnType = 'object';
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifyPhotoIdWithSelfieRequest($ml_verify_photo_id_with_selfie_request, $app_id, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
@@ -1377,26 +377,37 @@ class MLApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'verifyPhotoIdWithSelfie'
      *
-     * @param  \Dojah\Model\VerifyPhotoIdWithSelfieRequest $verify_photo_id_with_selfie_request (optional)
+     * @param  \Dojah\Model\MlVerifyPhotoIdWithSelfieRequest $ml_verify_photo_id_with_selfie_request (required)
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyPhotoIdWithSelfie'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function verifyPhotoIdWithSelfieRequest($verify_photo_id_with_selfie_request = SENTINEL_VALUE, string $contentType = self::contentTypes['verifyPhotoIdWithSelfie'][0])
+    public function verifyPhotoIdWithSelfieRequest($ml_verify_photo_id_with_selfie_request, $app_id = SENTINEL_VALUE, string $contentType = self::contentTypes['verifyPhotoIdWithSelfie'][0])
     {
 
-        if ($verify_photo_id_with_selfie_request !== SENTINEL_VALUE) {
-            if (!($verify_photo_id_with_selfie_request instanceof \Dojah\Model\VerifyPhotoIdWithSelfieRequest)) {
-                if (!is_array($verify_photo_id_with_selfie_request))
-                    throw new \InvalidArgumentException('"verify_photo_id_with_selfie_request" must be associative array or an instance of \Dojah\Model\VerifyPhotoIdWithSelfieRequest MLApi.verifyPhotoIdWithSelfie.');
+        if ($ml_verify_photo_id_with_selfie_request !== SENTINEL_VALUE) {
+            if (!($ml_verify_photo_id_with_selfie_request instanceof \Dojah\Model\MlVerifyPhotoIdWithSelfieRequest)) {
+                if (!is_array($ml_verify_photo_id_with_selfie_request))
+                    throw new \InvalidArgumentException('"ml_verify_photo_id_with_selfie_request" must be associative array or an instance of \Dojah\Model\MlVerifyPhotoIdWithSelfieRequest MLApi.verifyPhotoIdWithSelfie.');
                 else
-                    $verify_photo_id_with_selfie_request = new \Dojah\Model\VerifyPhotoIdWithSelfieRequest($verify_photo_id_with_selfie_request);
+                    $ml_verify_photo_id_with_selfie_request = new \Dojah\Model\MlVerifyPhotoIdWithSelfieRequest($ml_verify_photo_id_with_selfie_request);
             }
+        }
+        // verify the required parameter 'ml_verify_photo_id_with_selfie_request' is set
+        if ($ml_verify_photo_id_with_selfie_request === SENTINEL_VALUE || (is_array($ml_verify_photo_id_with_selfie_request) && count($ml_verify_photo_id_with_selfie_request) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter ml_verify_photo_id_with_selfie_request when calling verifyPhotoIdWithSelfie'
+            );
+        }
+        // Check if $app_id is a string
+        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
         }
 
 
-        $resourcePath = '/v1/kyc/photoid/verify';
+        $resourcePath = '/api/v1/kyc/photoid/verify';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -1404,6 +415,10 @@ class MLApi extends \Dojah\CustomApi
         $multipart = false;
 
 
+        // header params
+        if ($app_id !== SENTINEL_VALUE) {
+            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
+        }
 
 
 
@@ -1414,12 +429,12 @@ class MLApi extends \Dojah\CustomApi
         );
 
         // for model (json/xml)
-        if (isset($verify_photo_id_with_selfie_request)) {
+        if (isset($ml_verify_photo_id_with_selfie_request)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
-                $httpBody = \GuzzleHttp\json_encode(ObjectSerializer::sanitizeForSerialization($verify_photo_id_with_selfie_request));
+                $httpBody = \GuzzleHttp\json_encode(ObjectSerializer::sanitizeForSerialization($ml_verify_photo_id_with_selfie_request));
             } else {
-                $httpBody = $verify_photo_id_with_selfie_request;
+                $httpBody = $ml_verify_photo_id_with_selfie_request;
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -1445,16 +460,6 @@ class MLApi extends \Dojah\CustomApi
             }
         }
 
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {

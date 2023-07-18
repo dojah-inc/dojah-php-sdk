@@ -10,7 +10,7 @@
  */
 
 /**
- * DOJAH APIs
+ * DOJAH Publilc APIs
  *
  * Use Dojah to verify, onboard and manage user identity across Africa!
  *
@@ -28,6 +28,10 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\MultipartStream;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
+use GuzzleHttp\BodySummarizer;
+use GuzzleHttp\Middleware;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Utils;
 use Dojah\ApiException;
 use Dojah\Configuration;
 use Dojah\HeaderSelector;
@@ -83,7 +87,19 @@ class WebHooksApi extends \Dojah\CustomApi
         HeaderSelector $selector = null,
         $hostIndex = 0
     ) {
-        $this->client = $client ?: new Client();
+        $clientOptions = [];
+        if (!$config->getVerifySsl()) $clientOptions["verify"] = false;
+
+        // Do not truncate error messages
+        // https://github.com/guzzle/guzzle/issues/2185#issuecomment-800293420
+        $stack = new HandlerStack(Utils::chooseHandler());
+        $stack->push(Middleware::httpErrors(new BodySummarizer(10000)), 'http_errors');
+        $stack->push(Middleware::redirect(), 'allow_redirects');
+        $stack->push(Middleware::cookies(), 'cookies');
+        $stack->push(Middleware::prepareBody(), 'prepare_body');
+        $clientOptions["handler"] = $stack;
+
+        $this->client = $client ?: new Client($clientOptions);
         $this->config = $config ?: new Configuration();
         $this->headerSelector = $selector ?: new HeaderSelector();
         $this->hostIndex = $hostIndex;
@@ -132,6 +148,7 @@ class WebHooksApi extends \Dojah\CustomApi
      *
      * Delete Webhook
      *
+     * @param  string $app_id app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteWebhook'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
@@ -139,6 +156,7 @@ class WebHooksApi extends \Dojah\CustomApi
      * @return \Dojah\Model\DeleteWebhookResponse
      */
     public function deleteWebhook(
+        $app_id = SENTINEL_VALUE,
 
 
         string $contentType = self::contentTypes['deleteWebhook'][0]
@@ -146,7 +164,7 @@ class WebHooksApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->deleteWebhookWithHttpInfo($contentType);
+        list($response) = $this->deleteWebhookWithHttpInfo($app_id, $contentType);
         return $response;
     }
 
@@ -155,15 +173,16 @@ class WebHooksApi extends \Dojah\CustomApi
      *
      * Delete Webhook
      *
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteWebhook'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\DeleteWebhookResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function deleteWebhookWithHttpInfo(string $contentType = self::contentTypes['deleteWebhook'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function deleteWebhookWithHttpInfo($app_id = null, string $contentType = self::contentTypes['deleteWebhook'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->deleteWebhookRequest($contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->deleteWebhookRequest($app_id, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -179,6 +198,7 @@ class WebHooksApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->deleteWebhookWithHttpInfo(
+                        $app_id,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
                     );
@@ -268,12 +288,14 @@ class WebHooksApi extends \Dojah\CustomApi
      *
      * Delete Webhook
      *
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteWebhook'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function deleteWebhookAsync(
+        $app_id = SENTINEL_VALUE,
 
 
         string $contentType = self::contentTypes['deleteWebhook'][0]
@@ -281,7 +303,7 @@ class WebHooksApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->deleteWebhookAsyncWithHttpInfo($contentType)
+        return $this->deleteWebhookAsyncWithHttpInfo($app_id, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -294,15 +316,16 @@ class WebHooksApi extends \Dojah\CustomApi
      *
      * Delete Webhook
      *
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteWebhook'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function deleteWebhookAsyncWithHttpInfo(string $contentType = self::contentTypes['deleteWebhook'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function deleteWebhookAsyncWithHttpInfo($app_id = null, string $contentType = self::contentTypes['deleteWebhook'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\DeleteWebhookResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->deleteWebhookRequest($contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->deleteWebhookRequest($app_id, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -346,14 +369,19 @@ class WebHooksApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'deleteWebhook'
      *
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['deleteWebhook'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function deleteWebhookRequest(string $contentType = self::contentTypes['deleteWebhook'][0])
+    public function deleteWebhookRequest($app_id = SENTINEL_VALUE, string $contentType = self::contentTypes['deleteWebhook'][0])
     {
 
+        // Check if $app_id is a string
+        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
+        }
 
 
         $resourcePath = '/api/v1/webhook/delete';
@@ -364,6 +392,10 @@ class WebHooksApi extends \Dojah\CustomApi
         $multipart = false;
 
 
+        // header params
+        if ($app_id !== SENTINEL_VALUE) {
+            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
+        }
 
 
 
@@ -398,16 +430,6 @@ class WebHooksApi extends \Dojah\CustomApi
             }
         }
 
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -441,6 +463,7 @@ class WebHooksApi extends \Dojah\CustomApi
      *
      * Fetch All Webhooks
      *
+     * @param  string $app_id app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getWebhooks'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
@@ -448,6 +471,7 @@ class WebHooksApi extends \Dojah\CustomApi
      * @return \Dojah\Model\GetWebhooksResponse
      */
     public function getWebhooks(
+        $app_id = SENTINEL_VALUE,
 
 
         string $contentType = self::contentTypes['getWebhooks'][0]
@@ -455,7 +479,7 @@ class WebHooksApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getWebhooksWithHttpInfo($contentType);
+        list($response) = $this->getWebhooksWithHttpInfo($app_id, $contentType);
         return $response;
     }
 
@@ -464,15 +488,16 @@ class WebHooksApi extends \Dojah\CustomApi
      *
      * Fetch All Webhooks
      *
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getWebhooks'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetWebhooksResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getWebhooksWithHttpInfo(string $contentType = self::contentTypes['getWebhooks'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getWebhooksWithHttpInfo($app_id = null, string $contentType = self::contentTypes['getWebhooks'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getWebhooksRequest($contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getWebhooksRequest($app_id, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -488,6 +513,7 @@ class WebHooksApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getWebhooksWithHttpInfo(
+                        $app_id,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
                     );
@@ -577,12 +603,14 @@ class WebHooksApi extends \Dojah\CustomApi
      *
      * Fetch All Webhooks
      *
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getWebhooks'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getWebhooksAsync(
+        $app_id = SENTINEL_VALUE,
 
 
         string $contentType = self::contentTypes['getWebhooks'][0]
@@ -590,7 +618,7 @@ class WebHooksApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getWebhooksAsyncWithHttpInfo($contentType)
+        return $this->getWebhooksAsyncWithHttpInfo($app_id, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -603,15 +631,16 @@ class WebHooksApi extends \Dojah\CustomApi
      *
      * Fetch All Webhooks
      *
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getWebhooks'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getWebhooksAsyncWithHttpInfo(string $contentType = self::contentTypes['getWebhooks'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getWebhooksAsyncWithHttpInfo($app_id = null, string $contentType = self::contentTypes['getWebhooks'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetWebhooksResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getWebhooksRequest($contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getWebhooksRequest($app_id, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -655,14 +684,19 @@ class WebHooksApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getWebhooks'
      *
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getWebhooks'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getWebhooksRequest(string $contentType = self::contentTypes['getWebhooks'][0])
+    public function getWebhooksRequest($app_id = SENTINEL_VALUE, string $contentType = self::contentTypes['getWebhooks'][0])
     {
 
+        // Check if $app_id is a string
+        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
+        }
 
 
         $resourcePath = '/api/v1/webhook/fetch';
@@ -673,6 +707,10 @@ class WebHooksApi extends \Dojah\CustomApi
         $multipart = false;
 
 
+        // header params
+        if ($app_id !== SENTINEL_VALUE) {
+            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
+        }
 
 
 
@@ -707,16 +745,6 @@ class WebHooksApi extends \Dojah\CustomApi
             }
         }
 
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -750,7 +778,8 @@ class WebHooksApi extends \Dojah\CustomApi
      *
      * Post Hook
      *
-     * @param  \Dojah\Model\NotifyWebhookRequest $notify_webhook_request notify_webhook_request (optional)
+     * @param  \Dojah\Model\NotifyWebhookRequest $notify_webhook_request notify_webhook_request (required)
+     * @param  string $app_id app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['notifyWebhook'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
@@ -758,20 +787,21 @@ class WebHooksApi extends \Dojah\CustomApi
      * @return \Dojah\Model\NotifyWebhookResponse
      */
     public function notifyWebhook(
+
         $subject = SENTINEL_VALUE,
         $data = SENTINEL_VALUE,
-
+        $app_id = SENTINEL_VALUE,
 
         string $contentType = self::contentTypes['notifyWebhook'][0]
 
     )
     {
-        $_body = null;
+        $_body = [];
         $this->setRequestBodyProperty($_body, "subject", $subject);
         $this->setRequestBodyProperty($_body, "data", $data);
         $notify_webhook_request = $_body;
 
-        list($response) = $this->notifyWebhookWithHttpInfo($notify_webhook_request, $contentType);
+        list($response) = $this->notifyWebhookWithHttpInfo($notify_webhook_request, $app_id, $contentType);
         return $response;
     }
 
@@ -780,16 +810,17 @@ class WebHooksApi extends \Dojah\CustomApi
      *
      * Post Hook
      *
-     * @param  \Dojah\Model\NotifyWebhookRequest $notify_webhook_request (optional)
+     * @param  \Dojah\Model\NotifyWebhookRequest $notify_webhook_request (required)
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['notifyWebhook'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\NotifyWebhookResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function notifyWebhookWithHttpInfo($notify_webhook_request = null, string $contentType = self::contentTypes['notifyWebhook'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function notifyWebhookWithHttpInfo($notify_webhook_request, $app_id = null, string $contentType = self::contentTypes['notifyWebhook'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->notifyWebhookRequest($notify_webhook_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->notifyWebhookRequest($notify_webhook_request, $app_id, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
@@ -806,6 +837,7 @@ class WebHooksApi extends \Dojah\CustomApi
                 ) {
                     return $this->notifyWebhookWithHttpInfo(
                         $notify_webhook_request,
+                        $app_id,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
                     );
@@ -895,27 +927,29 @@ class WebHooksApi extends \Dojah\CustomApi
      *
      * Post Hook
      *
-     * @param  \Dojah\Model\NotifyWebhookRequest $notify_webhook_request (optional)
+     * @param  \Dojah\Model\NotifyWebhookRequest $notify_webhook_request (required)
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['notifyWebhook'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function notifyWebhookAsync(
+
         $subject = SENTINEL_VALUE,
         $data = SENTINEL_VALUE,
-
+        $app_id = SENTINEL_VALUE,
 
         string $contentType = self::contentTypes['notifyWebhook'][0]
 
     )
     {
-        $_body = null;
+        $_body = [];
         $this->setRequestBodyProperty($_body, "subject", $subject);
         $this->setRequestBodyProperty($_body, "data", $data);
         $notify_webhook_request = $_body;
 
-        return $this->notifyWebhookAsyncWithHttpInfo($notify_webhook_request, $contentType)
+        return $this->notifyWebhookAsyncWithHttpInfo($notify_webhook_request, $app_id, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -928,16 +962,17 @@ class WebHooksApi extends \Dojah\CustomApi
      *
      * Post Hook
      *
-     * @param  \Dojah\Model\NotifyWebhookRequest $notify_webhook_request (optional)
+     * @param  \Dojah\Model\NotifyWebhookRequest $notify_webhook_request (required)
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['notifyWebhook'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function notifyWebhookAsyncWithHttpInfo($notify_webhook_request = null, string $contentType = self::contentTypes['notifyWebhook'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function notifyWebhookAsyncWithHttpInfo($notify_webhook_request, $app_id = null, string $contentType = self::contentTypes['notifyWebhook'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\NotifyWebhookResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->notifyWebhookRequest($notify_webhook_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->notifyWebhookRequest($notify_webhook_request, $app_id, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
@@ -981,13 +1016,14 @@ class WebHooksApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'notifyWebhook'
      *
-     * @param  \Dojah\Model\NotifyWebhookRequest $notify_webhook_request (optional)
+     * @param  \Dojah\Model\NotifyWebhookRequest $notify_webhook_request (required)
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['notifyWebhook'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function notifyWebhookRequest($notify_webhook_request = SENTINEL_VALUE, string $contentType = self::contentTypes['notifyWebhook'][0])
+    public function notifyWebhookRequest($notify_webhook_request, $app_id = SENTINEL_VALUE, string $contentType = self::contentTypes['notifyWebhook'][0])
     {
 
         if ($notify_webhook_request !== SENTINEL_VALUE) {
@@ -997,6 +1033,16 @@ class WebHooksApi extends \Dojah\CustomApi
                 else
                     $notify_webhook_request = new \Dojah\Model\NotifyWebhookRequest($notify_webhook_request);
             }
+        }
+        // verify the required parameter 'notify_webhook_request' is set
+        if ($notify_webhook_request === SENTINEL_VALUE || (is_array($notify_webhook_request) && count($notify_webhook_request) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter notify_webhook_request when calling notifyWebhook'
+            );
+        }
+        // Check if $app_id is a string
+        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
         }
 
 
@@ -1008,6 +1054,10 @@ class WebHooksApi extends \Dojah\CustomApi
         $multipart = false;
 
 
+        // header params
+        if ($app_id !== SENTINEL_VALUE) {
+            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
+        }
 
 
 
@@ -1049,16 +1099,6 @@ class WebHooksApi extends \Dojah\CustomApi
             }
         }
 
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -1092,7 +1132,8 @@ class WebHooksApi extends \Dojah\CustomApi
      *
      * Subscribe to service
      *
-     * @param  \Dojah\Model\SubscribeServiceRequest $subscribe_service_request subscribe_service_request (optional)
+     * @param  \Dojah\Model\SubscribeServiceRequest $subscribe_service_request subscribe_service_request (required)
+     * @param  string $app_id app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['subscribeService'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
@@ -1100,20 +1141,21 @@ class WebHooksApi extends \Dojah\CustomApi
      * @return \Dojah\Model\SubscribeServiceResponse
      */
     public function subscribeService(
+
         $webhook = SENTINEL_VALUE,
         $service = SENTINEL_VALUE,
-
+        $app_id = SENTINEL_VALUE,
 
         string $contentType = self::contentTypes['subscribeService'][0]
 
     )
     {
-        $_body = null;
+        $_body = [];
         $this->setRequestBodyProperty($_body, "webhook", $webhook);
         $this->setRequestBodyProperty($_body, "service", $service);
         $subscribe_service_request = $_body;
 
-        list($response) = $this->subscribeServiceWithHttpInfo($subscribe_service_request, $contentType);
+        list($response) = $this->subscribeServiceWithHttpInfo($subscribe_service_request, $app_id, $contentType);
         return $response;
     }
 
@@ -1122,16 +1164,17 @@ class WebHooksApi extends \Dojah\CustomApi
      *
      * Subscribe to service
      *
-     * @param  \Dojah\Model\SubscribeServiceRequest $subscribe_service_request (optional)
+     * @param  \Dojah\Model\SubscribeServiceRequest $subscribe_service_request (required)
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['subscribeService'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\SubscribeServiceResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function subscribeServiceWithHttpInfo($subscribe_service_request = null, string $contentType = self::contentTypes['subscribeService'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function subscribeServiceWithHttpInfo($subscribe_service_request, $app_id = null, string $contentType = self::contentTypes['subscribeService'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->subscribeServiceRequest($subscribe_service_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->subscribeServiceRequest($subscribe_service_request, $app_id, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
@@ -1148,6 +1191,7 @@ class WebHooksApi extends \Dojah\CustomApi
                 ) {
                     return $this->subscribeServiceWithHttpInfo(
                         $subscribe_service_request,
+                        $app_id,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
                     );
@@ -1237,27 +1281,29 @@ class WebHooksApi extends \Dojah\CustomApi
      *
      * Subscribe to service
      *
-     * @param  \Dojah\Model\SubscribeServiceRequest $subscribe_service_request (optional)
+     * @param  \Dojah\Model\SubscribeServiceRequest $subscribe_service_request (required)
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['subscribeService'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function subscribeServiceAsync(
+
         $webhook = SENTINEL_VALUE,
         $service = SENTINEL_VALUE,
-
+        $app_id = SENTINEL_VALUE,
 
         string $contentType = self::contentTypes['subscribeService'][0]
 
     )
     {
-        $_body = null;
+        $_body = [];
         $this->setRequestBodyProperty($_body, "webhook", $webhook);
         $this->setRequestBodyProperty($_body, "service", $service);
         $subscribe_service_request = $_body;
 
-        return $this->subscribeServiceAsyncWithHttpInfo($subscribe_service_request, $contentType)
+        return $this->subscribeServiceAsyncWithHttpInfo($subscribe_service_request, $app_id, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -1270,16 +1316,17 @@ class WebHooksApi extends \Dojah\CustomApi
      *
      * Subscribe to service
      *
-     * @param  \Dojah\Model\SubscribeServiceRequest $subscribe_service_request (optional)
+     * @param  \Dojah\Model\SubscribeServiceRequest $subscribe_service_request (required)
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['subscribeService'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function subscribeServiceAsyncWithHttpInfo($subscribe_service_request = null, string $contentType = self::contentTypes['subscribeService'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function subscribeServiceAsyncWithHttpInfo($subscribe_service_request, $app_id = null, string $contentType = self::contentTypes['subscribeService'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\SubscribeServiceResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->subscribeServiceRequest($subscribe_service_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->subscribeServiceRequest($subscribe_service_request, $app_id, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
@@ -1323,13 +1370,14 @@ class WebHooksApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'subscribeService'
      *
-     * @param  \Dojah\Model\SubscribeServiceRequest $subscribe_service_request (optional)
+     * @param  \Dojah\Model\SubscribeServiceRequest $subscribe_service_request (required)
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['subscribeService'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function subscribeServiceRequest($subscribe_service_request = SENTINEL_VALUE, string $contentType = self::contentTypes['subscribeService'][0])
+    public function subscribeServiceRequest($subscribe_service_request, $app_id = SENTINEL_VALUE, string $contentType = self::contentTypes['subscribeService'][0])
     {
 
         if ($subscribe_service_request !== SENTINEL_VALUE) {
@@ -1339,6 +1387,16 @@ class WebHooksApi extends \Dojah\CustomApi
                 else
                     $subscribe_service_request = new \Dojah\Model\SubscribeServiceRequest($subscribe_service_request);
             }
+        }
+        // verify the required parameter 'subscribe_service_request' is set
+        if ($subscribe_service_request === SENTINEL_VALUE || (is_array($subscribe_service_request) && count($subscribe_service_request) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter subscribe_service_request when calling subscribeService'
+            );
+        }
+        // Check if $app_id is a string
+        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
         }
 
 
@@ -1350,6 +1408,10 @@ class WebHooksApi extends \Dojah\CustomApi
         $multipart = false;
 
 
+        // header params
+        if ($app_id !== SENTINEL_VALUE) {
+            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
+        }
 
 
 
@@ -1391,16 +1453,6 @@ class WebHooksApi extends \Dojah\CustomApi
             }
         }
 
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {

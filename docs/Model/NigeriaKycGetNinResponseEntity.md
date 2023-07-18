@@ -1,0 +1,47 @@
+# # NigeriaKycGetNinResponseEntity
+
+## Properties
+
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**title** | **string** |  | [optional]
+**birth_country** | **string** |  | [optional]
+**birth_date** | **string** |  | [optional]
+**birth_lga** | **string** |  | [optional]
+**birth_state** | **string** |  | [optional]
+**central_id** | **string** |  | [optional]
+**educational_level** | **string** |  | [optional]
+**email** | **string** |  | [optional]
+**employment_status** | **string** |  | [optional]
+**first_name** | **string** |  | [optional]
+**gender** | **string** |  | [optional]
+**height** | **string** |  | [optional]
+**maiden_name** | **string** |  | [optional]
+**marital_status** | **string** |  | [optional]
+**middle_name** | **string** |  | [optional]
+**nationality** | **string** |  | [optional]
+**nok_address_1** | **string** |  | [optional]
+**nok_address_2** | **string[]** |  | [optional]
+**nok_first_name** | **string** |  | [optional]
+**nok_lga** | **string** |  | [optional]
+**nok_state** | **string** |  | [optional]
+**nok_surname** | **string** |  | [optional]
+**nok_town** | **string** |  | [optional]
+**origin_lga** | **string** |  | [optional]
+**origin_place** | **string** |  | [optional]
+**origin_state** | **string** |  | [optional]
+**picture** | **string** |  | [optional]
+**profession** | **string** |  | [optional]
+**reference** | **string** |  | [optional]
+**religion** | **string** |  | [optional]
+**residence_address** | **string** |  | [optional]
+**residence_lga** | **string** |  | [optional]
+**residence_state** | **string** |  | [optional]
+**residence_status** | **string** |  | [optional]
+**residence_town** | **string** |  | [optional]
+**signature** | **string** |  | [optional]
+**spoken_language** | **string** |  | [optional]
+**surname** | **string** |  | [optional]
+**telephone** | **string** |  | [optional]
+
+[[Back to Model list]](../../README.md#models) [[Back to API list]](../../README.md#endpoints) [[Back to README]](../../README.md)

@@ -10,7 +10,7 @@
  */
 
 /**
- * DOJAH APIs
+ * DOJAH Publilc APIs
  *
  * Use Dojah to verify, onboard and manage user identity across Africa!
  *
@@ -28,6 +28,10 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\MultipartStream;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
+use GuzzleHttp\BodySummarizer;
+use GuzzleHttp\Middleware;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Utils;
 use Dojah\ApiException;
 use Dojah\Configuration;
 use Dojah\HeaderSelector;
@@ -74,7 +78,19 @@ class UgKycApi extends \Dojah\CustomApi
         HeaderSelector $selector = null,
         $hostIndex = 0
     ) {
-        $this->client = $client ?: new Client();
+        $clientOptions = [];
+        if (!$config->getVerifySsl()) $clientOptions["verify"] = false;
+
+        // Do not truncate error messages
+        // https://github.com/guzzle/guzzle/issues/2185#issuecomment-800293420
+        $stack = new HandlerStack(Utils::chooseHandler());
+        $stack->push(Middleware::httpErrors(new BodySummarizer(10000)), 'http_errors');
+        $stack->push(Middleware::redirect(), 'allow_redirects');
+        $stack->push(Middleware::cookies(), 'cookies');
+        $stack->push(Middleware::prepareBody(), 'prepare_body');
+        $clientOptions["handler"] = $stack;
+
+        $this->client = $client ?: new Client($clientOptions);
         $this->config = $config ?: new Configuration();
         $this->headerSelector = $selector ?: new HeaderSelector();
         $this->hostIndex = $hostIndex;
@@ -123,6 +139,7 @@ class UgKycApi extends \Dojah\CustomApi
      *
      * Voters ID
      *
+     * @param  string $app_id app_id (optional)
      * @param  int $id id (optional)
      * @param  string $first_name first_name (optional)
      * @param  string $last_name last_name (optional)
@@ -130,9 +147,10 @@ class UgKycApi extends \Dojah\CustomApi
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return \Dojah\Model\GetVoterResponse
+     * @return object
      */
     public function getVoter(
+        $app_id = SENTINEL_VALUE,
         $id = SENTINEL_VALUE,
         $first_name = SENTINEL_VALUE,
         $last_name = SENTINEL_VALUE,
@@ -143,7 +161,7 @@ class UgKycApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getVoterWithHttpInfo($id, $first_name, $last_name, $contentType);
+        list($response) = $this->getVoterWithHttpInfo($app_id, $id, $first_name, $last_name, $contentType);
         return $response;
     }
 
@@ -152,6 +170,7 @@ class UgKycApi extends \Dojah\CustomApi
      *
      * Voters ID
      *
+     * @param  string $app_id (optional)
      * @param  int $id (optional)
      * @param  string $first_name (optional)
      * @param  string $last_name (optional)
@@ -159,11 +178,11 @@ class UgKycApi extends \Dojah\CustomApi
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return array of \Dojah\Model\GetVoterResponse, HTTP status code, HTTP response headers (array of strings)
+     * @return array of object, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getVoterWithHttpInfo($id = null, $first_name = null, $last_name = null, string $contentType = self::contentTypes['getVoter'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getVoterWithHttpInfo($app_id = null, $id = null, $first_name = null, $last_name = null, string $contentType = self::contentTypes['getVoter'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getVoterRequest($id, $first_name, $last_name, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getVoterRequest($app_id, $id, $first_name, $last_name, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -179,6 +198,7 @@ class UgKycApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getVoterWithHttpInfo(
+                        $app_id,
                         $id,
                         $first_name,
                         $last_name,
@@ -219,23 +239,23 @@ class UgKycApi extends \Dojah\CustomApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Dojah\Model\GetVoterResponse' === '\SplFileObject') {
+                    if ('object' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Dojah\Model\GetVoterResponse' !== 'string') {
+                        if ('object' !== 'string') {
                             $content = json_decode($content);
                         }
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Dojah\Model\GetVoterResponse', []),
+                        ObjectSerializer::deserialize($content, 'object', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
             }
 
-            $returnType = '\Dojah\Model\GetVoterResponse';
+            $returnType = 'object';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -256,7 +276,7 @@ class UgKycApi extends \Dojah\CustomApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Dojah\Model\GetVoterResponse',
+                        'object',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -271,6 +291,7 @@ class UgKycApi extends \Dojah\CustomApi
      *
      * Voters ID
      *
+     * @param  string $app_id (optional)
      * @param  int $id (optional)
      * @param  string $first_name (optional)
      * @param  string $last_name (optional)
@@ -280,6 +301,7 @@ class UgKycApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getVoterAsync(
+        $app_id = SENTINEL_VALUE,
         $id = SENTINEL_VALUE,
         $first_name = SENTINEL_VALUE,
         $last_name = SENTINEL_VALUE,
@@ -290,7 +312,7 @@ class UgKycApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getVoterAsyncWithHttpInfo($id, $first_name, $last_name, $contentType)
+        return $this->getVoterAsyncWithHttpInfo($app_id, $id, $first_name, $last_name, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -303,6 +325,7 @@ class UgKycApi extends \Dojah\CustomApi
      *
      * Voters ID
      *
+     * @param  string $app_id (optional)
      * @param  int $id (optional)
      * @param  string $first_name (optional)
      * @param  string $last_name (optional)
@@ -311,10 +334,10 @@ class UgKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getVoterAsyncWithHttpInfo($id = null, $first_name = null, $last_name = null, string $contentType = self::contentTypes['getVoter'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getVoterAsyncWithHttpInfo($app_id = null, $id = null, $first_name = null, $last_name = null, string $contentType = self::contentTypes['getVoter'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $returnType = '\Dojah\Model\GetVoterResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getVoterRequest($id, $first_name, $last_name, $contentType);
+        $returnType = 'object';
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getVoterRequest($app_id, $id, $first_name, $last_name, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -358,6 +381,7 @@ class UgKycApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getVoter'
      *
+     * @param  string $app_id (optional)
      * @param  int $id (optional)
      * @param  string $first_name (optional)
      * @param  string $last_name (optional)
@@ -366,9 +390,13 @@ class UgKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getVoterRequest($id = SENTINEL_VALUE, $first_name = SENTINEL_VALUE, $last_name = SENTINEL_VALUE, string $contentType = self::contentTypes['getVoter'][0])
+    public function getVoterRequest($app_id = SENTINEL_VALUE, $id = SENTINEL_VALUE, $first_name = SENTINEL_VALUE, $last_name = SENTINEL_VALUE, string $contentType = self::contentTypes['getVoter'][0])
     {
 
+        // Check if $app_id is a string
+        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
+        }
         // Check if $first_name is a string
         if ($first_name !== SENTINEL_VALUE && !is_string($first_name)) {
             throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($first_name, true), gettype($first_name)));
@@ -420,6 +448,10 @@ class UgKycApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
+        // header params
+        if ($app_id !== SENTINEL_VALUE) {
+            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
+        }
 
 
 
@@ -454,16 +486,6 @@ class UgKycApi extends \Dojah\CustomApi
             }
         }
 
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {

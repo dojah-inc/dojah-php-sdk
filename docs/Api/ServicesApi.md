@@ -4,16 +4,16 @@ All URIs are relative to https://api.dojah.io, except if the operation defines a
 
 | Method | HTTP request | Description |
 | ------------- | ------------- | ------------- |
-| [**categorizeTransactions()**](ServicesApi.md#categorizeTransactions) | **POST** /v1/ml/categorize_transaction | Categorize Transactions |
+| [**getWalletBalance()**](ServicesApi.md#getWalletBalance) | **GET** /api/v1/balance | Get Dojah Wallet Balance |
 
 
-## `categorizeTransactions()`
+## `getWalletBalance()`
 
 ```php
-categorizeTransactions($categorize_transactions_request): \Dojah\Model\CategorizeTransactionsResponse
+getWalletBalance($app_id): \Dojah\Model\GetWalletBalanceResponse
 ```
 
-Categorize Transactions
+Get Dojah Wallet Balance
 
 ### Example
 
@@ -22,41 +22,38 @@ Categorize Transactions
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    Authorization: YOUR_AUTHORIZATION,
-    AppId: YOUR_APP_ID,
 );
 
-$description = "POS/WEB PURCHASE TRANSACTION -047608- -253842-MUNCHIES BY MOE OY OYNG";
-$trans_type = "debit";
+$app_id = "{{app_id}}";
 
 try {
-    $result = $dojah->services->categorizeTransactions(
-        description: $description, 
-        trans_type: $trans_type
+    $result = $dojah->services->getWalletBalance(
+        app_id: $app_id
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
-    echo 'Exception when calling ServicesApi->categorizeTransactions: ', $e->getMessage(), PHP_EOL;
+    echo 'Exception when calling ServicesApi->getWalletBalance: ', $e->getMessage(), PHP_EOL;
 }
+
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **categorize_transactions_request** | [**\Dojah\Model\CategorizeTransactionsRequest**](../Model/CategorizeTransactionsRequest.md)|  | [optional] |
+| **app_id** | **string**|  | [optional] |
 
 ### Return type
 
-[**\Dojah\Model\CategorizeTransactionsResponse**](../Model/CategorizeTransactionsResponse.md)
+[**\Dojah\Model\GetWalletBalanceResponse**](../Model/GetWalletBalanceResponse.md)
 
 ### Authorization
 
-[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
+[noauthAuth](../../README.md#noauthAuth)
 
 ### HTTP request headers
 
-- **Content-Type**: `application/json`
+- **Content-Type**: Not defined
 - **Accept**: `application/json`
 
 [[Back to top]](#) [[Back to API list]](../../README.md#endpoints)

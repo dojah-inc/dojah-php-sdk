@@ -10,7 +10,7 @@
  */
 
 /**
- * DOJAH APIs
+ * DOJAH Publilc APIs
  *
  * Use Dojah to verify, onboard and manage user identity across Africa!
  *
@@ -58,24 +58,24 @@ class KYBApiTest extends TestCase
     }
 
     /**
-     * Test case for getAdvancedCac
+     * Test case for businessDetail
      *
-     * KYC - Get CAC Advanced.
+     * Business Detail.
      *
      */
-    public function testGetAdvancedCac()
+    public function testBusinessDetail()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
     }
 
     /**
-     * Test case for getBasicCac
+     * Test case for businessSearch
      *
-     * KYB - Get CAC 2.
+     * Business Search.
      *
      */
-    public function testGetBasicCac()
+    public function testBusinessSearch()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');

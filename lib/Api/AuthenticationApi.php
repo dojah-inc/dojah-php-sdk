@@ -10,7 +10,7 @@
  */
 
 /**
- * DOJAH APIs
+ * DOJAH Publilc APIs
  *
  * Use Dojah to verify, onboard and manage user identity across Africa!
  *
@@ -28,6 +28,10 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\MultipartStream;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
+use GuzzleHttp\BodySummarizer;
+use GuzzleHttp\Middleware;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Utils;
 use Dojah\ApiException;
 use Dojah\Configuration;
 use Dojah\HeaderSelector;
@@ -89,7 +93,19 @@ class AuthenticationApi extends \Dojah\CustomApi
         HeaderSelector $selector = null,
         $hostIndex = 0
     ) {
-        $this->client = $client ?: new Client();
+        $clientOptions = [];
+        if (!$config->getVerifySsl()) $clientOptions["verify"] = false;
+
+        // Do not truncate error messages
+        // https://github.com/guzzle/guzzle/issues/2185#issuecomment-800293420
+        $stack = new HandlerStack(Utils::chooseHandler());
+        $stack->push(Middleware::httpErrors(new BodySummarizer(10000)), 'http_errors');
+        $stack->push(Middleware::redirect(), 'allow_redirects');
+        $stack->push(Middleware::cookies(), 'cookies');
+        $stack->push(Middleware::prepareBody(), 'prepare_body');
+        $clientOptions["handler"] = $stack;
+
+        $this->client = $client ?: new Client($clientOptions);
         $this->config = $config ?: new Configuration();
         $this->headerSelector = $selector ?: new HeaderSelector();
         $this->hostIndex = $hostIndex;
@@ -138,6 +154,7 @@ class AuthenticationApi extends \Dojah\CustomApi
      *
      * Messaging - Get Sender IDs
      *
+     * @param  string $app_id app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSenderId'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
@@ -145,6 +162,7 @@ class AuthenticationApi extends \Dojah\CustomApi
      * @return \Dojah\Model\GetSenderIdResponse
      */
     public function getSenderId(
+        $app_id = SENTINEL_VALUE,
 
 
         string $contentType = self::contentTypes['getSenderId'][0]
@@ -152,7 +170,7 @@ class AuthenticationApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getSenderIdWithHttpInfo($contentType);
+        list($response) = $this->getSenderIdWithHttpInfo($app_id, $contentType);
         return $response;
     }
 
@@ -161,15 +179,16 @@ class AuthenticationApi extends \Dojah\CustomApi
      *
      * Messaging - Get Sender IDs
      *
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSenderId'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetSenderIdResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getSenderIdWithHttpInfo(string $contentType = self::contentTypes['getSenderId'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getSenderIdWithHttpInfo($app_id = null, string $contentType = self::contentTypes['getSenderId'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getSenderIdRequest($contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getSenderIdRequest($app_id, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -185,6 +204,7 @@ class AuthenticationApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getSenderIdWithHttpInfo(
+                        $app_id,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
                     );
@@ -274,12 +294,14 @@ class AuthenticationApi extends \Dojah\CustomApi
      *
      * Messaging - Get Sender IDs
      *
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSenderId'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getSenderIdAsync(
+        $app_id = SENTINEL_VALUE,
 
 
         string $contentType = self::contentTypes['getSenderId'][0]
@@ -287,7 +309,7 @@ class AuthenticationApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getSenderIdAsyncWithHttpInfo($contentType)
+        return $this->getSenderIdAsyncWithHttpInfo($app_id, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -300,15 +322,16 @@ class AuthenticationApi extends \Dojah\CustomApi
      *
      * Messaging - Get Sender IDs
      *
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSenderId'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getSenderIdAsyncWithHttpInfo(string $contentType = self::contentTypes['getSenderId'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getSenderIdAsyncWithHttpInfo($app_id = null, string $contentType = self::contentTypes['getSenderId'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetSenderIdResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getSenderIdRequest($contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getSenderIdRequest($app_id, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -352,14 +375,19 @@ class AuthenticationApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getSenderId'
      *
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSenderId'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getSenderIdRequest(string $contentType = self::contentTypes['getSenderId'][0])
+    public function getSenderIdRequest($app_id = SENTINEL_VALUE, string $contentType = self::contentTypes['getSenderId'][0])
     {
 
+        // Check if $app_id is a string
+        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
+        }
 
 
         $resourcePath = '/api/v1/messaging/sender_ids';
@@ -370,6 +398,10 @@ class AuthenticationApi extends \Dojah\CustomApi
         $multipart = false;
 
 
+        // header params
+        if ($app_id !== SENTINEL_VALUE) {
+            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
+        }
 
 
 
@@ -404,16 +436,6 @@ class AuthenticationApi extends \Dojah\CustomApi
             }
         }
 
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -447,6 +469,7 @@ class AuthenticationApi extends \Dojah\CustomApi
      *
      * Messaging - Get SMS Status
      *
+     * @param  string $app_id app_id (optional)
      * @param  string $message_id message_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSmsStatus'] to see the possible values for this operation
      *
@@ -455,6 +478,7 @@ class AuthenticationApi extends \Dojah\CustomApi
      * @return \Dojah\Model\GetSmsStatusResponse
      */
     public function getSmsStatus(
+        $app_id = SENTINEL_VALUE,
         $message_id = SENTINEL_VALUE,
 
 
@@ -463,7 +487,7 @@ class AuthenticationApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getSmsStatusWithHttpInfo($message_id, $contentType);
+        list($response) = $this->getSmsStatusWithHttpInfo($app_id, $message_id, $contentType);
         return $response;
     }
 
@@ -472,6 +496,7 @@ class AuthenticationApi extends \Dojah\CustomApi
      *
      * Messaging - Get SMS Status
      *
+     * @param  string $app_id (optional)
      * @param  string $message_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSmsStatus'] to see the possible values for this operation
      *
@@ -479,9 +504,9 @@ class AuthenticationApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetSmsStatusResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getSmsStatusWithHttpInfo($message_id = null, string $contentType = self::contentTypes['getSmsStatus'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getSmsStatusWithHttpInfo($app_id = null, $message_id = null, string $contentType = self::contentTypes['getSmsStatus'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getSmsStatusRequest($message_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getSmsStatusRequest($app_id, $message_id, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -497,6 +522,7 @@ class AuthenticationApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getSmsStatusWithHttpInfo(
+                        $app_id,
                         $message_id,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
@@ -587,6 +613,7 @@ class AuthenticationApi extends \Dojah\CustomApi
      *
      * Messaging - Get SMS Status
      *
+     * @param  string $app_id (optional)
      * @param  string $message_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSmsStatus'] to see the possible values for this operation
      *
@@ -594,6 +621,7 @@ class AuthenticationApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getSmsStatusAsync(
+        $app_id = SENTINEL_VALUE,
         $message_id = SENTINEL_VALUE,
 
 
@@ -602,7 +630,7 @@ class AuthenticationApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getSmsStatusAsyncWithHttpInfo($message_id, $contentType)
+        return $this->getSmsStatusAsyncWithHttpInfo($app_id, $message_id, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -615,16 +643,17 @@ class AuthenticationApi extends \Dojah\CustomApi
      *
      * Messaging - Get SMS Status
      *
+     * @param  string $app_id (optional)
      * @param  string $message_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSmsStatus'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getSmsStatusAsyncWithHttpInfo($message_id = null, string $contentType = self::contentTypes['getSmsStatus'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getSmsStatusAsyncWithHttpInfo($app_id = null, $message_id = null, string $contentType = self::contentTypes['getSmsStatus'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetSmsStatusResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getSmsStatusRequest($message_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getSmsStatusRequest($app_id, $message_id, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -668,15 +697,20 @@ class AuthenticationApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getSmsStatus'
      *
+     * @param  string $app_id (optional)
      * @param  string $message_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSmsStatus'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getSmsStatusRequest($message_id = SENTINEL_VALUE, string $contentType = self::contentTypes['getSmsStatus'][0])
+    public function getSmsStatusRequest($app_id = SENTINEL_VALUE, $message_id = SENTINEL_VALUE, string $contentType = self::contentTypes['getSmsStatus'][0])
     {
 
+        // Check if $app_id is a string
+        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
+        }
         // Check if $message_id is a string
         if ($message_id !== SENTINEL_VALUE && !is_string($message_id)) {
             throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($message_id, true), gettype($message_id)));
@@ -702,6 +736,10 @@ class AuthenticationApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
+        // header params
+        if ($app_id !== SENTINEL_VALUE) {
+            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
+        }
 
 
 
@@ -736,16 +774,6 @@ class AuthenticationApi extends \Dojah\CustomApi
             }
         }
 
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -779,7 +807,8 @@ class AuthenticationApi extends \Dojah\CustomApi
      *
      * Messaging - Request Sender ID
      *
-     * @param  \Dojah\Model\RequestSenderIdRequest $request_sender_id_request request_sender_id_request (optional)
+     * @param  \Dojah\Model\RequestSenderIdRequest $request_sender_id_request request_sender_id_request (required)
+     * @param  string $app_id app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['requestSenderId'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
@@ -787,18 +816,19 @@ class AuthenticationApi extends \Dojah\CustomApi
      * @return \Dojah\Model\RequestSenderIdResponse
      */
     public function requestSenderId(
-        $sender_id = SENTINEL_VALUE,
 
+        $sender_id = SENTINEL_VALUE,
+        $app_id = SENTINEL_VALUE,
 
         string $contentType = self::contentTypes['requestSenderId'][0]
 
     )
     {
-        $_body = null;
+        $_body = [];
         $this->setRequestBodyProperty($_body, "sender_id", $sender_id);
         $request_sender_id_request = $_body;
 
-        list($response) = $this->requestSenderIdWithHttpInfo($request_sender_id_request, $contentType);
+        list($response) = $this->requestSenderIdWithHttpInfo($request_sender_id_request, $app_id, $contentType);
         return $response;
     }
 
@@ -807,16 +837,17 @@ class AuthenticationApi extends \Dojah\CustomApi
      *
      * Messaging - Request Sender ID
      *
-     * @param  \Dojah\Model\RequestSenderIdRequest $request_sender_id_request (optional)
+     * @param  \Dojah\Model\RequestSenderIdRequest $request_sender_id_request (required)
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['requestSenderId'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\RequestSenderIdResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function requestSenderIdWithHttpInfo($request_sender_id_request = null, string $contentType = self::contentTypes['requestSenderId'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function requestSenderIdWithHttpInfo($request_sender_id_request, $app_id = null, string $contentType = self::contentTypes['requestSenderId'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->requestSenderIdRequest($request_sender_id_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->requestSenderIdRequest($request_sender_id_request, $app_id, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
@@ -833,6 +864,7 @@ class AuthenticationApi extends \Dojah\CustomApi
                 ) {
                     return $this->requestSenderIdWithHttpInfo(
                         $request_sender_id_request,
+                        $app_id,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
                     );
@@ -922,25 +954,27 @@ class AuthenticationApi extends \Dojah\CustomApi
      *
      * Messaging - Request Sender ID
      *
-     * @param  \Dojah\Model\RequestSenderIdRequest $request_sender_id_request (optional)
+     * @param  \Dojah\Model\RequestSenderIdRequest $request_sender_id_request (required)
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['requestSenderId'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function requestSenderIdAsync(
-        $sender_id = SENTINEL_VALUE,
 
+        $sender_id = SENTINEL_VALUE,
+        $app_id = SENTINEL_VALUE,
 
         string $contentType = self::contentTypes['requestSenderId'][0]
 
     )
     {
-        $_body = null;
+        $_body = [];
         $this->setRequestBodyProperty($_body, "sender_id", $sender_id);
         $request_sender_id_request = $_body;
 
-        return $this->requestSenderIdAsyncWithHttpInfo($request_sender_id_request, $contentType)
+        return $this->requestSenderIdAsyncWithHttpInfo($request_sender_id_request, $app_id, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -953,16 +987,17 @@ class AuthenticationApi extends \Dojah\CustomApi
      *
      * Messaging - Request Sender ID
      *
-     * @param  \Dojah\Model\RequestSenderIdRequest $request_sender_id_request (optional)
+     * @param  \Dojah\Model\RequestSenderIdRequest $request_sender_id_request (required)
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['requestSenderId'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function requestSenderIdAsyncWithHttpInfo($request_sender_id_request = null, string $contentType = self::contentTypes['requestSenderId'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function requestSenderIdAsyncWithHttpInfo($request_sender_id_request, $app_id = null, string $contentType = self::contentTypes['requestSenderId'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\RequestSenderIdResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->requestSenderIdRequest($request_sender_id_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->requestSenderIdRequest($request_sender_id_request, $app_id, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
@@ -1006,13 +1041,14 @@ class AuthenticationApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'requestSenderId'
      *
-     * @param  \Dojah\Model\RequestSenderIdRequest $request_sender_id_request (optional)
+     * @param  \Dojah\Model\RequestSenderIdRequest $request_sender_id_request (required)
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['requestSenderId'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function requestSenderIdRequest($request_sender_id_request = SENTINEL_VALUE, string $contentType = self::contentTypes['requestSenderId'][0])
+    public function requestSenderIdRequest($request_sender_id_request, $app_id = SENTINEL_VALUE, string $contentType = self::contentTypes['requestSenderId'][0])
     {
 
         if ($request_sender_id_request !== SENTINEL_VALUE) {
@@ -1022,6 +1058,16 @@ class AuthenticationApi extends \Dojah\CustomApi
                 else
                     $request_sender_id_request = new \Dojah\Model\RequestSenderIdRequest($request_sender_id_request);
             }
+        }
+        // verify the required parameter 'request_sender_id_request' is set
+        if ($request_sender_id_request === SENTINEL_VALUE || (is_array($request_sender_id_request) && count($request_sender_id_request) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter request_sender_id_request when calling requestSenderId'
+            );
+        }
+        // Check if $app_id is a string
+        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
         }
 
 
@@ -1033,6 +1079,10 @@ class AuthenticationApi extends \Dojah\CustomApi
         $multipart = false;
 
 
+        // header params
+        if ($app_id !== SENTINEL_VALUE) {
+            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
+        }
 
 
 
@@ -1074,16 +1124,6 @@ class AuthenticationApi extends \Dojah\CustomApi
             }
         }
 
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -1117,34 +1157,36 @@ class AuthenticationApi extends \Dojah\CustomApi
      *
      * Messaging - Send OTP
      *
-     * @param  \Dojah\Model\SendOtpRequest $send_otp_request send_otp_request (optional)
+     * @param  \Dojah\Model\AuthenticationSendOtpRequest $authentication_send_otp_request authentication_send_otp_request (required)
+     * @param  string $app_id app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sendOtp'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return \Dojah\Model\SendOtpResponse
+     * @return \Dojah\Model\AuthenticationSendOtpResponse
      */
     public function sendOtp(
+
         $destination = SENTINEL_VALUE,
         $length = SENTINEL_VALUE,
         $channel = SENTINEL_VALUE,
         $sender_id = SENTINEL_VALUE,
         $priority = SENTINEL_VALUE,
-
+        $app_id = SENTINEL_VALUE,
 
         string $contentType = self::contentTypes['sendOtp'][0]
 
     )
     {
-        $_body = null;
+        $_body = [];
         $this->setRequestBodyProperty($_body, "destination", $destination);
         $this->setRequestBodyProperty($_body, "length", $length);
         $this->setRequestBodyProperty($_body, "channel", $channel);
         $this->setRequestBodyProperty($_body, "sender_id", $sender_id);
         $this->setRequestBodyProperty($_body, "priority", $priority);
-        $send_otp_request = $_body;
+        $authentication_send_otp_request = $_body;
 
-        list($response) = $this->sendOtpWithHttpInfo($send_otp_request, $contentType);
+        list($response) = $this->sendOtpWithHttpInfo($authentication_send_otp_request, $app_id, $contentType);
         return $response;
     }
 
@@ -1153,16 +1195,17 @@ class AuthenticationApi extends \Dojah\CustomApi
      *
      * Messaging - Send OTP
      *
-     * @param  \Dojah\Model\SendOtpRequest $send_otp_request (optional)
+     * @param  \Dojah\Model\AuthenticationSendOtpRequest $authentication_send_otp_request (required)
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sendOtp'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return array of \Dojah\Model\SendOtpResponse, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Dojah\Model\AuthenticationSendOtpResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function sendOtpWithHttpInfo($send_otp_request = null, string $contentType = self::contentTypes['sendOtp'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function sendOtpWithHttpInfo($authentication_send_otp_request, $app_id = null, string $contentType = self::contentTypes['sendOtp'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->sendOtpRequest($send_otp_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->sendOtpRequest($authentication_send_otp_request, $app_id, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
@@ -1178,7 +1221,8 @@ class AuthenticationApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->sendOtpWithHttpInfo(
-                        $send_otp_request,
+                        $authentication_send_otp_request,
+                        $app_id,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
                     );
@@ -1216,23 +1260,23 @@ class AuthenticationApi extends \Dojah\CustomApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Dojah\Model\SendOtpResponse' === '\SplFileObject') {
+                    if ('\Dojah\Model\AuthenticationSendOtpResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Dojah\Model\SendOtpResponse' !== 'string') {
+                        if ('\Dojah\Model\AuthenticationSendOtpResponse' !== 'string') {
                             $content = json_decode($content);
                         }
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Dojah\Model\SendOtpResponse', []),
+                        ObjectSerializer::deserialize($content, '\Dojah\Model\AuthenticationSendOtpResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
             }
 
-            $returnType = '\Dojah\Model\SendOtpResponse';
+            $returnType = '\Dojah\Model\AuthenticationSendOtpResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -1253,7 +1297,7 @@ class AuthenticationApi extends \Dojah\CustomApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Dojah\Model\SendOtpResponse',
+                        '\Dojah\Model\AuthenticationSendOtpResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1268,33 +1312,35 @@ class AuthenticationApi extends \Dojah\CustomApi
      *
      * Messaging - Send OTP
      *
-     * @param  \Dojah\Model\SendOtpRequest $send_otp_request (optional)
+     * @param  \Dojah\Model\AuthenticationSendOtpRequest $authentication_send_otp_request (required)
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sendOtp'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function sendOtpAsync(
+
         $destination = SENTINEL_VALUE,
         $length = SENTINEL_VALUE,
         $channel = SENTINEL_VALUE,
         $sender_id = SENTINEL_VALUE,
         $priority = SENTINEL_VALUE,
-
+        $app_id = SENTINEL_VALUE,
 
         string $contentType = self::contentTypes['sendOtp'][0]
 
     )
     {
-        $_body = null;
+        $_body = [];
         $this->setRequestBodyProperty($_body, "destination", $destination);
         $this->setRequestBodyProperty($_body, "length", $length);
         $this->setRequestBodyProperty($_body, "channel", $channel);
         $this->setRequestBodyProperty($_body, "sender_id", $sender_id);
         $this->setRequestBodyProperty($_body, "priority", $priority);
-        $send_otp_request = $_body;
+        $authentication_send_otp_request = $_body;
 
-        return $this->sendOtpAsyncWithHttpInfo($send_otp_request, $contentType)
+        return $this->sendOtpAsyncWithHttpInfo($authentication_send_otp_request, $app_id, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -1307,16 +1353,17 @@ class AuthenticationApi extends \Dojah\CustomApi
      *
      * Messaging - Send OTP
      *
-     * @param  \Dojah\Model\SendOtpRequest $send_otp_request (optional)
+     * @param  \Dojah\Model\AuthenticationSendOtpRequest $authentication_send_otp_request (required)
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sendOtp'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function sendOtpAsyncWithHttpInfo($send_otp_request = null, string $contentType = self::contentTypes['sendOtp'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function sendOtpAsyncWithHttpInfo($authentication_send_otp_request, $app_id = null, string $contentType = self::contentTypes['sendOtp'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $returnType = '\Dojah\Model\SendOtpResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->sendOtpRequest($send_otp_request, $contentType);
+        $returnType = '\Dojah\Model\AuthenticationSendOtpResponse';
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->sendOtpRequest($authentication_send_otp_request, $app_id, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
@@ -1360,26 +1407,37 @@ class AuthenticationApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'sendOtp'
      *
-     * @param  \Dojah\Model\SendOtpRequest $send_otp_request (optional)
+     * @param  \Dojah\Model\AuthenticationSendOtpRequest $authentication_send_otp_request (required)
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sendOtp'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function sendOtpRequest($send_otp_request = SENTINEL_VALUE, string $contentType = self::contentTypes['sendOtp'][0])
+    public function sendOtpRequest($authentication_send_otp_request, $app_id = SENTINEL_VALUE, string $contentType = self::contentTypes['sendOtp'][0])
     {
 
-        if ($send_otp_request !== SENTINEL_VALUE) {
-            if (!($send_otp_request instanceof \Dojah\Model\SendOtpRequest)) {
-                if (!is_array($send_otp_request))
-                    throw new \InvalidArgumentException('"send_otp_request" must be associative array or an instance of \Dojah\Model\SendOtpRequest AuthenticationApi.sendOtp.');
+        if ($authentication_send_otp_request !== SENTINEL_VALUE) {
+            if (!($authentication_send_otp_request instanceof \Dojah\Model\AuthenticationSendOtpRequest)) {
+                if (!is_array($authentication_send_otp_request))
+                    throw new \InvalidArgumentException('"authentication_send_otp_request" must be associative array or an instance of \Dojah\Model\AuthenticationSendOtpRequest AuthenticationApi.sendOtp.');
                 else
-                    $send_otp_request = new \Dojah\Model\SendOtpRequest($send_otp_request);
+                    $authentication_send_otp_request = new \Dojah\Model\AuthenticationSendOtpRequest($authentication_send_otp_request);
             }
+        }
+        // verify the required parameter 'authentication_send_otp_request' is set
+        if ($authentication_send_otp_request === SENTINEL_VALUE || (is_array($authentication_send_otp_request) && count($authentication_send_otp_request) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter authentication_send_otp_request when calling sendOtp'
+            );
+        }
+        // Check if $app_id is a string
+        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
         }
 
 
-        $resourcePath = '/v1/messaging/otp';
+        $resourcePath = '/api/v1/messaging/otp';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -1387,6 +1445,10 @@ class AuthenticationApi extends \Dojah\CustomApi
         $multipart = false;
 
 
+        // header params
+        if ($app_id !== SENTINEL_VALUE) {
+            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
+        }
 
 
 
@@ -1397,12 +1459,12 @@ class AuthenticationApi extends \Dojah\CustomApi
         );
 
         // for model (json/xml)
-        if (isset($send_otp_request)) {
+        if (isset($authentication_send_otp_request)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
-                $httpBody = \GuzzleHttp\json_encode(ObjectSerializer::sanitizeForSerialization($send_otp_request));
+                $httpBody = \GuzzleHttp\json_encode(ObjectSerializer::sanitizeForSerialization($authentication_send_otp_request));
             } else {
-                $httpBody = $send_otp_request;
+                $httpBody = $authentication_send_otp_request;
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -1428,16 +1490,6 @@ class AuthenticationApi extends \Dojah\CustomApi
             }
         }
 
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -1471,7 +1523,8 @@ class AuthenticationApi extends \Dojah\CustomApi
      *
      * Messaging - Send SMS
      *
-     * @param  \Dojah\Model\SendSmsRequest $send_sms_request send_sms_request (optional)
+     * @param  \Dojah\Model\SendSmsRequest $send_sms_request send_sms_request (required)
+     * @param  string $app_id app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sendSms'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
@@ -1479,24 +1532,25 @@ class AuthenticationApi extends \Dojah\CustomApi
      * @return \Dojah\Model\SendSmsResponse
      */
     public function sendSms(
+
         $destination = SENTINEL_VALUE,
         $message = SENTINEL_VALUE,
         $channel = SENTINEL_VALUE,
         $sender_id = SENTINEL_VALUE,
-
+        $app_id = SENTINEL_VALUE,
 
         string $contentType = self::contentTypes['sendSms'][0]
 
     )
     {
-        $_body = null;
+        $_body = [];
         $this->setRequestBodyProperty($_body, "destination", $destination);
         $this->setRequestBodyProperty($_body, "message", $message);
         $this->setRequestBodyProperty($_body, "channel", $channel);
         $this->setRequestBodyProperty($_body, "sender_id", $sender_id);
         $send_sms_request = $_body;
 
-        list($response) = $this->sendSmsWithHttpInfo($send_sms_request, $contentType);
+        list($response) = $this->sendSmsWithHttpInfo($send_sms_request, $app_id, $contentType);
         return $response;
     }
 
@@ -1505,16 +1559,17 @@ class AuthenticationApi extends \Dojah\CustomApi
      *
      * Messaging - Send SMS
      *
-     * @param  \Dojah\Model\SendSmsRequest $send_sms_request (optional)
+     * @param  \Dojah\Model\SendSmsRequest $send_sms_request (required)
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sendSms'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\SendSmsResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function sendSmsWithHttpInfo($send_sms_request = null, string $contentType = self::contentTypes['sendSms'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function sendSmsWithHttpInfo($send_sms_request, $app_id = null, string $contentType = self::contentTypes['sendSms'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->sendSmsRequest($send_sms_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->sendSmsRequest($send_sms_request, $app_id, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
@@ -1531,6 +1586,7 @@ class AuthenticationApi extends \Dojah\CustomApi
                 ) {
                     return $this->sendSmsWithHttpInfo(
                         $send_sms_request,
+                        $app_id,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
                     );
@@ -1620,31 +1676,33 @@ class AuthenticationApi extends \Dojah\CustomApi
      *
      * Messaging - Send SMS
      *
-     * @param  \Dojah\Model\SendSmsRequest $send_sms_request (optional)
+     * @param  \Dojah\Model\SendSmsRequest $send_sms_request (required)
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sendSms'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function sendSmsAsync(
+
         $destination = SENTINEL_VALUE,
         $message = SENTINEL_VALUE,
         $channel = SENTINEL_VALUE,
         $sender_id = SENTINEL_VALUE,
-
+        $app_id = SENTINEL_VALUE,
 
         string $contentType = self::contentTypes['sendSms'][0]
 
     )
     {
-        $_body = null;
+        $_body = [];
         $this->setRequestBodyProperty($_body, "destination", $destination);
         $this->setRequestBodyProperty($_body, "message", $message);
         $this->setRequestBodyProperty($_body, "channel", $channel);
         $this->setRequestBodyProperty($_body, "sender_id", $sender_id);
         $send_sms_request = $_body;
 
-        return $this->sendSmsAsyncWithHttpInfo($send_sms_request, $contentType)
+        return $this->sendSmsAsyncWithHttpInfo($send_sms_request, $app_id, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -1657,16 +1715,17 @@ class AuthenticationApi extends \Dojah\CustomApi
      *
      * Messaging - Send SMS
      *
-     * @param  \Dojah\Model\SendSmsRequest $send_sms_request (optional)
+     * @param  \Dojah\Model\SendSmsRequest $send_sms_request (required)
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sendSms'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function sendSmsAsyncWithHttpInfo($send_sms_request = null, string $contentType = self::contentTypes['sendSms'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function sendSmsAsyncWithHttpInfo($send_sms_request, $app_id = null, string $contentType = self::contentTypes['sendSms'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\SendSmsResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->sendSmsRequest($send_sms_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->sendSmsRequest($send_sms_request, $app_id, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
@@ -1710,13 +1769,14 @@ class AuthenticationApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'sendSms'
      *
-     * @param  \Dojah\Model\SendSmsRequest $send_sms_request (optional)
+     * @param  \Dojah\Model\SendSmsRequest $send_sms_request (required)
+     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sendSms'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function sendSmsRequest($send_sms_request = SENTINEL_VALUE, string $contentType = self::contentTypes['sendSms'][0])
+    public function sendSmsRequest($send_sms_request, $app_id = SENTINEL_VALUE, string $contentType = self::contentTypes['sendSms'][0])
     {
 
         if ($send_sms_request !== SENTINEL_VALUE) {
@@ -1726,6 +1786,16 @@ class AuthenticationApi extends \Dojah\CustomApi
                 else
                     $send_sms_request = new \Dojah\Model\SendSmsRequest($send_sms_request);
             }
+        }
+        // verify the required parameter 'send_sms_request' is set
+        if ($send_sms_request === SENTINEL_VALUE || (is_array($send_sms_request) && count($send_sms_request) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter send_sms_request when calling sendSms'
+            );
+        }
+        // Check if $app_id is a string
+        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
         }
 
 
@@ -1737,6 +1807,10 @@ class AuthenticationApi extends \Dojah\CustomApi
         $multipart = false;
 
 
+        // header params
+        if ($app_id !== SENTINEL_VALUE) {
+            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
+        }
 
 
 
@@ -1778,16 +1852,6 @@ class AuthenticationApi extends \Dojah\CustomApi
             }
         }
 
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -1821,15 +1885,17 @@ class AuthenticationApi extends \Dojah\CustomApi
      *
      * Messaging - Validate OTP
      *
+     * @param  string $app_id app_id (optional)
      * @param  string $reference_id reference_id (optional)
      * @param  int $code code (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['validateOtp'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return \Dojah\Model\ValidateOtpResponse
+     * @return \Dojah\Model\AuthenticationValidateOtpResponse
      */
     public function validateOtp(
+        $app_id = SENTINEL_VALUE,
         $reference_id = SENTINEL_VALUE,
         $code = SENTINEL_VALUE,
 
@@ -1839,7 +1905,7 @@ class AuthenticationApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->validateOtpWithHttpInfo($reference_id, $code, $contentType);
+        list($response) = $this->validateOtpWithHttpInfo($app_id, $reference_id, $code, $contentType);
         return $response;
     }
 
@@ -1848,17 +1914,18 @@ class AuthenticationApi extends \Dojah\CustomApi
      *
      * Messaging - Validate OTP
      *
+     * @param  string $app_id (optional)
      * @param  string $reference_id (optional)
      * @param  int $code (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['validateOtp'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return array of \Dojah\Model\ValidateOtpResponse, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Dojah\Model\AuthenticationValidateOtpResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function validateOtpWithHttpInfo($reference_id = null, $code = null, string $contentType = self::contentTypes['validateOtp'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function validateOtpWithHttpInfo($app_id = null, $reference_id = null, $code = null, string $contentType = self::contentTypes['validateOtp'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->validateOtpRequest($reference_id, $code, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->validateOtpRequest($app_id, $reference_id, $code, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -1874,6 +1941,7 @@ class AuthenticationApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->validateOtpWithHttpInfo(
+                        $app_id,
                         $reference_id,
                         $code,
                         $contentType,
@@ -1913,23 +1981,23 @@ class AuthenticationApi extends \Dojah\CustomApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Dojah\Model\ValidateOtpResponse' === '\SplFileObject') {
+                    if ('\Dojah\Model\AuthenticationValidateOtpResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Dojah\Model\ValidateOtpResponse' !== 'string') {
+                        if ('\Dojah\Model\AuthenticationValidateOtpResponse' !== 'string') {
                             $content = json_decode($content);
                         }
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Dojah\Model\ValidateOtpResponse', []),
+                        ObjectSerializer::deserialize($content, '\Dojah\Model\AuthenticationValidateOtpResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
             }
 
-            $returnType = '\Dojah\Model\ValidateOtpResponse';
+            $returnType = '\Dojah\Model\AuthenticationValidateOtpResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -1950,7 +2018,7 @@ class AuthenticationApi extends \Dojah\CustomApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Dojah\Model\ValidateOtpResponse',
+                        '\Dojah\Model\AuthenticationValidateOtpResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1965,6 +2033,7 @@ class AuthenticationApi extends \Dojah\CustomApi
      *
      * Messaging - Validate OTP
      *
+     * @param  string $app_id (optional)
      * @param  string $reference_id (optional)
      * @param  int $code (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['validateOtp'] to see the possible values for this operation
@@ -1973,6 +2042,7 @@ class AuthenticationApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function validateOtpAsync(
+        $app_id = SENTINEL_VALUE,
         $reference_id = SENTINEL_VALUE,
         $code = SENTINEL_VALUE,
 
@@ -1982,7 +2052,7 @@ class AuthenticationApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->validateOtpAsyncWithHttpInfo($reference_id, $code, $contentType)
+        return $this->validateOtpAsyncWithHttpInfo($app_id, $reference_id, $code, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -1995,6 +2065,7 @@ class AuthenticationApi extends \Dojah\CustomApi
      *
      * Messaging - Validate OTP
      *
+     * @param  string $app_id (optional)
      * @param  string $reference_id (optional)
      * @param  int $code (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['validateOtp'] to see the possible values for this operation
@@ -2002,10 +2073,10 @@ class AuthenticationApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function validateOtpAsyncWithHttpInfo($reference_id = null, $code = null, string $contentType = self::contentTypes['validateOtp'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function validateOtpAsyncWithHttpInfo($app_id = null, $reference_id = null, $code = null, string $contentType = self::contentTypes['validateOtp'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $returnType = '\Dojah\Model\ValidateOtpResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->validateOtpRequest($reference_id, $code, $contentType);
+        $returnType = '\Dojah\Model\AuthenticationValidateOtpResponse';
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->validateOtpRequest($app_id, $reference_id, $code, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -2049,6 +2120,7 @@ class AuthenticationApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'validateOtp'
      *
+     * @param  string $app_id (optional)
      * @param  string $reference_id (optional)
      * @param  int $code (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['validateOtp'] to see the possible values for this operation
@@ -2056,16 +2128,20 @@ class AuthenticationApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function validateOtpRequest($reference_id = SENTINEL_VALUE, $code = SENTINEL_VALUE, string $contentType = self::contentTypes['validateOtp'][0])
+    public function validateOtpRequest($app_id = SENTINEL_VALUE, $reference_id = SENTINEL_VALUE, $code = SENTINEL_VALUE, string $contentType = self::contentTypes['validateOtp'][0])
     {
 
+        // Check if $app_id is a string
+        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
+        }
         // Check if $reference_id is a string
         if ($reference_id !== SENTINEL_VALUE && !is_string($reference_id)) {
             throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($reference_id, true), gettype($reference_id)));
         }
 
 
-        $resourcePath = '/v1/messaging/otp/validate';
+        $resourcePath = '/api/v1/messaging/otp/validate';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -2095,6 +2171,10 @@ class AuthenticationApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
+        // header params
+        if ($app_id !== SENTINEL_VALUE) {
+            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
+        }
 
 
 
@@ -2129,16 +2209,6 @@ class AuthenticationApi extends \Dojah\CustomApi
             }
         }
 
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {

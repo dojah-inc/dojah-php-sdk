@@ -10,7 +10,7 @@
  */
 
 /**
- * DOJAH APIs
+ * DOJAH Publilc APIs
  *
  * Use Dojah to verify, onboard and manage user identity across Africa!
  *
@@ -28,6 +28,10 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\MultipartStream;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
+use GuzzleHttp\BodySummarizer;
+use GuzzleHttp\Middleware;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Utils;
 use Dojah\ApiException;
 use Dojah\Configuration;
 use Dojah\HeaderSelector;
@@ -57,52 +61,22 @@ class KYCApi extends \Dojah\CustomApi
 
     /** @var string[] $contentTypes **/
     public const contentTypes = [
-        'analyzeDocument' => [
+        'checkLiveness' => [
             'application/json',
         ],
-        'getBasicBvn' => [
+        'getAccounts' => [
             'application/json',
         ],
-        'getBasicPhoneNumber' => [
+        'getAddressVerification' => [
             'application/json',
         ],
-        'getDriversLicense' => [
+        'getBvnFromNuban' => [
             'application/json',
         ],
-        'getEmailReputation' => [
+        'getVin' => [
             'application/json',
         ],
-        'getFullBvn' => [
-            'application/json',
-        ],
-        'getNuban' => [
-            'application/json',
-        ],
-        'getPassport' => [
-            'application/json',
-        ],
-        'getPhoneNumber' => [
-            'application/json',
-        ],
-        'getPremiumBvn' => [
-            'application/json',
-        ],
-        'getVIN' => [
-            'application/json',
-        ],
-        'getVnin' => [
-            'application/json',
-        ],
-        'validateBvn' => [
-            'application/json',
-        ],
-        'verifyAge' => [
-            'application/json',
-        ],
-        'verifySelfieBvn' => [
-            'application/json',
-        ],
-        'verifySelfieNin' => [
+        'submitAddress' => [
             'application/json',
         ],
     ];
@@ -119,7 +93,19 @@ class KYCApi extends \Dojah\CustomApi
         HeaderSelector $selector = null,
         $hostIndex = 0
     ) {
-        $this->client = $client ?: new Client();
+        $clientOptions = [];
+        if (!$config->getVerifySsl()) $clientOptions["verify"] = false;
+
+        // Do not truncate error messages
+        // https://github.com/guzzle/guzzle/issues/2185#issuecomment-800293420
+        $stack = new HandlerStack(Utils::chooseHandler());
+        $stack->push(Middleware::httpErrors(new BodySummarizer(10000)), 'http_errors');
+        $stack->push(Middleware::redirect(), 'allow_redirects');
+        $stack->push(Middleware::cookies(), 'cookies');
+        $stack->push(Middleware::prepareBody(), 'prepare_body');
+        $clientOptions["handler"] = $stack;
+
+        $this->client = $client ?: new Client($clientOptions);
         $this->config = $config ?: new Configuration();
         $this->headerSelector = $selector ?: new HeaderSelector();
         $this->hostIndex = $hostIndex;
@@ -164,45 +150,54 @@ class KYCApi extends \Dojah\CustomApi
     }
 
     /**
-     * Operation analyzeDocument
+     * Operation checkLiveness
      *
-     * KYC - Document Analysis
+     * Liveness Check
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['analyzeDocument'] to see the possible values for this operation
+     * @param  \Dojah\Model\KycCheckLivenessRequest $kyc_check_liveness_request kyc_check_liveness_request (required)
+     * @param  string $app_id app_id (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['checkLiveness'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return \Dojah\Model\AnalyzeDocumentResponse
+     * @return object
      */
-    public function analyzeDocument(
+    public function checkLiveness(
 
+        $image = SENTINEL_VALUE,
+        $app_id = SENTINEL_VALUE,
 
-        string $contentType = self::contentTypes['analyzeDocument'][0]
+        string $contentType = self::contentTypes['checkLiveness'][0]
 
     )
     {
+        $_body = [];
+        $this->setRequestBodyProperty($_body, "image", $image);
+        $kyc_check_liveness_request = $_body;
 
-        list($response) = $this->analyzeDocumentWithHttpInfo($contentType);
+        list($response) = $this->checkLivenessWithHttpInfo($kyc_check_liveness_request, $app_id, $contentType);
         return $response;
     }
 
     /**
-     * Operation analyzeDocumentWithHttpInfo
+     * Operation checkLivenessWithHttpInfo
      *
-     * KYC - Document Analysis
+     * Liveness Check
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['analyzeDocument'] to see the possible values for this operation
+     * @param  \Dojah\Model\KycCheckLivenessRequest $kyc_check_liveness_request (required)
+     * @param  string $app_id (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['checkLiveness'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return array of \Dojah\Model\AnalyzeDocumentResponse, HTTP status code, HTTP response headers (array of strings)
+     * @return array of object, HTTP status code, HTTP response headers (array of strings)
      */
-    public function analyzeDocumentWithHttpInfo(string $contentType = self::contentTypes['analyzeDocument'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function checkLivenessWithHttpInfo($kyc_check_liveness_request, $app_id = null, string $contentType = self::contentTypes['checkLiveness'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->analyzeDocumentRequest($contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->checkLivenessRequest($kyc_check_liveness_request, $app_id, $contentType);
 
         // Customization hook
-        $this->beforeSendHook($request, $requestOptions, $this->config);
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         try {
             $options = $this->createHttpClientOption();
@@ -214,7 +209,9 @@ class KYCApi extends \Dojah\CustomApi
                     !empty($this->getConfig()->getAccessToken()) &&
                     $requestOptions->shouldRetryOAuth()
                 ) {
-                    return $this->analyzeDocumentWithHttpInfo(
+                    return $this->checkLivenessWithHttpInfo(
+                        $kyc_check_liveness_request,
+                        $app_id,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
                     );
@@ -252,23 +249,23 @@ class KYCApi extends \Dojah\CustomApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Dojah\Model\AnalyzeDocumentResponse' === '\SplFileObject') {
+                    if ('object' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Dojah\Model\AnalyzeDocumentResponse' !== 'string') {
+                        if ('object' !== 'string') {
                             $content = json_decode($content);
                         }
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Dojah\Model\AnalyzeDocumentResponse', []),
+                        ObjectSerializer::deserialize($content, 'object', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
             }
 
-            $returnType = '\Dojah\Model\AnalyzeDocumentResponse';
+            $returnType = 'object';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -289,7 +286,7 @@ class KYCApi extends \Dojah\CustomApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Dojah\Model\AnalyzeDocumentResponse',
+                        'object',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -300,24 +297,31 @@ class KYCApi extends \Dojah\CustomApi
     }
 
     /**
-     * Operation analyzeDocumentAsync
+     * Operation checkLivenessAsync
      *
-     * KYC - Document Analysis
+     * Liveness Check
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['analyzeDocument'] to see the possible values for this operation
+     * @param  \Dojah\Model\KycCheckLivenessRequest $kyc_check_liveness_request (required)
+     * @param  string $app_id (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['checkLiveness'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function analyzeDocumentAsync(
+    public function checkLivenessAsync(
 
+        $image = SENTINEL_VALUE,
+        $app_id = SENTINEL_VALUE,
 
-        string $contentType = self::contentTypes['analyzeDocument'][0]
+        string $contentType = self::contentTypes['checkLiveness'][0]
 
     )
     {
+        $_body = [];
+        $this->setRequestBodyProperty($_body, "image", $image);
+        $kyc_check_liveness_request = $_body;
 
-        return $this->analyzeDocumentAsyncWithHttpInfo($contentType)
+        return $this->checkLivenessAsyncWithHttpInfo($kyc_check_liveness_request, $app_id, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -326,22 +330,24 @@ class KYCApi extends \Dojah\CustomApi
     }
 
     /**
-     * Operation analyzeDocumentAsyncWithHttpInfo
+     * Operation checkLivenessAsyncWithHttpInfo
      *
-     * KYC - Document Analysis
+     * Liveness Check
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['analyzeDocument'] to see the possible values for this operation
+     * @param  \Dojah\Model\KycCheckLivenessRequest $kyc_check_liveness_request (required)
+     * @param  string $app_id (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['checkLiveness'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function analyzeDocumentAsyncWithHttpInfo(string $contentType = self::contentTypes['analyzeDocument'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function checkLivenessAsyncWithHttpInfo($kyc_check_liveness_request, $app_id = null, string $contentType = self::contentTypes['checkLiveness'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $returnType = '\Dojah\Model\AnalyzeDocumentResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->analyzeDocumentRequest($contentType);
+        $returnType = 'object';
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->checkLivenessRequest($kyc_check_liveness_request, $app_id, $contentType);
 
         // Customization hook
-        $this->beforeSendHook($request, $requestOptions, $this->config);
+        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -380,19 +386,39 @@ class KYCApi extends \Dojah\CustomApi
     }
 
     /**
-     * Create request for operation 'analyzeDocument'
+     * Create request for operation 'checkLiveness'
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['analyzeDocument'] to see the possible values for this operation
+     * @param  \Dojah\Model\KycCheckLivenessRequest $kyc_check_liveness_request (required)
+     * @param  string $app_id (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['checkLiveness'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function analyzeDocumentRequest(string $contentType = self::contentTypes['analyzeDocument'][0])
+    public function checkLivenessRequest($kyc_check_liveness_request, $app_id = SENTINEL_VALUE, string $contentType = self::contentTypes['checkLiveness'][0])
     {
 
+        if ($kyc_check_liveness_request !== SENTINEL_VALUE) {
+            if (!($kyc_check_liveness_request instanceof \Dojah\Model\KycCheckLivenessRequest)) {
+                if (!is_array($kyc_check_liveness_request))
+                    throw new \InvalidArgumentException('"kyc_check_liveness_request" must be associative array or an instance of \Dojah\Model\KycCheckLivenessRequest KYCApi.checkLiveness.');
+                else
+                    $kyc_check_liveness_request = new \Dojah\Model\KycCheckLivenessRequest($kyc_check_liveness_request);
+            }
+        }
+        // verify the required parameter 'kyc_check_liveness_request' is set
+        if ($kyc_check_liveness_request === SENTINEL_VALUE || (is_array($kyc_check_liveness_request) && count($kyc_check_liveness_request) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter kyc_check_liveness_request when calling checkLiveness'
+            );
+        }
+        // Check if $app_id is a string
+        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
+        }
 
 
-        $resourcePath = '/api/v1/document/analysis';
+        $resourcePath = '/api/v1/ml/liveness';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -400,6 +426,10 @@ class KYCApi extends \Dojah\CustomApi
         $multipart = false;
 
 
+        // header params
+        if ($app_id !== SENTINEL_VALUE) {
+            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
+        }
 
 
 
@@ -410,7 +440,14 @@ class KYCApi extends \Dojah\CustomApi
         );
 
         // for model (json/xml)
-        if (count($formParams) > 0) {
+        if (isset($kyc_check_liveness_request)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\json_encode(ObjectSerializer::sanitizeForSerialization($kyc_check_liveness_request));
+            } else {
+                $httpBody = $kyc_check_liveness_request;
+            }
+        } elseif (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
                 foreach ($formParams as $formParamName => $formParamValue) {
@@ -434,16 +471,6 @@ class KYCApi extends \Dojah\CustomApi
             }
         }
 
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -473,45 +500,48 @@ class KYCApi extends \Dojah\CustomApi
     }
 
     /**
-     * Operation getBasicBvn
+     * Operation getAccounts
      *
-     * KYC - Get Basic BVN Info
+     * KYC - Fetch Accounts
      *
-     * @param  int $bvn bvn (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBasicBvn'] to see the possible values for this operation
+     * @param  string $app_id app_id (optional)
+     * @param  string $bvn bvn (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAccounts'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return \Dojah\Model\GetBasicBvnResponse
+     * @return object
      */
-    public function getBasicBvn(
+    public function getAccounts(
+        $app_id = SENTINEL_VALUE,
         $bvn = SENTINEL_VALUE,
 
 
-        string $contentType = self::contentTypes['getBasicBvn'][0]
+        string $contentType = self::contentTypes['getAccounts'][0]
 
     )
     {
 
-        list($response) = $this->getBasicBvnWithHttpInfo($bvn, $contentType);
+        list($response) = $this->getAccountsWithHttpInfo($app_id, $bvn, $contentType);
         return $response;
     }
 
     /**
-     * Operation getBasicBvnWithHttpInfo
+     * Operation getAccountsWithHttpInfo
      *
-     * KYC - Get Basic BVN Info
+     * KYC - Fetch Accounts
      *
-     * @param  int $bvn (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBasicBvn'] to see the possible values for this operation
+     * @param  string $app_id (optional)
+     * @param  string $bvn (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAccounts'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return array of \Dojah\Model\GetBasicBvnResponse, HTTP status code, HTTP response headers (array of strings)
+     * @return array of object, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getBasicBvnWithHttpInfo($bvn = null, string $contentType = self::contentTypes['getBasicBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getAccountsWithHttpInfo($app_id = null, $bvn = null, string $contentType = self::contentTypes['getAccounts'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBasicBvnRequest($bvn, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getAccountsRequest($app_id, $bvn, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -526,7 +556,8 @@ class KYCApi extends \Dojah\CustomApi
                     !empty($this->getConfig()->getAccessToken()) &&
                     $requestOptions->shouldRetryOAuth()
                 ) {
-                    return $this->getBasicBvnWithHttpInfo(
+                    return $this->getAccountsWithHttpInfo(
+                        $app_id,
                         $bvn,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
@@ -565,23 +596,23 @@ class KYCApi extends \Dojah\CustomApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Dojah\Model\GetBasicBvnResponse' === '\SplFileObject') {
+                    if ('object' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Dojah\Model\GetBasicBvnResponse' !== 'string') {
+                        if ('object' !== 'string') {
                             $content = json_decode($content);
                         }
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Dojah\Model\GetBasicBvnResponse', []),
+                        ObjectSerializer::deserialize($content, 'object', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
             }
 
-            $returnType = '\Dojah\Model\GetBasicBvnResponse';
+            $returnType = 'object';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -602,7 +633,7 @@ class KYCApi extends \Dojah\CustomApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Dojah\Model\GetBasicBvnResponse',
+                        'object',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -613,26 +644,28 @@ class KYCApi extends \Dojah\CustomApi
     }
 
     /**
-     * Operation getBasicBvnAsync
+     * Operation getAccountsAsync
      *
-     * KYC - Get Basic BVN Info
+     * KYC - Fetch Accounts
      *
-     * @param  int $bvn (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBasicBvn'] to see the possible values for this operation
+     * @param  string $app_id (optional)
+     * @param  string $bvn (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAccounts'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getBasicBvnAsync(
+    public function getAccountsAsync(
+        $app_id = SENTINEL_VALUE,
         $bvn = SENTINEL_VALUE,
 
 
-        string $contentType = self::contentTypes['getBasicBvn'][0]
+        string $contentType = self::contentTypes['getAccounts'][0]
 
     )
     {
 
-        return $this->getBasicBvnAsyncWithHttpInfo($bvn, $contentType)
+        return $this->getAccountsAsyncWithHttpInfo($app_id, $bvn, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -641,20 +674,21 @@ class KYCApi extends \Dojah\CustomApi
     }
 
     /**
-     * Operation getBasicBvnAsyncWithHttpInfo
+     * Operation getAccountsAsyncWithHttpInfo
      *
-     * KYC - Get Basic BVN Info
+     * KYC - Fetch Accounts
      *
-     * @param  int $bvn (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBasicBvn'] to see the possible values for this operation
+     * @param  string $app_id (optional)
+     * @param  string $bvn (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAccounts'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getBasicBvnAsyncWithHttpInfo($bvn = null, string $contentType = self::contentTypes['getBasicBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getAccountsAsyncWithHttpInfo($app_id = null, $bvn = null, string $contentType = self::contentTypes['getAccounts'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $returnType = '\Dojah\Model\GetBasicBvnResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBasicBvnRequest($bvn, $contentType);
+        $returnType = 'object';
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getAccountsRequest($app_id, $bvn, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -696,20 +730,29 @@ class KYCApi extends \Dojah\CustomApi
     }
 
     /**
-     * Create request for operation 'getBasicBvn'
+     * Create request for operation 'getAccounts'
      *
-     * @param  int $bvn (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBasicBvn'] to see the possible values for this operation
+     * @param  string $app_id (optional)
+     * @param  string $bvn (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAccounts'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getBasicBvnRequest($bvn = SENTINEL_VALUE, string $contentType = self::contentTypes['getBasicBvn'][0])
+    public function getAccountsRequest($app_id = SENTINEL_VALUE, $bvn = SENTINEL_VALUE, string $contentType = self::contentTypes['getAccounts'][0])
     {
 
+        // Check if $app_id is a string
+        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
+        }
+        // Check if $bvn is a string
+        if ($bvn !== SENTINEL_VALUE && !is_string($bvn)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($bvn, true), gettype($bvn)));
+        }
 
 
-        $resourcePath = '/api/v1/kyc/bvn/basic';
+        $resourcePath = '/api/v1/kyc/accounts';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -721,666 +764,6 @@ class KYCApi extends \Dojah\CustomApi
             $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
                 $bvn,
                 'bvn', // param base name
-                'integer', // openApiType
-                'form', // style
-                true, // explode
-                false // required
-            ) ?? []);
-        }
-
-
-
-
-        $headers = $this->headerSelector->selectHeaders(
-            ['application/json', ],
-            $contentType,
-            $multipart
-        );
-
-        // for model (json/xml)
-        if (count($formParams) > 0) {
-            if ($multipart) {
-                $multipartContents = [];
-                foreach ($formParams as $formParamName => $formParamValue) {
-                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
-                    foreach ($formParamValueItems as $formParamValueItem) {
-                        $multipartContents[] = [
-                            'name' => $formParamName,
-                            'contents' => $formParamValueItem
-                        ];
-                    }
-                }
-                // for HTTP post (form)
-                $httpBody = new MultipartStream($multipartContents);
-
-            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
-                # if Content-Type contains "application/json", json_encode the form parameters
-                $httpBody = \GuzzleHttp\json_encode($formParams);
-            } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
-            }
-        }
-
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
-
-        $defaultHeaders = [];
-        if ($this->config->getUserAgent()) {
-            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
-        }
-
-        $headers = array_merge(
-            $defaultHeaders,
-            $headerParams,
-            $headers
-        );
-
-        $method = 'GET';
-        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
-
-        $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
-        return [
-            "request" => new Request(
-                $method,
-                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-                $headers,
-                $httpBody
-            ),
-            "serializedBody" => $httpBody
-        ];
-    }
-
-    /**
-     * Operation getBasicPhoneNumber
-     *
-     * KYC Lookup Phone Number Basic
-     *
-     * @param  int $phone_number phone_number (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBasicPhoneNumber'] to see the possible values for this operation
-     *
-     * @throws \Dojah\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
-     * @return \Dojah\Model\GetBasicPhoneNumberResponse
-     */
-    public function getBasicPhoneNumber(
-        $phone_number = SENTINEL_VALUE,
-
-
-        string $contentType = self::contentTypes['getBasicPhoneNumber'][0]
-
-    )
-    {
-
-        list($response) = $this->getBasicPhoneNumberWithHttpInfo($phone_number, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation getBasicPhoneNumberWithHttpInfo
-     *
-     * KYC Lookup Phone Number Basic
-     *
-     * @param  int $phone_number (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBasicPhoneNumber'] to see the possible values for this operation
-     *
-     * @throws \Dojah\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
-     * @return array of \Dojah\Model\GetBasicPhoneNumberResponse, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function getBasicPhoneNumberWithHttpInfo($phone_number = null, string $contentType = self::contentTypes['getBasicPhoneNumber'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
-    {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBasicPhoneNumberRequest($phone_number, $contentType);
-
-        // Customization hook
-        $this->beforeSendHook($request, $requestOptions, $this->config);
-
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                if (
-                    ($e->getCode() == 401 || $e->getCode() == 403) &&
-                    !empty($this->getConfig()->getAccessToken()) &&
-                    $requestOptions->shouldRetryOAuth()
-                ) {
-                    return $this->getBasicPhoneNumberWithHttpInfo(
-                        $phone_number,
-                        $contentType,
-                        $requestOptions->setRetryOAuth(false)
-                    );
-                }
-
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Dojah\Model\GetBasicPhoneNumberResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Dojah\Model\GetBasicPhoneNumberResponse' !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Dojah\Model\GetBasicPhoneNumberResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            $returnType = '\Dojah\Model\GetBasicPhoneNumberResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    $content = json_decode($content);
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Dojah\Model\GetBasicPhoneNumberResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation getBasicPhoneNumberAsync
-     *
-     * KYC Lookup Phone Number Basic
-     *
-     * @param  int $phone_number (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBasicPhoneNumber'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function getBasicPhoneNumberAsync(
-        $phone_number = SENTINEL_VALUE,
-
-
-        string $contentType = self::contentTypes['getBasicPhoneNumber'][0]
-
-    )
-    {
-
-        return $this->getBasicPhoneNumberAsyncWithHttpInfo($phone_number, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation getBasicPhoneNumberAsyncWithHttpInfo
-     *
-     * KYC Lookup Phone Number Basic
-     *
-     * @param  int $phone_number (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBasicPhoneNumber'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function getBasicPhoneNumberAsyncWithHttpInfo($phone_number = null, string $contentType = self::contentTypes['getBasicPhoneNumber'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
-    {
-        $returnType = '\Dojah\Model\GetBasicPhoneNumberResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBasicPhoneNumberRequest($phone_number, $contentType);
-
-        // Customization hook
-        $this->beforeSendHook($request, $requestOptions, $this->config);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
-    }
-
-    /**
-     * Create request for operation 'getBasicPhoneNumber'
-     *
-     * @param  int $phone_number (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBasicPhoneNumber'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Psr7\Request
-     */
-    public function getBasicPhoneNumberRequest($phone_number = SENTINEL_VALUE, string $contentType = self::contentTypes['getBasicPhoneNumber'][0])
-    {
-
-
-
-        $resourcePath = '/v1/kyc/phone_number/basic';
-        $formParams = [];
-        $queryParams = [];
-        $headerParams = [];
-        $httpBody = '';
-        $multipart = false;
-
-        if ($phone_number !== SENTINEL_VALUE) {
-            // query params
-            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-                $phone_number,
-                'phone_number', // param base name
-                'integer', // openApiType
-                'form', // style
-                true, // explode
-                false // required
-            ) ?? []);
-        }
-
-
-
-
-        $headers = $this->headerSelector->selectHeaders(
-            ['application/json', ],
-            $contentType,
-            $multipart
-        );
-
-        // for model (json/xml)
-        if (count($formParams) > 0) {
-            if ($multipart) {
-                $multipartContents = [];
-                foreach ($formParams as $formParamName => $formParamValue) {
-                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
-                    foreach ($formParamValueItems as $formParamValueItem) {
-                        $multipartContents[] = [
-                            'name' => $formParamName,
-                            'contents' => $formParamValueItem
-                        ];
-                    }
-                }
-                // for HTTP post (form)
-                $httpBody = new MultipartStream($multipartContents);
-
-            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
-                # if Content-Type contains "application/json", json_encode the form parameters
-                $httpBody = \GuzzleHttp\json_encode($formParams);
-            } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
-            }
-        }
-
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
-
-        $defaultHeaders = [];
-        if ($this->config->getUserAgent()) {
-            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
-        }
-
-        $headers = array_merge(
-            $defaultHeaders,
-            $headerParams,
-            $headers
-        );
-
-        $method = 'GET';
-        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
-
-        $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
-        return [
-            "request" => new Request(
-                $method,
-                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-                $headers,
-                $httpBody
-            ),
-            "serializedBody" => $httpBody
-        ];
-    }
-
-    /**
-     * Operation getDriversLicense
-     *
-     * KYC - Get Drivers License Info
-     *
-     * @param  string $license_number license_number (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getDriversLicense'] to see the possible values for this operation
-     *
-     * @throws \Dojah\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
-     * @return \Dojah\Model\GetKycDriversLicenseResponse
-     */
-    public function getDriversLicense(
-        $license_number = SENTINEL_VALUE,
-
-
-        string $contentType = self::contentTypes['getDriversLicense'][0]
-
-    )
-    {
-
-        list($response) = $this->getDriversLicenseWithHttpInfo($license_number, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation getDriversLicenseWithHttpInfo
-     *
-     * KYC - Get Drivers License Info
-     *
-     * @param  string $license_number (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getDriversLicense'] to see the possible values for this operation
-     *
-     * @throws \Dojah\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
-     * @return array of \Dojah\Model\GetKycDriversLicenseResponse, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function getDriversLicenseWithHttpInfo($license_number = null, string $contentType = self::contentTypes['getDriversLicense'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
-    {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getDriversLicenseRequest($license_number, $contentType);
-
-        // Customization hook
-        $this->beforeSendHook($request, $requestOptions, $this->config);
-
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                if (
-                    ($e->getCode() == 401 || $e->getCode() == 403) &&
-                    !empty($this->getConfig()->getAccessToken()) &&
-                    $requestOptions->shouldRetryOAuth()
-                ) {
-                    return $this->getDriversLicenseWithHttpInfo(
-                        $license_number,
-                        $contentType,
-                        $requestOptions->setRetryOAuth(false)
-                    );
-                }
-
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Dojah\Model\GetKycDriversLicenseResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Dojah\Model\GetKycDriversLicenseResponse' !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Dojah\Model\GetKycDriversLicenseResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            $returnType = '\Dojah\Model\GetKycDriversLicenseResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    $content = json_decode($content);
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Dojah\Model\GetKycDriversLicenseResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation getDriversLicenseAsync
-     *
-     * KYC - Get Drivers License Info
-     *
-     * @param  string $license_number (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getDriversLicense'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function getDriversLicenseAsync(
-        $license_number = SENTINEL_VALUE,
-
-
-        string $contentType = self::contentTypes['getDriversLicense'][0]
-
-    )
-    {
-
-        return $this->getDriversLicenseAsyncWithHttpInfo($license_number, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation getDriversLicenseAsyncWithHttpInfo
-     *
-     * KYC - Get Drivers License Info
-     *
-     * @param  string $license_number (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getDriversLicense'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function getDriversLicenseAsyncWithHttpInfo($license_number = null, string $contentType = self::contentTypes['getDriversLicense'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
-    {
-        $returnType = '\Dojah\Model\GetKycDriversLicenseResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getDriversLicenseRequest($license_number, $contentType);
-
-        // Customization hook
-        $this->beforeSendHook($request, $requestOptions, $this->config);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
-    }
-
-    /**
-     * Create request for operation 'getDriversLicense'
-     *
-     * @param  string $license_number (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getDriversLicense'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Psr7\Request
-     */
-    public function getDriversLicenseRequest($license_number = SENTINEL_VALUE, string $contentType = self::contentTypes['getDriversLicense'][0])
-    {
-
-        // Check if $license_number is a string
-        if ($license_number !== SENTINEL_VALUE && !is_string($license_number)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($license_number, true), gettype($license_number)));
-        }
-
-
-        $resourcePath = '/api/v1/kyc/dl';
-        $formParams = [];
-        $queryParams = [];
-        $headerParams = [];
-        $httpBody = '';
-        $multipart = false;
-
-        if ($license_number !== SENTINEL_VALUE) {
-            // query params
-            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-                $license_number,
-                'license_number', // param base name
                 'string', // openApiType
                 'form', // style
                 true, // explode
@@ -1388,6 +771,10 @@ class KYCApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
+        // header params
+        if ($app_id !== SENTINEL_VALUE) {
+            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
+        }
 
 
 
@@ -1422,16 +809,6 @@ class KYCApi extends \Dojah\CustomApi
             }
         }
 
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -1461,45 +838,48 @@ class KYCApi extends \Dojah\CustomApi
     }
 
     /**
-     * Operation getEmailReputation
+     * Operation getAddressVerification
      *
-     * KYC - Get Email Reputation
+     * Fetch Address Verification Data
      *
-     * @param  string $email email (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getEmailReputation'] to see the possible values for this operation
+     * @param  string $app_id app_id (optional)
+     * @param  string $reference_id reference_id (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAddressVerification'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return \Dojah\Model\GetEmailReputationResponse
+     * @return object
      */
-    public function getEmailReputation(
-        $email = SENTINEL_VALUE,
+    public function getAddressVerification(
+        $app_id = SENTINEL_VALUE,
+        $reference_id = SENTINEL_VALUE,
 
 
-        string $contentType = self::contentTypes['getEmailReputation'][0]
+        string $contentType = self::contentTypes['getAddressVerification'][0]
 
     )
     {
 
-        list($response) = $this->getEmailReputationWithHttpInfo($email, $contentType);
+        list($response) = $this->getAddressVerificationWithHttpInfo($app_id, $reference_id, $contentType);
         return $response;
     }
 
     /**
-     * Operation getEmailReputationWithHttpInfo
+     * Operation getAddressVerificationWithHttpInfo
      *
-     * KYC - Get Email Reputation
+     * Fetch Address Verification Data
      *
-     * @param  string $email (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getEmailReputation'] to see the possible values for this operation
+     * @param  string $app_id (optional)
+     * @param  string $reference_id (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAddressVerification'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return array of \Dojah\Model\GetEmailReputationResponse, HTTP status code, HTTP response headers (array of strings)
+     * @return array of object, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getEmailReputationWithHttpInfo($email = null, string $contentType = self::contentTypes['getEmailReputation'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getAddressVerificationWithHttpInfo($app_id = null, $reference_id = null, string $contentType = self::contentTypes['getAddressVerification'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getEmailReputationRequest($email, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getAddressVerificationRequest($app_id, $reference_id, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -1514,8 +894,9 @@ class KYCApi extends \Dojah\CustomApi
                     !empty($this->getConfig()->getAccessToken()) &&
                     $requestOptions->shouldRetryOAuth()
                 ) {
-                    return $this->getEmailReputationWithHttpInfo(
-                        $email,
+                    return $this->getAddressVerificationWithHttpInfo(
+                        $app_id,
+                        $reference_id,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
                     );
@@ -1553,23 +934,23 @@ class KYCApi extends \Dojah\CustomApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Dojah\Model\GetEmailReputationResponse' === '\SplFileObject') {
+                    if ('object' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Dojah\Model\GetEmailReputationResponse' !== 'string') {
+                        if ('object' !== 'string') {
                             $content = json_decode($content);
                         }
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Dojah\Model\GetEmailReputationResponse', []),
+                        ObjectSerializer::deserialize($content, 'object', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
             }
 
-            $returnType = '\Dojah\Model\GetEmailReputationResponse';
+            $returnType = 'object';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -1590,7 +971,7 @@ class KYCApi extends \Dojah\CustomApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Dojah\Model\GetEmailReputationResponse',
+                        'object',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1601,26 +982,28 @@ class KYCApi extends \Dojah\CustomApi
     }
 
     /**
-     * Operation getEmailReputationAsync
+     * Operation getAddressVerificationAsync
      *
-     * KYC - Get Email Reputation
+     * Fetch Address Verification Data
      *
-     * @param  string $email (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getEmailReputation'] to see the possible values for this operation
+     * @param  string $app_id (optional)
+     * @param  string $reference_id (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAddressVerification'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getEmailReputationAsync(
-        $email = SENTINEL_VALUE,
+    public function getAddressVerificationAsync(
+        $app_id = SENTINEL_VALUE,
+        $reference_id = SENTINEL_VALUE,
 
 
-        string $contentType = self::contentTypes['getEmailReputation'][0]
+        string $contentType = self::contentTypes['getAddressVerification'][0]
 
     )
     {
 
-        return $this->getEmailReputationAsyncWithHttpInfo($email, $contentType)
+        return $this->getAddressVerificationAsyncWithHttpInfo($app_id, $reference_id, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -1629,20 +1012,21 @@ class KYCApi extends \Dojah\CustomApi
     }
 
     /**
-     * Operation getEmailReputationAsyncWithHttpInfo
+     * Operation getAddressVerificationAsyncWithHttpInfo
      *
-     * KYC - Get Email Reputation
+     * Fetch Address Verification Data
      *
-     * @param  string $email (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getEmailReputation'] to see the possible values for this operation
+     * @param  string $app_id (optional)
+     * @param  string $reference_id (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAddressVerification'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getEmailReputationAsyncWithHttpInfo($email = null, string $contentType = self::contentTypes['getEmailReputation'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getAddressVerificationAsyncWithHttpInfo($app_id = null, $reference_id = null, string $contentType = self::contentTypes['getAddressVerification'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $returnType = '\Dojah\Model\GetEmailReputationResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getEmailReputationRequest($email, $contentType);
+        $returnType = 'object';
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getAddressVerificationRequest($app_id, $reference_id, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -1684,35 +1068,40 @@ class KYCApi extends \Dojah\CustomApi
     }
 
     /**
-     * Create request for operation 'getEmailReputation'
+     * Create request for operation 'getAddressVerification'
      *
-     * @param  string $email (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getEmailReputation'] to see the possible values for this operation
+     * @param  string $app_id (optional)
+     * @param  string $reference_id (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAddressVerification'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getEmailReputationRequest($email = SENTINEL_VALUE, string $contentType = self::contentTypes['getEmailReputation'][0])
+    public function getAddressVerificationRequest($app_id = SENTINEL_VALUE, $reference_id = SENTINEL_VALUE, string $contentType = self::contentTypes['getAddressVerification'][0])
     {
 
-        // Check if $email is a string
-        if ($email !== SENTINEL_VALUE && !is_string($email)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($email, true), gettype($email)));
+        // Check if $app_id is a string
+        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
+        }
+        // Check if $reference_id is a string
+        if ($reference_id !== SENTINEL_VALUE && !is_string($reference_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($reference_id, true), gettype($reference_id)));
         }
 
 
-        $resourcePath = '/v1/kyc/email';
+        $resourcePath = '/api/v1/kyc/address';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
         $httpBody = '';
         $multipart = false;
 
-        if ($email !== SENTINEL_VALUE) {
+        if ($reference_id !== SENTINEL_VALUE) {
             // query params
             $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-                $email,
-                'email', // param base name
+                $reference_id,
+                'reference_id', // param base name
                 'string', // openApiType
                 'form', // style
                 true, // explode
@@ -1720,6 +1109,10 @@ class KYCApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
+        // header params
+        if ($app_id !== SENTINEL_VALUE) {
+            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
+        }
 
 
 
@@ -1754,16 +1147,6 @@ class KYCApi extends \Dojah\CustomApi
             }
         }
 
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -1793,376 +1176,51 @@ class KYCApi extends \Dojah\CustomApi
     }
 
     /**
-     * Operation getFullBvn
+     * Operation getBvnFromNuban
      *
-     * KYC - Lookup BVN Basic
+     * Lookup BVN from NUBAN
      *
-     * @param  int $bvn bvn (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getFullBvn'] to see the possible values for this operation
-     *
-     * @throws \Dojah\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
-     * @return \Dojah\Model\GetFullBvnResponse
-     */
-    public function getFullBvn(
-        $bvn = SENTINEL_VALUE,
-
-
-        string $contentType = self::contentTypes['getFullBvn'][0]
-
-    )
-    {
-
-        list($response) = $this->getFullBvnWithHttpInfo($bvn, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation getFullBvnWithHttpInfo
-     *
-     * KYC - Lookup BVN Basic
-     *
-     * @param  int $bvn (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getFullBvn'] to see the possible values for this operation
-     *
-     * @throws \Dojah\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
-     * @return array of \Dojah\Model\GetFullBvnResponse, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function getFullBvnWithHttpInfo($bvn = null, string $contentType = self::contentTypes['getFullBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
-    {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getFullBvnRequest($bvn, $contentType);
-
-        // Customization hook
-        $this->beforeSendHook($request, $requestOptions, $this->config);
-
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                if (
-                    ($e->getCode() == 401 || $e->getCode() == 403) &&
-                    !empty($this->getConfig()->getAccessToken()) &&
-                    $requestOptions->shouldRetryOAuth()
-                ) {
-                    return $this->getFullBvnWithHttpInfo(
-                        $bvn,
-                        $contentType,
-                        $requestOptions->setRetryOAuth(false)
-                    );
-                }
-
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Dojah\Model\GetFullBvnResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Dojah\Model\GetFullBvnResponse' !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Dojah\Model\GetFullBvnResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            $returnType = '\Dojah\Model\GetFullBvnResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    $content = json_decode($content);
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Dojah\Model\GetFullBvnResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation getFullBvnAsync
-     *
-     * KYC - Lookup BVN Basic
-     *
-     * @param  int $bvn (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getFullBvn'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function getFullBvnAsync(
-        $bvn = SENTINEL_VALUE,
-
-
-        string $contentType = self::contentTypes['getFullBvn'][0]
-
-    )
-    {
-
-        return $this->getFullBvnAsyncWithHttpInfo($bvn, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation getFullBvnAsyncWithHttpInfo
-     *
-     * KYC - Lookup BVN Basic
-     *
-     * @param  int $bvn (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getFullBvn'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function getFullBvnAsyncWithHttpInfo($bvn = null, string $contentType = self::contentTypes['getFullBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
-    {
-        $returnType = '\Dojah\Model\GetFullBvnResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getFullBvnRequest($bvn, $contentType);
-
-        // Customization hook
-        $this->beforeSendHook($request, $requestOptions, $this->config);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
-    }
-
-    /**
-     * Create request for operation 'getFullBvn'
-     *
-     * @param  int $bvn (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getFullBvn'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Psr7\Request
-     */
-    public function getFullBvnRequest($bvn = SENTINEL_VALUE, string $contentType = self::contentTypes['getFullBvn'][0])
-    {
-
-
-
-        $resourcePath = '/api/v1/kyc/bvn/full';
-        $formParams = [];
-        $queryParams = [];
-        $headerParams = [];
-        $httpBody = '';
-        $multipart = false;
-
-        if ($bvn !== SENTINEL_VALUE) {
-            // query params
-            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-                $bvn,
-                'bvn', // param base name
-                'integer', // openApiType
-                'form', // style
-                true, // explode
-                false // required
-            ) ?? []);
-        }
-
-
-
-
-        $headers = $this->headerSelector->selectHeaders(
-            ['application/json', ],
-            $contentType,
-            $multipart
-        );
-
-        // for model (json/xml)
-        if (count($formParams) > 0) {
-            if ($multipart) {
-                $multipartContents = [];
-                foreach ($formParams as $formParamName => $formParamValue) {
-                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
-                    foreach ($formParamValueItems as $formParamValueItem) {
-                        $multipartContents[] = [
-                            'name' => $formParamName,
-                            'contents' => $formParamValueItem
-                        ];
-                    }
-                }
-                // for HTTP post (form)
-                $httpBody = new MultipartStream($multipartContents);
-
-            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
-                # if Content-Type contains "application/json", json_encode the form parameters
-                $httpBody = \GuzzleHttp\json_encode($formParams);
-            } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
-            }
-        }
-
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
-
-        $defaultHeaders = [];
-        if ($this->config->getUserAgent()) {
-            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
-        }
-
-        $headers = array_merge(
-            $defaultHeaders,
-            $headerParams,
-            $headers
-        );
-
-        $method = 'GET';
-        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
-
-        $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
-        return [
-            "request" => new Request(
-                $method,
-                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-                $headers,
-                $httpBody
-            ),
-            "serializedBody" => $httpBody
-        ];
-    }
-
-    /**
-     * Operation getNuban
-     *
-     * KYC - Get NUBAN Information
-     *
+     * @param  string $app_id app_id (optional)
      * @param  int $bank_code bank_code (optional)
      * @param  int $account_number account_number (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getNuban'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBvnFromNuban'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return \Dojah\Model\GetNubanResponse
+     * @return object
      */
-    public function getNuban(
+    public function getBvnFromNuban(
+        $app_id = SENTINEL_VALUE,
         $bank_code = SENTINEL_VALUE,
         $account_number = SENTINEL_VALUE,
 
 
-        string $contentType = self::contentTypes['getNuban'][0]
+        string $contentType = self::contentTypes['getBvnFromNuban'][0]
 
     )
     {
 
-        list($response) = $this->getNubanWithHttpInfo($bank_code, $account_number, $contentType);
+        list($response) = $this->getBvnFromNubanWithHttpInfo($app_id, $bank_code, $account_number, $contentType);
         return $response;
     }
 
     /**
-     * Operation getNubanWithHttpInfo
+     * Operation getBvnFromNubanWithHttpInfo
      *
-     * KYC - Get NUBAN Information
+     * Lookup BVN from NUBAN
      *
+     * @param  string $app_id (optional)
      * @param  int $bank_code (optional)
      * @param  int $account_number (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getNuban'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBvnFromNuban'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return array of \Dojah\Model\GetNubanResponse, HTTP status code, HTTP response headers (array of strings)
+     * @return array of object, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getNubanWithHttpInfo($bank_code = null, $account_number = null, string $contentType = self::contentTypes['getNuban'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getBvnFromNubanWithHttpInfo($app_id = null, $bank_code = null, $account_number = null, string $contentType = self::contentTypes['getBvnFromNuban'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getNubanRequest($bank_code, $account_number, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBvnFromNubanRequest($app_id, $bank_code, $account_number, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -2177,7 +1235,8 @@ class KYCApi extends \Dojah\CustomApi
                     !empty($this->getConfig()->getAccessToken()) &&
                     $requestOptions->shouldRetryOAuth()
                 ) {
-                    return $this->getNubanWithHttpInfo(
+                    return $this->getBvnFromNubanWithHttpInfo(
+                        $app_id,
                         $bank_code,
                         $account_number,
                         $contentType,
@@ -2217,23 +1276,23 @@ class KYCApi extends \Dojah\CustomApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Dojah\Model\GetNubanResponse' === '\SplFileObject') {
+                    if ('object' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Dojah\Model\GetNubanResponse' !== 'string') {
+                        if ('object' !== 'string') {
                             $content = json_decode($content);
                         }
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Dojah\Model\GetNubanResponse', []),
+                        ObjectSerializer::deserialize($content, 'object', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
             }
 
-            $returnType = '\Dojah\Model\GetNubanResponse';
+            $returnType = 'object';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -2254,7 +1313,7 @@ class KYCApi extends \Dojah\CustomApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Dojah\Model\GetNubanResponse',
+                        'object',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2265,28 +1324,30 @@ class KYCApi extends \Dojah\CustomApi
     }
 
     /**
-     * Operation getNubanAsync
+     * Operation getBvnFromNubanAsync
      *
-     * KYC - Get NUBAN Information
+     * Lookup BVN from NUBAN
      *
+     * @param  string $app_id (optional)
      * @param  int $bank_code (optional)
      * @param  int $account_number (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getNuban'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBvnFromNuban'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getNubanAsync(
+    public function getBvnFromNubanAsync(
+        $app_id = SENTINEL_VALUE,
         $bank_code = SENTINEL_VALUE,
         $account_number = SENTINEL_VALUE,
 
 
-        string $contentType = self::contentTypes['getNuban'][0]
+        string $contentType = self::contentTypes['getBvnFromNuban'][0]
 
     )
     {
 
-        return $this->getNubanAsyncWithHttpInfo($bank_code, $account_number, $contentType)
+        return $this->getBvnFromNubanAsyncWithHttpInfo($app_id, $bank_code, $account_number, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -2295,21 +1356,22 @@ class KYCApi extends \Dojah\CustomApi
     }
 
     /**
-     * Operation getNubanAsyncWithHttpInfo
+     * Operation getBvnFromNubanAsyncWithHttpInfo
      *
-     * KYC - Get NUBAN Information
+     * Lookup BVN from NUBAN
      *
+     * @param  string $app_id (optional)
      * @param  int $bank_code (optional)
      * @param  int $account_number (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getNuban'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBvnFromNuban'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getNubanAsyncWithHttpInfo($bank_code = null, $account_number = null, string $contentType = self::contentTypes['getNuban'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getBvnFromNubanAsyncWithHttpInfo($app_id = null, $bank_code = null, $account_number = null, string $contentType = self::contentTypes['getBvnFromNuban'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $returnType = '\Dojah\Model\GetNubanResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getNubanRequest($bank_code, $account_number, $contentType);
+        $returnType = 'object';
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBvnFromNubanRequest($app_id, $bank_code, $account_number, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -2351,21 +1413,26 @@ class KYCApi extends \Dojah\CustomApi
     }
 
     /**
-     * Create request for operation 'getNuban'
+     * Create request for operation 'getBvnFromNuban'
      *
+     * @param  string $app_id (optional)
      * @param  int $bank_code (optional)
      * @param  int $account_number (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getNuban'] to see the possible values for this operation
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBvnFromNuban'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getNubanRequest($bank_code = SENTINEL_VALUE, $account_number = SENTINEL_VALUE, string $contentType = self::contentTypes['getNuban'][0])
+    public function getBvnFromNubanRequest($app_id = SENTINEL_VALUE, $bank_code = SENTINEL_VALUE, $account_number = SENTINEL_VALUE, string $contentType = self::contentTypes['getBvnFromNuban'][0])
     {
 
+        // Check if $app_id is a string
+        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
+        }
 
 
-        $resourcePath = '/api/v1/kyc/nuban';
+        $resourcePath = '/api/v1/kyc/nuban/bvn';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -2395,6 +1462,10 @@ class KYCApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
+        // header params
+        if ($app_id !== SENTINEL_VALUE) {
+            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
+        }
 
 
 
@@ -2429,16 +1500,6 @@ class KYCApi extends \Dojah\CustomApi
             }
         }
 
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -2468,1087 +1529,48 @@ class KYCApi extends \Dojah\CustomApi
     }
 
     /**
-     * Operation getPassport
-     *
-     * KYC - Passport
-     *
-     * @param  int $passport_number passport_number (optional)
-     * @param  string $surname surname (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPassport'] to see the possible values for this operation
-     *
-     * @throws \Dojah\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
-     * @return \Dojah\Model\GetKycPassportResponse
-     */
-    public function getPassport(
-        $passport_number = SENTINEL_VALUE,
-        $surname = SENTINEL_VALUE,
-
-
-        string $contentType = self::contentTypes['getPassport'][0]
-
-    )
-    {
-
-        list($response) = $this->getPassportWithHttpInfo($passport_number, $surname, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation getPassportWithHttpInfo
-     *
-     * KYC - Passport
-     *
-     * @param  int $passport_number (optional)
-     * @param  string $surname (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPassport'] to see the possible values for this operation
-     *
-     * @throws \Dojah\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
-     * @return array of \Dojah\Model\GetKycPassportResponse, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function getPassportWithHttpInfo($passport_number = null, $surname = null, string $contentType = self::contentTypes['getPassport'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
-    {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getPassportRequest($passport_number, $surname, $contentType);
-
-        // Customization hook
-        $this->beforeSendHook($request, $requestOptions, $this->config);
-
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                if (
-                    ($e->getCode() == 401 || $e->getCode() == 403) &&
-                    !empty($this->getConfig()->getAccessToken()) &&
-                    $requestOptions->shouldRetryOAuth()
-                ) {
-                    return $this->getPassportWithHttpInfo(
-                        $passport_number,
-                        $surname,
-                        $contentType,
-                        $requestOptions->setRetryOAuth(false)
-                    );
-                }
-
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Dojah\Model\GetKycPassportResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Dojah\Model\GetKycPassportResponse' !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Dojah\Model\GetKycPassportResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            $returnType = '\Dojah\Model\GetKycPassportResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    $content = json_decode($content);
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Dojah\Model\GetKycPassportResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation getPassportAsync
-     *
-     * KYC - Passport
-     *
-     * @param  int $passport_number (optional)
-     * @param  string $surname (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPassport'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function getPassportAsync(
-        $passport_number = SENTINEL_VALUE,
-        $surname = SENTINEL_VALUE,
-
-
-        string $contentType = self::contentTypes['getPassport'][0]
-
-    )
-    {
-
-        return $this->getPassportAsyncWithHttpInfo($passport_number, $surname, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation getPassportAsyncWithHttpInfo
-     *
-     * KYC - Passport
-     *
-     * @param  int $passport_number (optional)
-     * @param  string $surname (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPassport'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function getPassportAsyncWithHttpInfo($passport_number = null, $surname = null, string $contentType = self::contentTypes['getPassport'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
-    {
-        $returnType = '\Dojah\Model\GetKycPassportResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getPassportRequest($passport_number, $surname, $contentType);
-
-        // Customization hook
-        $this->beforeSendHook($request, $requestOptions, $this->config);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
-    }
-
-    /**
-     * Create request for operation 'getPassport'
-     *
-     * @param  int $passport_number (optional)
-     * @param  string $surname (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPassport'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Psr7\Request
-     */
-    public function getPassportRequest($passport_number = SENTINEL_VALUE, $surname = SENTINEL_VALUE, string $contentType = self::contentTypes['getPassport'][0])
-    {
-
-        // Check if $surname is a string
-        if ($surname !== SENTINEL_VALUE && !is_string($surname)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($surname, true), gettype($surname)));
-        }
-
-
-        $resourcePath = '/api/v1/kyc/passport';
-        $formParams = [];
-        $queryParams = [];
-        $headerParams = [];
-        $httpBody = '';
-        $multipart = false;
-
-        if ($passport_number !== SENTINEL_VALUE) {
-            // query params
-            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-                $passport_number,
-                'passport_number', // param base name
-                'integer', // openApiType
-                'form', // style
-                true, // explode
-                false // required
-            ) ?? []);
-        }
-        if ($surname !== SENTINEL_VALUE) {
-            // query params
-            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-                $surname,
-                'surname', // param base name
-                'string', // openApiType
-                'form', // style
-                true, // explode
-                false // required
-            ) ?? []);
-        }
-
-
-
-
-        $headers = $this->headerSelector->selectHeaders(
-            ['application/json', ],
-            $contentType,
-            $multipart
-        );
-
-        // for model (json/xml)
-        if (count($formParams) > 0) {
-            if ($multipart) {
-                $multipartContents = [];
-                foreach ($formParams as $formParamName => $formParamValue) {
-                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
-                    foreach ($formParamValueItems as $formParamValueItem) {
-                        $multipartContents[] = [
-                            'name' => $formParamName,
-                            'contents' => $formParamValueItem
-                        ];
-                    }
-                }
-                // for HTTP post (form)
-                $httpBody = new MultipartStream($multipartContents);
-
-            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
-                # if Content-Type contains "application/json", json_encode the form parameters
-                $httpBody = \GuzzleHttp\json_encode($formParams);
-            } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
-            }
-        }
-
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
-
-        $defaultHeaders = [];
-        if ($this->config->getUserAgent()) {
-            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
-        }
-
-        $headers = array_merge(
-            $defaultHeaders,
-            $headerParams,
-            $headers
-        );
-
-        $method = 'GET';
-        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
-
-        $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
-        return [
-            "request" => new Request(
-                $method,
-                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-                $headers,
-                $httpBody
-            ),
-            "serializedBody" => $httpBody
-        ];
-    }
-
-    /**
-     * Operation getPhoneNumber
-     *
-     * KYC - Lookup Phone Number
-     *
-     * @param  int $phone_number phone_number (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPhoneNumber'] to see the possible values for this operation
-     *
-     * @throws \Dojah\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
-     * @return \Dojah\Model\GetPhoneNumberResponse|\Dojah\Model\GetPhoneNumber404Response
-     */
-    public function getPhoneNumber(
-        $phone_number = SENTINEL_VALUE,
-
-
-        string $contentType = self::contentTypes['getPhoneNumber'][0]
-
-    )
-    {
-
-        list($response) = $this->getPhoneNumberWithHttpInfo($phone_number, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation getPhoneNumberWithHttpInfo
-     *
-     * KYC - Lookup Phone Number
-     *
-     * @param  int $phone_number (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPhoneNumber'] to see the possible values for this operation
-     *
-     * @throws \Dojah\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
-     * @return array of \Dojah\Model\GetPhoneNumberResponse|\Dojah\Model\GetPhoneNumber404Response, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function getPhoneNumberWithHttpInfo($phone_number = null, string $contentType = self::contentTypes['getPhoneNumber'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
-    {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getPhoneNumberRequest($phone_number, $contentType);
-
-        // Customization hook
-        $this->beforeSendHook($request, $requestOptions, $this->config);
-
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                if (
-                    ($e->getCode() == 401 || $e->getCode() == 403) &&
-                    !empty($this->getConfig()->getAccessToken()) &&
-                    $requestOptions->shouldRetryOAuth()
-                ) {
-                    return $this->getPhoneNumberWithHttpInfo(
-                        $phone_number,
-                        $contentType,
-                        $requestOptions->setRetryOAuth(false)
-                    );
-                }
-
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Dojah\Model\GetPhoneNumberResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Dojah\Model\GetPhoneNumberResponse' !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Dojah\Model\GetPhoneNumberResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\Dojah\Model\GetPhoneNumber404Response' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Dojah\Model\GetPhoneNumber404Response' !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Dojah\Model\GetPhoneNumber404Response', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            $returnType = '\Dojah\Model\GetPhoneNumberResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    $content = json_decode($content);
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Dojah\Model\GetPhoneNumberResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Dojah\Model\GetPhoneNumber404Response',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation getPhoneNumberAsync
-     *
-     * KYC - Lookup Phone Number
-     *
-     * @param  int $phone_number (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPhoneNumber'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function getPhoneNumberAsync(
-        $phone_number = SENTINEL_VALUE,
-
-
-        string $contentType = self::contentTypes['getPhoneNumber'][0]
-
-    )
-    {
-
-        return $this->getPhoneNumberAsyncWithHttpInfo($phone_number, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation getPhoneNumberAsyncWithHttpInfo
-     *
-     * KYC - Lookup Phone Number
-     *
-     * @param  int $phone_number (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPhoneNumber'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function getPhoneNumberAsyncWithHttpInfo($phone_number = null, string $contentType = self::contentTypes['getPhoneNumber'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
-    {
-        $returnType = '\Dojah\Model\GetPhoneNumberResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getPhoneNumberRequest($phone_number, $contentType);
-
-        // Customization hook
-        $this->beforeSendHook($request, $requestOptions, $this->config);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
-    }
-
-    /**
-     * Create request for operation 'getPhoneNumber'
-     *
-     * @param  int $phone_number (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPhoneNumber'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Psr7\Request
-     */
-    public function getPhoneNumberRequest($phone_number = SENTINEL_VALUE, string $contentType = self::contentTypes['getPhoneNumber'][0])
-    {
-
-
-
-        $resourcePath = '/api/v1/kyc/phone_number';
-        $formParams = [];
-        $queryParams = [];
-        $headerParams = [];
-        $httpBody = '';
-        $multipart = false;
-
-        if ($phone_number !== SENTINEL_VALUE) {
-            // query params
-            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-                $phone_number,
-                'phone_number', // param base name
-                'integer', // openApiType
-                'form', // style
-                true, // explode
-                false // required
-            ) ?? []);
-        }
-
-
-
-
-        $headers = $this->headerSelector->selectHeaders(
-            ['application/json', ],
-            $contentType,
-            $multipart
-        );
-
-        // for model (json/xml)
-        if (count($formParams) > 0) {
-            if ($multipart) {
-                $multipartContents = [];
-                foreach ($formParams as $formParamName => $formParamValue) {
-                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
-                    foreach ($formParamValueItems as $formParamValueItem) {
-                        $multipartContents[] = [
-                            'name' => $formParamName,
-                            'contents' => $formParamValueItem
-                        ];
-                    }
-                }
-                // for HTTP post (form)
-                $httpBody = new MultipartStream($multipartContents);
-
-            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
-                # if Content-Type contains "application/json", json_encode the form parameters
-                $httpBody = \GuzzleHttp\json_encode($formParams);
-            } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
-            }
-        }
-
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
-
-        $defaultHeaders = [];
-        if ($this->config->getUserAgent()) {
-            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
-        }
-
-        $headers = array_merge(
-            $defaultHeaders,
-            $headerParams,
-            $headers
-        );
-
-        $method = 'GET';
-        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
-
-        $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
-        return [
-            "request" => new Request(
-                $method,
-                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-                $headers,
-                $httpBody
-            ),
-            "serializedBody" => $httpBody
-        ];
-    }
-
-    /**
-     * Operation getPremiumBvn
-     *
-     * KYC - Lookup BVN Premium
-     *
-     * @param  int $bvn bvn (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPremiumBvn'] to see the possible values for this operation
-     *
-     * @throws \Dojah\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
-     * @return \Dojah\Model\GetPremiumBvnResponse
-     */
-    public function getPremiumBvn(
-        $bvn = SENTINEL_VALUE,
-
-
-        string $contentType = self::contentTypes['getPremiumBvn'][0]
-
-    )
-    {
-
-        list($response) = $this->getPremiumBvnWithHttpInfo($bvn, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation getPremiumBvnWithHttpInfo
-     *
-     * KYC - Lookup BVN Premium
-     *
-     * @param  int $bvn (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPremiumBvn'] to see the possible values for this operation
-     *
-     * @throws \Dojah\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
-     * @return array of \Dojah\Model\GetPremiumBvnResponse, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function getPremiumBvnWithHttpInfo($bvn = null, string $contentType = self::contentTypes['getPremiumBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
-    {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getPremiumBvnRequest($bvn, $contentType);
-
-        // Customization hook
-        $this->beforeSendHook($request, $requestOptions, $this->config);
-
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                if (
-                    ($e->getCode() == 401 || $e->getCode() == 403) &&
-                    !empty($this->getConfig()->getAccessToken()) &&
-                    $requestOptions->shouldRetryOAuth()
-                ) {
-                    return $this->getPremiumBvnWithHttpInfo(
-                        $bvn,
-                        $contentType,
-                        $requestOptions->setRetryOAuth(false)
-                    );
-                }
-
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Dojah\Model\GetPremiumBvnResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Dojah\Model\GetPremiumBvnResponse' !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Dojah\Model\GetPremiumBvnResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            $returnType = '\Dojah\Model\GetPremiumBvnResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    $content = json_decode($content);
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Dojah\Model\GetPremiumBvnResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation getPremiumBvnAsync
-     *
-     * KYC - Lookup BVN Premium
-     *
-     * @param  int $bvn (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPremiumBvn'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function getPremiumBvnAsync(
-        $bvn = SENTINEL_VALUE,
-
-
-        string $contentType = self::contentTypes['getPremiumBvn'][0]
-
-    )
-    {
-
-        return $this->getPremiumBvnAsyncWithHttpInfo($bvn, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation getPremiumBvnAsyncWithHttpInfo
-     *
-     * KYC - Lookup BVN Premium
-     *
-     * @param  int $bvn (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPremiumBvn'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function getPremiumBvnAsyncWithHttpInfo($bvn = null, string $contentType = self::contentTypes['getPremiumBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
-    {
-        $returnType = '\Dojah\Model\GetPremiumBvnResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getPremiumBvnRequest($bvn, $contentType);
-
-        // Customization hook
-        $this->beforeSendHook($request, $requestOptions, $this->config);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
-    }
-
-    /**
-     * Create request for operation 'getPremiumBvn'
-     *
-     * @param  int $bvn (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPremiumBvn'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Psr7\Request
-     */
-    public function getPremiumBvnRequest($bvn = SENTINEL_VALUE, string $contentType = self::contentTypes['getPremiumBvn'][0])
-    {
-
-
-
-        $resourcePath = '/api/v1/kyc/bvn/advance';
-        $formParams = [];
-        $queryParams = [];
-        $headerParams = [];
-        $httpBody = '';
-        $multipart = false;
-
-        if ($bvn !== SENTINEL_VALUE) {
-            // query params
-            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-                $bvn,
-                'bvn', // param base name
-                'integer', // openApiType
-                'form', // style
-                true, // explode
-                false // required
-            ) ?? []);
-        }
-
-
-
-
-        $headers = $this->headerSelector->selectHeaders(
-            ['application/json', ],
-            $contentType,
-            $multipart
-        );
-
-        // for model (json/xml)
-        if (count($formParams) > 0) {
-            if ($multipart) {
-                $multipartContents = [];
-                foreach ($formParams as $formParamName => $formParamValue) {
-                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
-                    foreach ($formParamValueItems as $formParamValueItem) {
-                        $multipartContents[] = [
-                            'name' => $formParamName,
-                            'contents' => $formParamValueItem
-                        ];
-                    }
-                }
-                // for HTTP post (form)
-                $httpBody = new MultipartStream($multipartContents);
-
-            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
-                # if Content-Type contains "application/json", json_encode the form parameters
-                $httpBody = \GuzzleHttp\json_encode($formParams);
-            } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
-            }
-        }
-
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
-
-        $defaultHeaders = [];
-        if ($this->config->getUserAgent()) {
-            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
-        }
-
-        $headers = array_merge(
-            $defaultHeaders,
-            $headerParams,
-            $headers
-        );
-
-        $method = 'GET';
-        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
-
-        $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
-        return [
-            "request" => new Request(
-                $method,
-                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-                $headers,
-                $httpBody
-            ),
-            "serializedBody" => $httpBody
-        ];
-    }
-
-    /**
-     * Operation getVIN
+     * Operation getVin
      *
      * KYC - Get VIN
      *
-     * @param  string $mode mode (optional)
-     * @param  string $firstname firstname (optional)
-     * @param  string $lastname lastname (optional)
-     * @param  int $vin vin (optional)
-     * @param  string $state state (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getVIN'] to see the possible values for this operation
+     * @param  string $app_id app_id (optional)
+     * @param  string $vin vin (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getVin'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return \Dojah\Model\GetVinResponse
      */
-    public function getVIN(
-        $mode = SENTINEL_VALUE,
-        $firstname = SENTINEL_VALUE,
-        $lastname = SENTINEL_VALUE,
+    public function getVin(
+        $app_id = SENTINEL_VALUE,
         $vin = SENTINEL_VALUE,
-        $state = SENTINEL_VALUE,
 
 
-        string $contentType = self::contentTypes['getVIN'][0]
+        string $contentType = self::contentTypes['getVin'][0]
 
     )
     {
 
-        list($response) = $this->getVINWithHttpInfo($mode, $firstname, $lastname, $vin, $state, $contentType);
+        list($response) = $this->getVinWithHttpInfo($app_id, $vin, $contentType);
         return $response;
     }
 
     /**
-     * Operation getVINWithHttpInfo
+     * Operation getVinWithHttpInfo
      *
      * KYC - Get VIN
      *
-     * @param  string $mode (optional)
-     * @param  string $firstname (optional)
-     * @param  string $lastname (optional)
-     * @param  int $vin (optional)
-     * @param  string $state (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getVIN'] to see the possible values for this operation
+     * @param  string $app_id (optional)
+     * @param  string $vin (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getVin'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetVinResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getVINWithHttpInfo($mode = null, $firstname = null, $lastname = null, $vin = null, $state = null, string $contentType = self::contentTypes['getVIN'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getVinWithHttpInfo($app_id = null, $vin = null, string $contentType = self::contentTypes['getVin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getVINRequest($mode, $firstname, $lastname, $vin, $state, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getVinRequest($app_id, $vin, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -3563,12 +1585,9 @@ class KYCApi extends \Dojah\CustomApi
                     !empty($this->getConfig()->getAccessToken()) &&
                     $requestOptions->shouldRetryOAuth()
                 ) {
-                    return $this->getVINWithHttpInfo(
-                        $mode,
-                        $firstname,
-                        $lastname,
+                    return $this->getVinWithHttpInfo(
+                        $app_id,
                         $vin,
-                        $state,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
                     );
@@ -3654,34 +1673,28 @@ class KYCApi extends \Dojah\CustomApi
     }
 
     /**
-     * Operation getVINAsync
+     * Operation getVinAsync
      *
      * KYC - Get VIN
      *
-     * @param  string $mode (optional)
-     * @param  string $firstname (optional)
-     * @param  string $lastname (optional)
-     * @param  int $vin (optional)
-     * @param  string $state (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getVIN'] to see the possible values for this operation
+     * @param  string $app_id (optional)
+     * @param  string $vin (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getVin'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getVINAsync(
-        $mode = SENTINEL_VALUE,
-        $firstname = SENTINEL_VALUE,
-        $lastname = SENTINEL_VALUE,
+    public function getVinAsync(
+        $app_id = SENTINEL_VALUE,
         $vin = SENTINEL_VALUE,
-        $state = SENTINEL_VALUE,
 
 
-        string $contentType = self::contentTypes['getVIN'][0]
+        string $contentType = self::contentTypes['getVin'][0]
 
     )
     {
 
-        return $this->getVINAsyncWithHttpInfo($mode, $firstname, $lastname, $vin, $state, $contentType)
+        return $this->getVinAsyncWithHttpInfo($app_id, $vin, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -3690,24 +1703,21 @@ class KYCApi extends \Dojah\CustomApi
     }
 
     /**
-     * Operation getVINAsyncWithHttpInfo
+     * Operation getVinAsyncWithHttpInfo
      *
      * KYC - Get VIN
      *
-     * @param  string $mode (optional)
-     * @param  string $firstname (optional)
-     * @param  string $lastname (optional)
-     * @param  int $vin (optional)
-     * @param  string $state (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getVIN'] to see the possible values for this operation
+     * @param  string $app_id (optional)
+     * @param  string $vin (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getVin'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getVINAsyncWithHttpInfo($mode = null, $firstname = null, $lastname = null, $vin = null, $state = null, string $contentType = self::contentTypes['getVIN'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getVinAsyncWithHttpInfo($app_id = null, $vin = null, string $contentType = self::contentTypes['getVin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetVinResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getVINRequest($mode, $firstname, $lastname, $vin, $state, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getVinRequest($app_id, $vin, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -3749,36 +1759,25 @@ class KYCApi extends \Dojah\CustomApi
     }
 
     /**
-     * Create request for operation 'getVIN'
+     * Create request for operation 'getVin'
      *
-     * @param  string $mode (optional)
-     * @param  string $firstname (optional)
-     * @param  string $lastname (optional)
-     * @param  int $vin (optional)
-     * @param  string $state (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getVIN'] to see the possible values for this operation
+     * @param  string $app_id (optional)
+     * @param  string $vin (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getVin'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getVINRequest($mode = SENTINEL_VALUE, $firstname = SENTINEL_VALUE, $lastname = SENTINEL_VALUE, $vin = SENTINEL_VALUE, $state = SENTINEL_VALUE, string $contentType = self::contentTypes['getVIN'][0])
+    public function getVinRequest($app_id = SENTINEL_VALUE, $vin = SENTINEL_VALUE, string $contentType = self::contentTypes['getVin'][0])
     {
 
-        // Check if $mode is a string
-        if ($mode !== SENTINEL_VALUE && !is_string($mode)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($mode, true), gettype($mode)));
+        // Check if $app_id is a string
+        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
         }
-        // Check if $firstname is a string
-        if ($firstname !== SENTINEL_VALUE && !is_string($firstname)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($firstname, true), gettype($firstname)));
-        }
-        // Check if $lastname is a string
-        if ($lastname !== SENTINEL_VALUE && !is_string($lastname)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($lastname, true), gettype($lastname)));
-        }
-        // Check if $state is a string
-        if ($state !== SENTINEL_VALUE && !is_string($state)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($state, true), gettype($state)));
+        // Check if $vin is a string
+        if ($vin !== SENTINEL_VALUE && !is_string($vin)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($vin, true), gettype($vin)));
         }
 
 
@@ -3789,55 +1788,11 @@ class KYCApi extends \Dojah\CustomApi
         $httpBody = '';
         $multipart = false;
 
-        if ($mode !== SENTINEL_VALUE) {
-            // query params
-            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-                $mode,
-                'mode', // param base name
-                'string', // openApiType
-                'form', // style
-                true, // explode
-                false // required
-            ) ?? []);
-        }
-        if ($firstname !== SENTINEL_VALUE) {
-            // query params
-            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-                $firstname,
-                'firstname', // param base name
-                'string', // openApiType
-                'form', // style
-                true, // explode
-                false // required
-            ) ?? []);
-        }
-        if ($lastname !== SENTINEL_VALUE) {
-            // query params
-            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-                $lastname,
-                'lastname', // param base name
-                'string', // openApiType
-                'form', // style
-                true, // explode
-                false // required
-            ) ?? []);
-        }
         if ($vin !== SENTINEL_VALUE) {
             // query params
             $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
                 $vin,
                 'vin', // param base name
-                'integer', // openApiType
-                'form', // style
-                true, // explode
-                false // required
-            ) ?? []);
-        }
-        if ($state !== SENTINEL_VALUE) {
-            // query params
-            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-                $state,
-                'state', // param base name
                 'string', // openApiType
                 'form', // style
                 true, // explode
@@ -3845,6 +1800,10 @@ class KYCApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
+        // header params
+        if ($app_id !== SENTINEL_VALUE) {
+            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
+        }
 
 
 
@@ -3879,16 +1838,6 @@ class KYCApi extends \Dojah\CustomApi
             }
         }
 
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -3918,1195 +1867,69 @@ class KYCApi extends \Dojah\CustomApi
     }
 
     /**
-     * Operation getVnin
+     * Operation submitAddress
      *
-     * Lookup VNIN
+     * Submit Address
      *
-     * @param  string $vnin vnin (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getVnin'] to see the possible values for this operation
-     *
-     * @throws \Dojah\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
-     * @return \Dojah\Model\GetVninResponse
-     */
-    public function getVnin(
-        $vnin = SENTINEL_VALUE,
-
-
-        string $contentType = self::contentTypes['getVnin'][0]
-
-    )
-    {
-
-        list($response) = $this->getVninWithHttpInfo($vnin, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation getVninWithHttpInfo
-     *
-     * Lookup VNIN
-     *
-     * @param  string $vnin (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getVnin'] to see the possible values for this operation
+     * @param  string $app_id app_id (optional)
+     * @param  \Dojah\Model\KycSubmitAddressRequest $kyc_submit_address_request kyc_submit_address_request (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['submitAddress'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return array of \Dojah\Model\GetVninResponse, HTTP status code, HTTP response headers (array of strings)
+     * @return \Dojah\Model\KycSubmitAddressResponse
      */
-    public function getVninWithHttpInfo($vnin = null, string $contentType = self::contentTypes['getVnin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
-    {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getVninRequest($vnin, $contentType);
-
-        // Customization hook
-        $this->beforeSendHook($request, $requestOptions, $this->config);
-
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                if (
-                    ($e->getCode() == 401 || $e->getCode() == 403) &&
-                    !empty($this->getConfig()->getAccessToken()) &&
-                    $requestOptions->shouldRetryOAuth()
-                ) {
-                    return $this->getVninWithHttpInfo(
-                        $vnin,
-                        $contentType,
-                        $requestOptions->setRetryOAuth(false)
-                    );
-                }
-
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Dojah\Model\GetVninResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Dojah\Model\GetVninResponse' !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Dojah\Model\GetVninResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            $returnType = '\Dojah\Model\GetVninResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    $content = json_decode($content);
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Dojah\Model\GetVninResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation getVninAsync
-     *
-     * Lookup VNIN
-     *
-     * @param  string $vnin (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getVnin'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function getVninAsync(
-        $vnin = SENTINEL_VALUE,
-
-
-        string $contentType = self::contentTypes['getVnin'][0]
-
-    )
-    {
-
-        return $this->getVninAsyncWithHttpInfo($vnin, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation getVninAsyncWithHttpInfo
-     *
-     * Lookup VNIN
-     *
-     * @param  string $vnin (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getVnin'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function getVninAsyncWithHttpInfo($vnin = null, string $contentType = self::contentTypes['getVnin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
-    {
-        $returnType = '\Dojah\Model\GetVninResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getVninRequest($vnin, $contentType);
-
-        // Customization hook
-        $this->beforeSendHook($request, $requestOptions, $this->config);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
-    }
-
-    /**
-     * Create request for operation 'getVnin'
-     *
-     * @param  string $vnin (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getVnin'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Psr7\Request
-     */
-    public function getVninRequest($vnin = SENTINEL_VALUE, string $contentType = self::contentTypes['getVnin'][0])
-    {
-
-        // Check if $vnin is a string
-        if ($vnin !== SENTINEL_VALUE && !is_string($vnin)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($vnin, true), gettype($vnin)));
-        }
-
-
-        $resourcePath = '/api/v1/kyc/vnin';
-        $formParams = [];
-        $queryParams = [];
-        $headerParams = [];
-        $httpBody = '';
-        $multipart = false;
-
-        if ($vnin !== SENTINEL_VALUE) {
-            // query params
-            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-                $vnin,
-                'vnin', // param base name
-                'string', // openApiType
-                'form', // style
-                true, // explode
-                false // required
-            ) ?? []);
-        }
-
-
-
-
-        $headers = $this->headerSelector->selectHeaders(
-            ['application/json', ],
-            $contentType,
-            $multipart
-        );
-
-        // for model (json/xml)
-        if (count($formParams) > 0) {
-            if ($multipart) {
-                $multipartContents = [];
-                foreach ($formParams as $formParamName => $formParamValue) {
-                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
-                    foreach ($formParamValueItems as $formParamValueItem) {
-                        $multipartContents[] = [
-                            'name' => $formParamName,
-                            'contents' => $formParamValueItem
-                        ];
-                    }
-                }
-                // for HTTP post (form)
-                $httpBody = new MultipartStream($multipartContents);
-
-            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
-                # if Content-Type contains "application/json", json_encode the form parameters
-                $httpBody = \GuzzleHttp\json_encode($formParams);
-            } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
-            }
-        }
-
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
-
-        $defaultHeaders = [];
-        if ($this->config->getUserAgent()) {
-            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
-        }
-
-        $headers = array_merge(
-            $defaultHeaders,
-            $headerParams,
-            $headers
-        );
-
-        $method = 'GET';
-        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
-
-        $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
-        return [
-            "request" => new Request(
-                $method,
-                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-                $headers,
-                $httpBody
-            ),
-            "serializedBody" => $httpBody
-        ];
-    }
-
-    /**
-     * Operation validateBvn
-     *
-     * KYC - Validate BVN
-     *
-     * @param  int $bvn bvn (optional)
-     * @param  string $first_name first_name (optional)
-     * @param  string $dob dob (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['validateBvn'] to see the possible values for this operation
-     *
-     * @throws \Dojah\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
-     * @return \Dojah\Model\ValidateBvnResponse
-     */
-    public function validateBvn(
-        $bvn = SENTINEL_VALUE,
-        $first_name = SENTINEL_VALUE,
-        $dob = SENTINEL_VALUE,
-
-
-        string $contentType = self::contentTypes['validateBvn'][0]
-
-    )
-    {
-
-        list($response) = $this->validateBvnWithHttpInfo($bvn, $first_name, $dob, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation validateBvnWithHttpInfo
-     *
-     * KYC - Validate BVN
-     *
-     * @param  int $bvn (optional)
-     * @param  string $first_name (optional)
-     * @param  string $dob (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['validateBvn'] to see the possible values for this operation
-     *
-     * @throws \Dojah\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
-     * @return array of \Dojah\Model\ValidateBvnResponse, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function validateBvnWithHttpInfo($bvn = null, $first_name = null, $dob = null, string $contentType = self::contentTypes['validateBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
-    {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->validateBvnRequest($bvn, $first_name, $dob, $contentType);
-
-        // Customization hook
-        $this->beforeSendHook($request, $requestOptions, $this->config);
-
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                if (
-                    ($e->getCode() == 401 || $e->getCode() == 403) &&
-                    !empty($this->getConfig()->getAccessToken()) &&
-                    $requestOptions->shouldRetryOAuth()
-                ) {
-                    return $this->validateBvnWithHttpInfo(
-                        $bvn,
-                        $first_name,
-                        $dob,
-                        $contentType,
-                        $requestOptions->setRetryOAuth(false)
-                    );
-                }
-
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Dojah\Model\ValidateBvnResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Dojah\Model\ValidateBvnResponse' !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Dojah\Model\ValidateBvnResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            $returnType = '\Dojah\Model\ValidateBvnResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    $content = json_decode($content);
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Dojah\Model\ValidateBvnResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation validateBvnAsync
-     *
-     * KYC - Validate BVN
-     *
-     * @param  int $bvn (optional)
-     * @param  string $first_name (optional)
-     * @param  string $dob (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['validateBvn'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function validateBvnAsync(
-        $bvn = SENTINEL_VALUE,
-        $first_name = SENTINEL_VALUE,
-        $dob = SENTINEL_VALUE,
-
-
-        string $contentType = self::contentTypes['validateBvn'][0]
-
-    )
-    {
-
-        return $this->validateBvnAsyncWithHttpInfo($bvn, $first_name, $dob, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation validateBvnAsyncWithHttpInfo
-     *
-     * KYC - Validate BVN
-     *
-     * @param  int $bvn (optional)
-     * @param  string $first_name (optional)
-     * @param  string $dob (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['validateBvn'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function validateBvnAsyncWithHttpInfo($bvn = null, $first_name = null, $dob = null, string $contentType = self::contentTypes['validateBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
-    {
-        $returnType = '\Dojah\Model\ValidateBvnResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->validateBvnRequest($bvn, $first_name, $dob, $contentType);
-
-        // Customization hook
-        $this->beforeSendHook($request, $requestOptions, $this->config);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
-    }
-
-    /**
-     * Create request for operation 'validateBvn'
-     *
-     * @param  int $bvn (optional)
-     * @param  string $first_name (optional)
-     * @param  string $dob (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['validateBvn'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Psr7\Request
-     */
-    public function validateBvnRequest($bvn = SENTINEL_VALUE, $first_name = SENTINEL_VALUE, $dob = SENTINEL_VALUE, string $contentType = self::contentTypes['validateBvn'][0])
-    {
-
-        // Check if $first_name is a string
-        if ($first_name !== SENTINEL_VALUE && !is_string($first_name)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($first_name, true), gettype($first_name)));
-        }
-        // Check if $dob is a string
-        if ($dob !== SENTINEL_VALUE && !is_string($dob)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($dob, true), gettype($dob)));
-        }
-
-
-        $resourcePath = '/api/v1/kyc/bvn';
-        $formParams = [];
-        $queryParams = [];
-        $headerParams = [];
-        $httpBody = '';
-        $multipart = false;
-
-        if ($bvn !== SENTINEL_VALUE) {
-            // query params
-            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-                $bvn,
-                'bvn', // param base name
-                'integer', // openApiType
-                'form', // style
-                true, // explode
-                false // required
-            ) ?? []);
-        }
-        if ($first_name !== SENTINEL_VALUE) {
-            // query params
-            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-                $first_name,
-                'first_name', // param base name
-                'string', // openApiType
-                'form', // style
-                true, // explode
-                false // required
-            ) ?? []);
-        }
-        if ($dob !== SENTINEL_VALUE) {
-            // query params
-            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-                $dob,
-                'dob', // param base name
-                'string', // openApiType
-                'form', // style
-                true, // explode
-                false // required
-            ) ?? []);
-        }
-
-
-
-
-        $headers = $this->headerSelector->selectHeaders(
-            ['application/json', ],
-            $contentType,
-            $multipart
-        );
-
-        // for model (json/xml)
-        if (count($formParams) > 0) {
-            if ($multipart) {
-                $multipartContents = [];
-                foreach ($formParams as $formParamName => $formParamValue) {
-                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
-                    foreach ($formParamValueItems as $formParamValueItem) {
-                        $multipartContents[] = [
-                            'name' => $formParamName,
-                            'contents' => $formParamValueItem
-                        ];
-                    }
-                }
-                // for HTTP post (form)
-                $httpBody = new MultipartStream($multipartContents);
-
-            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
-                # if Content-Type contains "application/json", json_encode the form parameters
-                $httpBody = \GuzzleHttp\json_encode($formParams);
-            } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
-            }
-        }
-
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
-
-        $defaultHeaders = [];
-        if ($this->config->getUserAgent()) {
-            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
-        }
-
-        $headers = array_merge(
-            $defaultHeaders,
-            $headerParams,
-            $headers
-        );
-
-        $method = 'GET';
-        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
-
-        $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
-        return [
-            "request" => new Request(
-                $method,
-                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-                $headers,
-                $httpBody
-            ),
-            "serializedBody" => $httpBody
-        ];
-    }
-
-    /**
-     * Operation verifyAge
-     *
-     * KYC - Age Verification
-     *
-     * @param  string $mode mode (optional)
-     * @param  int $account_number account_number (optional)
-     * @param  int $bank_code bank_code (optional)
-     * @param  string $dob dob (optional)
-     * @param  string $first_name first_name (optional)
-     * @param  string $last_name last_name (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyAge'] to see the possible values for this operation
-     *
-     * @throws \Dojah\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
-     * @return \Dojah\Model\VerifyAgeResponse
-     */
-    public function verifyAge(
-        $mode = SENTINEL_VALUE,
-        $account_number = SENTINEL_VALUE,
-        $bank_code = SENTINEL_VALUE,
-        $dob = SENTINEL_VALUE,
+    public function submitAddress(
+        $street = SENTINEL_VALUE,
+        $lga = SENTINEL_VALUE,
+        $state = SENTINEL_VALUE,
+        $landmark = SENTINEL_VALUE,
         $first_name = SENTINEL_VALUE,
         $last_name = SENTINEL_VALUE,
-
-
-        string $contentType = self::contentTypes['verifyAge'][0]
-
-    )
-    {
-
-        list($response) = $this->verifyAgeWithHttpInfo($mode, $account_number, $bank_code, $dob, $first_name, $last_name, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation verifyAgeWithHttpInfo
-     *
-     * KYC - Age Verification
-     *
-     * @param  string $mode (optional)
-     * @param  int $account_number (optional)
-     * @param  int $bank_code (optional)
-     * @param  string $dob (optional)
-     * @param  string $first_name (optional)
-     * @param  string $last_name (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyAge'] to see the possible values for this operation
-     *
-     * @throws \Dojah\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
-     * @return array of \Dojah\Model\VerifyAgeResponse, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function verifyAgeWithHttpInfo($mode = null, $account_number = null, $bank_code = null, $dob = null, $first_name = null, $last_name = null, string $contentType = self::contentTypes['verifyAge'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
-    {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifyAgeRequest($mode, $account_number, $bank_code, $dob, $first_name, $last_name, $contentType);
-
-        // Customization hook
-        $this->beforeSendHook($request, $requestOptions, $this->config);
-
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                if (
-                    ($e->getCode() == 401 || $e->getCode() == 403) &&
-                    !empty($this->getConfig()->getAccessToken()) &&
-                    $requestOptions->shouldRetryOAuth()
-                ) {
-                    return $this->verifyAgeWithHttpInfo(
-                        $mode,
-                        $account_number,
-                        $bank_code,
-                        $dob,
-                        $first_name,
-                        $last_name,
-                        $contentType,
-                        $requestOptions->setRetryOAuth(false)
-                    );
-                }
-
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Dojah\Model\VerifyAgeResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Dojah\Model\VerifyAgeResponse' !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Dojah\Model\VerifyAgeResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            $returnType = '\Dojah\Model\VerifyAgeResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    $content = json_decode($content);
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Dojah\Model\VerifyAgeResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation verifyAgeAsync
-     *
-     * KYC - Age Verification
-     *
-     * @param  string $mode (optional)
-     * @param  int $account_number (optional)
-     * @param  int $bank_code (optional)
-     * @param  string $dob (optional)
-     * @param  string $first_name (optional)
-     * @param  string $last_name (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyAge'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function verifyAgeAsync(
-        $mode = SENTINEL_VALUE,
-        $account_number = SENTINEL_VALUE,
-        $bank_code = SENTINEL_VALUE,
+        $middle_name = SENTINEL_VALUE,
         $dob = SENTINEL_VALUE,
-        $first_name = SENTINEL_VALUE,
-        $last_name = SENTINEL_VALUE,
+        $gender = SENTINEL_VALUE,
+        $mobile = SENTINEL_VALUE,
+        $app_id = SENTINEL_VALUE,
 
 
-        string $contentType = self::contentTypes['verifyAge'][0]
-
-    )
-    {
-
-        return $this->verifyAgeAsyncWithHttpInfo($mode, $account_number, $bank_code, $dob, $first_name, $last_name, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation verifyAgeAsyncWithHttpInfo
-     *
-     * KYC - Age Verification
-     *
-     * @param  string $mode (optional)
-     * @param  int $account_number (optional)
-     * @param  int $bank_code (optional)
-     * @param  string $dob (optional)
-     * @param  string $first_name (optional)
-     * @param  string $last_name (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyAge'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function verifyAgeAsyncWithHttpInfo($mode = null, $account_number = null, $bank_code = null, $dob = null, $first_name = null, $last_name = null, string $contentType = self::contentTypes['verifyAge'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
-    {
-        $returnType = '\Dojah\Model\VerifyAgeResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifyAgeRequest($mode, $account_number, $bank_code, $dob, $first_name, $last_name, $contentType);
-
-        // Customization hook
-        $this->beforeSendHook($request, $requestOptions, $this->config);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
-    }
-
-    /**
-     * Create request for operation 'verifyAge'
-     *
-     * @param  string $mode (optional)
-     * @param  int $account_number (optional)
-     * @param  int $bank_code (optional)
-     * @param  string $dob (optional)
-     * @param  string $first_name (optional)
-     * @param  string $last_name (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyAge'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Psr7\Request
-     */
-    public function verifyAgeRequest($mode = SENTINEL_VALUE, $account_number = SENTINEL_VALUE, $bank_code = SENTINEL_VALUE, $dob = SENTINEL_VALUE, $first_name = SENTINEL_VALUE, $last_name = SENTINEL_VALUE, string $contentType = self::contentTypes['verifyAge'][0])
-    {
-
-        // Check if $mode is a string
-        if ($mode !== SENTINEL_VALUE && !is_string($mode)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($mode, true), gettype($mode)));
-        }
-        // Check if $dob is a string
-        if ($dob !== SENTINEL_VALUE && !is_string($dob)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($dob, true), gettype($dob)));
-        }
-        // Check if $first_name is a string
-        if ($first_name !== SENTINEL_VALUE && !is_string($first_name)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($first_name, true), gettype($first_name)));
-        }
-        // Check if $last_name is a string
-        if ($last_name !== SENTINEL_VALUE && !is_string($last_name)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($last_name, true), gettype($last_name)));
-        }
-
-
-        $resourcePath = '/v1/kyc/age_verification';
-        $formParams = [];
-        $queryParams = [];
-        $headerParams = [];
-        $httpBody = '';
-        $multipart = false;
-
-        if ($mode !== SENTINEL_VALUE) {
-            // query params
-            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-                $mode,
-                'mode', // param base name
-                'string', // openApiType
-                'form', // style
-                true, // explode
-                false // required
-            ) ?? []);
-        }
-        if ($account_number !== SENTINEL_VALUE) {
-            // query params
-            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-                $account_number,
-                'account_number', // param base name
-                'integer', // openApiType
-                'form', // style
-                true, // explode
-                false // required
-            ) ?? []);
-        }
-        if ($bank_code !== SENTINEL_VALUE) {
-            // query params
-            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-                $bank_code,
-                'bank_code', // param base name
-                'integer', // openApiType
-                'form', // style
-                true, // explode
-                false // required
-            ) ?? []);
-        }
-        if ($dob !== SENTINEL_VALUE) {
-            // query params
-            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-                $dob,
-                'dob', // param base name
-                'string', // openApiType
-                'form', // style
-                true, // explode
-                false // required
-            ) ?? []);
-        }
-        if ($first_name !== SENTINEL_VALUE) {
-            // query params
-            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-                $first_name,
-                'first_name', // param base name
-                'string', // openApiType
-                'form', // style
-                true, // explode
-                false // required
-            ) ?? []);
-        }
-        if ($last_name !== SENTINEL_VALUE) {
-            // query params
-            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-                $last_name,
-                'last_name', // param base name
-                'string', // openApiType
-                'form', // style
-                true, // explode
-                false // required
-            ) ?? []);
-        }
-
-
-
-
-        $headers = $this->headerSelector->selectHeaders(
-            ['application/json', ],
-            $contentType,
-            $multipart
-        );
-
-        // for model (json/xml)
-        if (count($formParams) > 0) {
-            if ($multipart) {
-                $multipartContents = [];
-                foreach ($formParams as $formParamName => $formParamValue) {
-                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
-                    foreach ($formParamValueItems as $formParamValueItem) {
-                        $multipartContents[] = [
-                            'name' => $formParamName,
-                            'contents' => $formParamValueItem
-                        ];
-                    }
-                }
-                // for HTTP post (form)
-                $httpBody = new MultipartStream($multipartContents);
-
-            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
-                # if Content-Type contains "application/json", json_encode the form parameters
-                $httpBody = \GuzzleHttp\json_encode($formParams);
-            } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
-            }
-        }
-
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
-
-        $defaultHeaders = [];
-        if ($this->config->getUserAgent()) {
-            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
-        }
-
-        $headers = array_merge(
-            $defaultHeaders,
-            $headerParams,
-            $headers
-        );
-
-        $method = 'GET';
-        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
-
-        $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
-        return [
-            "request" => new Request(
-                $method,
-                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-                $headers,
-                $httpBody
-            ),
-            "serializedBody" => $httpBody
-        ];
-    }
-
-    /**
-     * Operation verifySelfieBvn
-     *
-     * KYC - Selfie BVN Verificatoin
-     *
-     * @param  \Dojah\Model\VerifySelfieBvnRequest $verify_selfie_bvn_request verify_selfie_bvn_request (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifySelfieBvn'] to see the possible values for this operation
-     *
-     * @throws \Dojah\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
-     * @return \Dojah\Model\VerifySelfieBvnResponse
-     */
-    public function verifySelfieBvn(
-        $bvn = SENTINEL_VALUE,
-        $selfie_image = SENTINEL_VALUE,
-
-
-        string $contentType = self::contentTypes['verifySelfieBvn'][0]
+        string $contentType = self::contentTypes['submitAddress'][0]
 
     )
     {
         $_body = null;
-        $this->setRequestBodyProperty($_body, "bvn", $bvn);
-        $this->setRequestBodyProperty($_body, "selfie_image", $selfie_image);
-        $verify_selfie_bvn_request = $_body;
+        $this->setRequestBodyProperty($_body, "street", $street);
+        $this->setRequestBodyProperty($_body, "lga", $lga);
+        $this->setRequestBodyProperty($_body, "state", $state);
+        $this->setRequestBodyProperty($_body, "landmark", $landmark);
+        $this->setRequestBodyProperty($_body, "first_name", $first_name);
+        $this->setRequestBodyProperty($_body, "last_name", $last_name);
+        $this->setRequestBodyProperty($_body, "middle_name", $middle_name);
+        $this->setRequestBodyProperty($_body, "dob", $dob);
+        $this->setRequestBodyProperty($_body, "gender", $gender);
+        $this->setRequestBodyProperty($_body, "mobile", $mobile);
+        $kyc_submit_address_request = $_body;
 
-        list($response) = $this->verifySelfieBvnWithHttpInfo($verify_selfie_bvn_request, $contentType);
+        list($response) = $this->submitAddressWithHttpInfo($app_id, $kyc_submit_address_request, $contentType);
         return $response;
     }
 
     /**
-     * Operation verifySelfieBvnWithHttpInfo
+     * Operation submitAddressWithHttpInfo
      *
-     * KYC - Selfie BVN Verificatoin
+     * Submit Address
      *
-     * @param  \Dojah\Model\VerifySelfieBvnRequest $verify_selfie_bvn_request (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifySelfieBvn'] to see the possible values for this operation
+     * @param  string $app_id (optional)
+     * @param  \Dojah\Model\KycSubmitAddressRequest $kyc_submit_address_request (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['submitAddress'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return array of \Dojah\Model\VerifySelfieBvnResponse, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Dojah\Model\KycSubmitAddressResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function verifySelfieBvnWithHttpInfo($verify_selfie_bvn_request = null, string $contentType = self::contentTypes['verifySelfieBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function submitAddressWithHttpInfo($app_id = null, $kyc_submit_address_request = null, string $contentType = self::contentTypes['submitAddress'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifySelfieBvnRequest($verify_selfie_bvn_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->submitAddressRequest($app_id, $kyc_submit_address_request, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
@@ -5121,8 +1944,9 @@ class KYCApi extends \Dojah\CustomApi
                     !empty($this->getConfig()->getAccessToken()) &&
                     $requestOptions->shouldRetryOAuth()
                 ) {
-                    return $this->verifySelfieBvnWithHttpInfo(
-                        $verify_selfie_bvn_request,
+                    return $this->submitAddressWithHttpInfo(
+                        $app_id,
+                        $kyc_submit_address_request,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
                     );
@@ -5160,23 +1984,23 @@ class KYCApi extends \Dojah\CustomApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Dojah\Model\VerifySelfieBvnResponse' === '\SplFileObject') {
+                    if ('\Dojah\Model\KycSubmitAddressResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Dojah\Model\VerifySelfieBvnResponse' !== 'string') {
+                        if ('\Dojah\Model\KycSubmitAddressResponse' !== 'string') {
                             $content = json_decode($content);
                         }
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Dojah\Model\VerifySelfieBvnResponse', []),
+                        ObjectSerializer::deserialize($content, '\Dojah\Model\KycSubmitAddressResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
             }
 
-            $returnType = '\Dojah\Model\VerifySelfieBvnResponse';
+            $returnType = '\Dojah\Model\KycSubmitAddressResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -5197,7 +2021,7 @@ class KYCApi extends \Dojah\CustomApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Dojah\Model\VerifySelfieBvnResponse',
+                        '\Dojah\Model\KycSubmitAddressResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -5208,31 +2032,49 @@ class KYCApi extends \Dojah\CustomApi
     }
 
     /**
-     * Operation verifySelfieBvnAsync
+     * Operation submitAddressAsync
      *
-     * KYC - Selfie BVN Verificatoin
+     * Submit Address
      *
-     * @param  \Dojah\Model\VerifySelfieBvnRequest $verify_selfie_bvn_request (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifySelfieBvn'] to see the possible values for this operation
+     * @param  string $app_id (optional)
+     * @param  \Dojah\Model\KycSubmitAddressRequest $kyc_submit_address_request (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['submitAddress'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function verifySelfieBvnAsync(
-        $bvn = SENTINEL_VALUE,
-        $selfie_image = SENTINEL_VALUE,
+    public function submitAddressAsync(
+        $street = SENTINEL_VALUE,
+        $lga = SENTINEL_VALUE,
+        $state = SENTINEL_VALUE,
+        $landmark = SENTINEL_VALUE,
+        $first_name = SENTINEL_VALUE,
+        $last_name = SENTINEL_VALUE,
+        $middle_name = SENTINEL_VALUE,
+        $dob = SENTINEL_VALUE,
+        $gender = SENTINEL_VALUE,
+        $mobile = SENTINEL_VALUE,
+        $app_id = SENTINEL_VALUE,
 
 
-        string $contentType = self::contentTypes['verifySelfieBvn'][0]
+        string $contentType = self::contentTypes['submitAddress'][0]
 
     )
     {
         $_body = null;
-        $this->setRequestBodyProperty($_body, "bvn", $bvn);
-        $this->setRequestBodyProperty($_body, "selfie_image", $selfie_image);
-        $verify_selfie_bvn_request = $_body;
+        $this->setRequestBodyProperty($_body, "street", $street);
+        $this->setRequestBodyProperty($_body, "lga", $lga);
+        $this->setRequestBodyProperty($_body, "state", $state);
+        $this->setRequestBodyProperty($_body, "landmark", $landmark);
+        $this->setRequestBodyProperty($_body, "first_name", $first_name);
+        $this->setRequestBodyProperty($_body, "last_name", $last_name);
+        $this->setRequestBodyProperty($_body, "middle_name", $middle_name);
+        $this->setRequestBodyProperty($_body, "dob", $dob);
+        $this->setRequestBodyProperty($_body, "gender", $gender);
+        $this->setRequestBodyProperty($_body, "mobile", $mobile);
+        $kyc_submit_address_request = $_body;
 
-        return $this->verifySelfieBvnAsyncWithHttpInfo($verify_selfie_bvn_request, $contentType)
+        return $this->submitAddressAsyncWithHttpInfo($app_id, $kyc_submit_address_request, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -5241,20 +2083,21 @@ class KYCApi extends \Dojah\CustomApi
     }
 
     /**
-     * Operation verifySelfieBvnAsyncWithHttpInfo
+     * Operation submitAddressAsyncWithHttpInfo
      *
-     * KYC - Selfie BVN Verificatoin
+     * Submit Address
      *
-     * @param  \Dojah\Model\VerifySelfieBvnRequest $verify_selfie_bvn_request (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifySelfieBvn'] to see the possible values for this operation
+     * @param  string $app_id (optional)
+     * @param  \Dojah\Model\KycSubmitAddressRequest $kyc_submit_address_request (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['submitAddress'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function verifySelfieBvnAsyncWithHttpInfo($verify_selfie_bvn_request = null, string $contentType = self::contentTypes['verifySelfieBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function submitAddressAsyncWithHttpInfo($app_id = null, $kyc_submit_address_request = null, string $contentType = self::contentTypes['submitAddress'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $returnType = '\Dojah\Model\VerifySelfieBvnResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifySelfieBvnRequest($verify_selfie_bvn_request, $contentType);
+        $returnType = '\Dojah\Model\KycSubmitAddressResponse';
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->submitAddressRequest($app_id, $kyc_submit_address_request, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
@@ -5296,28 +2139,33 @@ class KYCApi extends \Dojah\CustomApi
     }
 
     /**
-     * Create request for operation 'verifySelfieBvn'
+     * Create request for operation 'submitAddress'
      *
-     * @param  \Dojah\Model\VerifySelfieBvnRequest $verify_selfie_bvn_request (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifySelfieBvn'] to see the possible values for this operation
+     * @param  string $app_id (optional)
+     * @param  \Dojah\Model\KycSubmitAddressRequest $kyc_submit_address_request (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['submitAddress'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function verifySelfieBvnRequest($verify_selfie_bvn_request = SENTINEL_VALUE, string $contentType = self::contentTypes['verifySelfieBvn'][0])
+    public function submitAddressRequest($app_id = SENTINEL_VALUE, $kyc_submit_address_request = SENTINEL_VALUE, string $contentType = self::contentTypes['submitAddress'][0])
     {
 
-        if ($verify_selfie_bvn_request !== SENTINEL_VALUE) {
-            if (!($verify_selfie_bvn_request instanceof \Dojah\Model\VerifySelfieBvnRequest)) {
-                if (!is_array($verify_selfie_bvn_request))
-                    throw new \InvalidArgumentException('"verify_selfie_bvn_request" must be associative array or an instance of \Dojah\Model\VerifySelfieBvnRequest KYCApi.verifySelfieBvn.');
+        // Check if $app_id is a string
+        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
+        }
+        if ($kyc_submit_address_request !== SENTINEL_VALUE) {
+            if (!($kyc_submit_address_request instanceof \Dojah\Model\KycSubmitAddressRequest)) {
+                if (!is_array($kyc_submit_address_request))
+                    throw new \InvalidArgumentException('"kyc_submit_address_request" must be associative array or an instance of \Dojah\Model\KycSubmitAddressRequest KYCApi.submitAddress.');
                 else
-                    $verify_selfie_bvn_request = new \Dojah\Model\VerifySelfieBvnRequest($verify_selfie_bvn_request);
+                    $kyc_submit_address_request = new \Dojah\Model\KycSubmitAddressRequest($kyc_submit_address_request);
             }
         }
 
 
-        $resourcePath = '/v1/kyc/bvn/verify';
+        $resourcePath = '/api/v1/kyc/address';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -5325,6 +2173,10 @@ class KYCApi extends \Dojah\CustomApi
         $multipart = false;
 
 
+        // header params
+        if ($app_id !== SENTINEL_VALUE) {
+            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
+        }
 
 
 
@@ -5335,12 +2187,12 @@ class KYCApi extends \Dojah\CustomApi
         );
 
         // for model (json/xml)
-        if (isset($verify_selfie_bvn_request)) {
+        if (isset($kyc_submit_address_request)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
-                $httpBody = \GuzzleHttp\json_encode(ObjectSerializer::sanitizeForSerialization($verify_selfie_bvn_request));
+                $httpBody = \GuzzleHttp\json_encode(ObjectSerializer::sanitizeForSerialization($kyc_submit_address_request));
             } else {
-                $httpBody = $verify_selfie_bvn_request;
+                $httpBody = $kyc_submit_address_request;
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -5366,358 +2218,6 @@ class KYCApi extends \Dojah\CustomApi
             }
         }
 
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
-
-        $defaultHeaders = [];
-        if ($this->config->getUserAgent()) {
-            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
-        }
-
-        $headers = array_merge(
-            $defaultHeaders,
-            $headerParams,
-            $headers
-        );
-
-        $method = 'POST';
-        $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
-
-        $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
-        return [
-            "request" => new Request(
-                $method,
-                $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-                $headers,
-                $httpBody
-            ),
-            "serializedBody" => $httpBody
-        ];
-    }
-
-    /**
-     * Operation verifySelfieNin
-     *
-     * KYC - Selfie NIN Verification
-     *
-     * @param  \Dojah\Model\VerifySelfieNinRequest $verify_selfie_nin_request verify_selfie_nin_request (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifySelfieNin'] to see the possible values for this operation
-     *
-     * @throws \Dojah\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
-     * @return \Dojah\Model\VerifySelfieNinResponse
-     */
-    public function verifySelfieNin(
-        $nin = SENTINEL_VALUE,
-        $selfie_image = SENTINEL_VALUE,
-
-
-        string $contentType = self::contentTypes['verifySelfieNin'][0]
-
-    )
-    {
-        $_body = null;
-        $this->setRequestBodyProperty($_body, "nin", $nin);
-        $this->setRequestBodyProperty($_body, "selfie_image", $selfie_image);
-        $verify_selfie_nin_request = $_body;
-
-        list($response) = $this->verifySelfieNinWithHttpInfo($verify_selfie_nin_request, $contentType);
-        return $response;
-    }
-
-    /**
-     * Operation verifySelfieNinWithHttpInfo
-     *
-     * KYC - Selfie NIN Verification
-     *
-     * @param  \Dojah\Model\VerifySelfieNinRequest $verify_selfie_nin_request (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifySelfieNin'] to see the possible values for this operation
-     *
-     * @throws \Dojah\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
-     * @return array of \Dojah\Model\VerifySelfieNinResponse, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function verifySelfieNinWithHttpInfo($verify_selfie_nin_request = null, string $contentType = self::contentTypes['verifySelfieNin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
-    {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifySelfieNinRequest($verify_selfie_nin_request, $contentType);
-
-        // Customization hook
-        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
-
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                if (
-                    ($e->getCode() == 401 || $e->getCode() == 403) &&
-                    !empty($this->getConfig()->getAccessToken()) &&
-                    $requestOptions->shouldRetryOAuth()
-                ) {
-                    return $this->verifySelfieNinWithHttpInfo(
-                        $verify_selfie_nin_request,
-                        $contentType,
-                        $requestOptions->setRetryOAuth(false)
-                    );
-                }
-
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
-            }
-
-            $statusCode = $response->getStatusCode();
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            switch($statusCode) {
-                case 200:
-                    if ('\Dojah\Model\VerifySelfieNinResponse' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\Dojah\Model\VerifySelfieNinResponse' !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\Dojah\Model\VerifySelfieNinResponse', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-            }
-
-            $returnType = '\Dojah\Model\VerifySelfieNinResponse';
-            if ($returnType === '\SplFileObject') {
-                $content = $response->getBody(); //stream goes to serializer
-            } else {
-                $content = (string) $response->getBody();
-                if ($returnType !== 'string') {
-                    $content = json_decode($content);
-                }
-            }
-
-            return [
-                ObjectSerializer::deserialize($content, $returnType, []),
-                $response->getStatusCode(),
-                $response->getHeaders()
-            ];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-                case 200:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\Dojah\Model\VerifySelfieNinResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation verifySelfieNinAsync
-     *
-     * KYC - Selfie NIN Verification
-     *
-     * @param  \Dojah\Model\VerifySelfieNinRequest $verify_selfie_nin_request (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifySelfieNin'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function verifySelfieNinAsync(
-        $nin = SENTINEL_VALUE,
-        $selfie_image = SENTINEL_VALUE,
-
-
-        string $contentType = self::contentTypes['verifySelfieNin'][0]
-
-    )
-    {
-        $_body = null;
-        $this->setRequestBodyProperty($_body, "nin", $nin);
-        $this->setRequestBodyProperty($_body, "selfie_image", $selfie_image);
-        $verify_selfie_nin_request = $_body;
-
-        return $this->verifySelfieNinAsyncWithHttpInfo($verify_selfie_nin_request, $contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation verifySelfieNinAsyncWithHttpInfo
-     *
-     * KYC - Selfie NIN Verification
-     *
-     * @param  \Dojah\Model\VerifySelfieNinRequest $verify_selfie_nin_request (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifySelfieNin'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function verifySelfieNinAsyncWithHttpInfo($verify_selfie_nin_request = null, string $contentType = self::contentTypes['verifySelfieNin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
-    {
-        $returnType = '\Dojah\Model\VerifySelfieNinResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifySelfieNinRequest($verify_selfie_nin_request, $contentType);
-
-        // Customization hook
-        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    if ($returnType === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ($returnType !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, $returnType, []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
-    }
-
-    /**
-     * Create request for operation 'verifySelfieNin'
-     *
-     * @param  \Dojah\Model\VerifySelfieNinRequest $verify_selfie_nin_request (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifySelfieNin'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Psr7\Request
-     */
-    public function verifySelfieNinRequest($verify_selfie_nin_request = SENTINEL_VALUE, string $contentType = self::contentTypes['verifySelfieNin'][0])
-    {
-
-        if ($verify_selfie_nin_request !== SENTINEL_VALUE) {
-            if (!($verify_selfie_nin_request instanceof \Dojah\Model\VerifySelfieNinRequest)) {
-                if (!is_array($verify_selfie_nin_request))
-                    throw new \InvalidArgumentException('"verify_selfie_nin_request" must be associative array or an instance of \Dojah\Model\VerifySelfieNinRequest KYCApi.verifySelfieNin.');
-                else
-                    $verify_selfie_nin_request = new \Dojah\Model\VerifySelfieNinRequest($verify_selfie_nin_request);
-            }
-        }
-
-
-        $resourcePath = '/v1/kyc/nin/verify';
-        $formParams = [];
-        $queryParams = [];
-        $headerParams = [];
-        $httpBody = '';
-        $multipart = false;
-
-
-
-
-
-        $headers = $this->headerSelector->selectHeaders(
-            ['application/json', ],
-            $contentType,
-            $multipart
-        );
-
-        // for model (json/xml)
-        if (isset($verify_selfie_nin_request)) {
-            if (stripos($headers['Content-Type'], 'application/json') !== false) {
-                # if Content-Type contains "application/json", json_encode the body
-                $httpBody = \GuzzleHttp\json_encode(ObjectSerializer::sanitizeForSerialization($verify_selfie_nin_request));
-            } else {
-                $httpBody = $verify_selfie_nin_request;
-            }
-        } elseif (count($formParams) > 0) {
-            if ($multipart) {
-                $multipartContents = [];
-                foreach ($formParams as $formParamName => $formParamValue) {
-                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
-                    foreach ($formParamValueItems as $formParamValueItem) {
-                        $multipartContents[] = [
-                            'name' => $formParamName,
-                            'contents' => $formParamValueItem
-                        ];
-                    }
-                }
-                // for HTTP post (form)
-                $httpBody = new MultipartStream($multipartContents);
-
-            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
-                # if Content-Type contains "application/json", json_encode the form parameters
-                $httpBody = \GuzzleHttp\json_encode($formParams);
-            } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
-            }
-        }
-
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {

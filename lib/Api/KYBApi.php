@@ -10,7 +10,7 @@
  */
 
 /**
- * DOJAH APIs
+ * DOJAH Publilc APIs
  *
  * Use Dojah to verify, onboard and manage user identity across Africa!
  *
@@ -28,6 +28,10 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\MultipartStream;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
+use GuzzleHttp\BodySummarizer;
+use GuzzleHttp\Middleware;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Utils;
 use Dojah\ApiException;
 use Dojah\Configuration;
 use Dojah\HeaderSelector;
@@ -57,10 +61,10 @@ class KYBApi extends \Dojah\CustomApi
 
     /** @var string[] $contentTypes **/
     public const contentTypes = [
-        'getAdvancedCac' => [
+        'businessDetail' => [
             'application/json',
         ],
-        'getBasicCac' => [
+        'businessSearch' => [
             'application/json',
         ],
         'getCac' => [
@@ -83,7 +87,19 @@ class KYBApi extends \Dojah\CustomApi
         HeaderSelector $selector = null,
         $hostIndex = 0
     ) {
-        $this->client = $client ?: new Client();
+        $clientOptions = [];
+        if (!$config->getVerifySsl()) $clientOptions["verify"] = false;
+
+        // Do not truncate error messages
+        // https://github.com/guzzle/guzzle/issues/2185#issuecomment-800293420
+        $stack = new HandlerStack(Utils::chooseHandler());
+        $stack->push(Middleware::httpErrors(new BodySummarizer(10000)), 'http_errors');
+        $stack->push(Middleware::redirect(), 'allow_redirects');
+        $stack->push(Middleware::cookies(), 'cookies');
+        $stack->push(Middleware::prepareBody(), 'prepare_body');
+        $clientOptions["handler"] = $stack;
+
+        $this->client = $client ?: new Client($clientOptions);
         $this->config = $config ?: new Configuration();
         $this->headerSelector = $selector ?: new HeaderSelector();
         $this->hostIndex = $hostIndex;
@@ -128,51 +144,54 @@ class KYBApi extends \Dojah\CustomApi
     }
 
     /**
-     * Operation getAdvancedCac
+     * Operation businessDetail
      *
-     * KYC - Get CAC Advanced
+     * Business Detail
      *
-     * @param  int $rc rc (optional)
-     * @param  string $type type (optional)
-     * @param  string $class class (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAdvancedCac'] to see the possible values for this operation
+     * @param  string $app_id app_id (optional)
+     * @param  string $international_number international_number (optional)
+     * @param  string $country_code country_code (optional)
+     * @param  bool $full full (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['businessDetail'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return \Dojah\Model\GetAdvancedCacResponse
+     * @return object
      */
-    public function getAdvancedCac(
-        $rc = SENTINEL_VALUE,
-        $type = SENTINEL_VALUE,
-        $class = SENTINEL_VALUE,
+    public function businessDetail(
+        $app_id = SENTINEL_VALUE,
+        $international_number = SENTINEL_VALUE,
+        $country_code = SENTINEL_VALUE,
+        $full = SENTINEL_VALUE,
 
 
-        string $contentType = self::contentTypes['getAdvancedCac'][0]
+        string $contentType = self::contentTypes['businessDetail'][0]
 
     )
     {
 
-        list($response) = $this->getAdvancedCacWithHttpInfo($rc, $type, $class, $contentType);
+        list($response) = $this->businessDetailWithHttpInfo($app_id, $international_number, $country_code, $full, $contentType);
         return $response;
     }
 
     /**
-     * Operation getAdvancedCacWithHttpInfo
+     * Operation businessDetailWithHttpInfo
      *
-     * KYC - Get CAC Advanced
+     * Business Detail
      *
-     * @param  int $rc (optional)
-     * @param  string $type (optional)
-     * @param  string $class (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAdvancedCac'] to see the possible values for this operation
+     * @param  string $app_id (optional)
+     * @param  string $international_number (optional)
+     * @param  string $country_code (optional)
+     * @param  bool $full (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['businessDetail'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return array of \Dojah\Model\GetAdvancedCacResponse, HTTP status code, HTTP response headers (array of strings)
+     * @return array of object, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getAdvancedCacWithHttpInfo($rc = null, $type = null, $class = null, string $contentType = self::contentTypes['getAdvancedCac'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function businessDetailWithHttpInfo($app_id = null, $international_number = null, $country_code = null, $full = null, string $contentType = self::contentTypes['businessDetail'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getAdvancedCacRequest($rc, $type, $class, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->businessDetailRequest($app_id, $international_number, $country_code, $full, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -187,10 +206,11 @@ class KYBApi extends \Dojah\CustomApi
                     !empty($this->getConfig()->getAccessToken()) &&
                     $requestOptions->shouldRetryOAuth()
                 ) {
-                    return $this->getAdvancedCacWithHttpInfo(
-                        $rc,
-                        $type,
-                        $class,
+                    return $this->businessDetailWithHttpInfo(
+                        $app_id,
+                        $international_number,
+                        $country_code,
+                        $full,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
                     );
@@ -228,23 +248,23 @@ class KYBApi extends \Dojah\CustomApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Dojah\Model\GetAdvancedCacResponse' === '\SplFileObject') {
+                    if ('object' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Dojah\Model\GetAdvancedCacResponse' !== 'string') {
+                        if ('object' !== 'string') {
                             $content = json_decode($content);
                         }
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Dojah\Model\GetAdvancedCacResponse', []),
+                        ObjectSerializer::deserialize($content, 'object', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
             }
 
-            $returnType = '\Dojah\Model\GetAdvancedCacResponse';
+            $returnType = 'object';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -265,7 +285,7 @@ class KYBApi extends \Dojah\CustomApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Dojah\Model\GetAdvancedCacResponse',
+                        'object',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -276,30 +296,32 @@ class KYBApi extends \Dojah\CustomApi
     }
 
     /**
-     * Operation getAdvancedCacAsync
+     * Operation businessDetailAsync
      *
-     * KYC - Get CAC Advanced
+     * Business Detail
      *
-     * @param  int $rc (optional)
-     * @param  string $type (optional)
-     * @param  string $class (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAdvancedCac'] to see the possible values for this operation
+     * @param  string $app_id (optional)
+     * @param  string $international_number (optional)
+     * @param  string $country_code (optional)
+     * @param  bool $full (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['businessDetail'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getAdvancedCacAsync(
-        $rc = SENTINEL_VALUE,
-        $type = SENTINEL_VALUE,
-        $class = SENTINEL_VALUE,
+    public function businessDetailAsync(
+        $app_id = SENTINEL_VALUE,
+        $international_number = SENTINEL_VALUE,
+        $country_code = SENTINEL_VALUE,
+        $full = SENTINEL_VALUE,
 
 
-        string $contentType = self::contentTypes['getAdvancedCac'][0]
+        string $contentType = self::contentTypes['businessDetail'][0]
 
     )
     {
 
-        return $this->getAdvancedCacAsyncWithHttpInfo($rc, $type, $class, $contentType)
+        return $this->businessDetailAsyncWithHttpInfo($app_id, $international_number, $country_code, $full, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -308,22 +330,23 @@ class KYBApi extends \Dojah\CustomApi
     }
 
     /**
-     * Operation getAdvancedCacAsyncWithHttpInfo
+     * Operation businessDetailAsyncWithHttpInfo
      *
-     * KYC - Get CAC Advanced
+     * Business Detail
      *
-     * @param  int $rc (optional)
-     * @param  string $type (optional)
-     * @param  string $class (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAdvancedCac'] to see the possible values for this operation
+     * @param  string $app_id (optional)
+     * @param  string $international_number (optional)
+     * @param  string $country_code (optional)
+     * @param  bool $full (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['businessDetail'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getAdvancedCacAsyncWithHttpInfo($rc = null, $type = null, $class = null, string $contentType = self::contentTypes['getAdvancedCac'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function businessDetailAsyncWithHttpInfo($app_id = null, $international_number = null, $country_code = null, $full = null, string $contentType = self::contentTypes['businessDetail'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $returnType = '\Dojah\Model\GetAdvancedCacResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getAdvancedCacRequest($rc, $type, $class, $contentType);
+        $returnType = 'object';
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->businessDetailRequest($app_id, $international_number, $country_code, $full, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -365,70 +388,79 @@ class KYBApi extends \Dojah\CustomApi
     }
 
     /**
-     * Create request for operation 'getAdvancedCac'
+     * Create request for operation 'businessDetail'
      *
-     * @param  int $rc (optional)
-     * @param  string $type (optional)
-     * @param  string $class (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAdvancedCac'] to see the possible values for this operation
+     * @param  string $app_id (optional)
+     * @param  string $international_number (optional)
+     * @param  string $country_code (optional)
+     * @param  bool $full (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['businessDetail'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getAdvancedCacRequest($rc = SENTINEL_VALUE, $type = SENTINEL_VALUE, $class = SENTINEL_VALUE, string $contentType = self::contentTypes['getAdvancedCac'][0])
+    public function businessDetailRequest($app_id = SENTINEL_VALUE, $international_number = SENTINEL_VALUE, $country_code = SENTINEL_VALUE, $full = SENTINEL_VALUE, string $contentType = self::contentTypes['businessDetail'][0])
     {
 
-        // Check if $type is a string
-        if ($type !== SENTINEL_VALUE && !is_string($type)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($type, true), gettype($type)));
+        // Check if $app_id is a string
+        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
         }
-        // Check if $class is a string
-        if ($class !== SENTINEL_VALUE && !is_string($class)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($class, true), gettype($class)));
+        // Check if $international_number is a string
+        if ($international_number !== SENTINEL_VALUE && !is_string($international_number)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($international_number, true), gettype($international_number)));
+        }
+        // Check if $country_code is a string
+        if ($country_code !== SENTINEL_VALUE && !is_string($country_code)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($country_code, true), gettype($country_code)));
         }
 
 
-        $resourcePath = '/v1/kyc/cac/advance';
+        $resourcePath = '/api/v1/kyb/business/detail';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
         $httpBody = '';
         $multipart = false;
 
-        if ($rc !== SENTINEL_VALUE) {
+        if ($international_number !== SENTINEL_VALUE) {
             // query params
             $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-                $rc,
-                'rc', // param base name
-                'integer', // openApiType
-                'form', // style
-                true, // explode
-                false // required
-            ) ?? []);
-        }
-        if ($type !== SENTINEL_VALUE) {
-            // query params
-            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-                $type,
-                'type', // param base name
+                $international_number,
+                'international_number', // param base name
                 'string', // openApiType
                 'form', // style
                 true, // explode
                 false // required
             ) ?? []);
         }
-        if ($class !== SENTINEL_VALUE) {
+        if ($country_code !== SENTINEL_VALUE) {
             // query params
             $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-                $class,
-                'class', // param base name
+                $country_code,
+                'country_code', // param base name
                 'string', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
+        if ($full !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $full,
+                'full', // param base name
+                'boolean', // openApiType
                 'form', // style
                 true, // explode
                 false // required
             ) ?? []);
         }
 
+        // header params
+        if ($app_id !== SENTINEL_VALUE) {
+            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
+        }
 
 
 
@@ -463,16 +495,6 @@ class KYBApi extends \Dojah\CustomApi
             }
         }
 
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -502,48 +524,51 @@ class KYBApi extends \Dojah\CustomApi
     }
 
     /**
-     * Operation getBasicCac
+     * Operation businessSearch
      *
-     * KYB - Get CAC 2
+     * Business Search
      *
-     * @param  int $rc rc (optional)
-     * @param  string $type type (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBasicCac'] to see the possible values for this operation
+     * @param  string $app_id app_id (optional)
+     * @param  string $country_code country_code (optional)
+     * @param  int $company company (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['businessSearch'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return \Dojah\Model\GetBasicCacResponse
+     * @return object
      */
-    public function getBasicCac(
-        $rc = SENTINEL_VALUE,
-        $type = SENTINEL_VALUE,
+    public function businessSearch(
+        $app_id = SENTINEL_VALUE,
+        $country_code = SENTINEL_VALUE,
+        $company = SENTINEL_VALUE,
 
 
-        string $contentType = self::contentTypes['getBasicCac'][0]
+        string $contentType = self::contentTypes['businessSearch'][0]
 
     )
     {
 
-        list($response) = $this->getBasicCacWithHttpInfo($rc, $type, $contentType);
+        list($response) = $this->businessSearchWithHttpInfo($app_id, $country_code, $company, $contentType);
         return $response;
     }
 
     /**
-     * Operation getBasicCacWithHttpInfo
+     * Operation businessSearchWithHttpInfo
      *
-     * KYB - Get CAC 2
+     * Business Search
      *
-     * @param  int $rc (optional)
-     * @param  string $type (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBasicCac'] to see the possible values for this operation
+     * @param  string $app_id (optional)
+     * @param  string $country_code (optional)
+     * @param  int $company (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['businessSearch'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return array of \Dojah\Model\GetBasicCacResponse, HTTP status code, HTTP response headers (array of strings)
+     * @return array of object, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getBasicCacWithHttpInfo($rc = null, $type = null, string $contentType = self::contentTypes['getBasicCac'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function businessSearchWithHttpInfo($app_id = null, $country_code = null, $company = null, string $contentType = self::contentTypes['businessSearch'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBasicCacRequest($rc, $type, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->businessSearchRequest($app_id, $country_code, $company, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -558,9 +583,10 @@ class KYBApi extends \Dojah\CustomApi
                     !empty($this->getConfig()->getAccessToken()) &&
                     $requestOptions->shouldRetryOAuth()
                 ) {
-                    return $this->getBasicCacWithHttpInfo(
-                        $rc,
-                        $type,
+                    return $this->businessSearchWithHttpInfo(
+                        $app_id,
+                        $country_code,
+                        $company,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
                     );
@@ -598,23 +624,23 @@ class KYBApi extends \Dojah\CustomApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Dojah\Model\GetBasicCacResponse' === '\SplFileObject') {
+                    if ('object' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Dojah\Model\GetBasicCacResponse' !== 'string') {
+                        if ('object' !== 'string') {
                             $content = json_decode($content);
                         }
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Dojah\Model\GetBasicCacResponse', []),
+                        ObjectSerializer::deserialize($content, 'object', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
             }
 
-            $returnType = '\Dojah\Model\GetBasicCacResponse';
+            $returnType = 'object';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -635,7 +661,7 @@ class KYBApi extends \Dojah\CustomApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Dojah\Model\GetBasicCacResponse',
+                        'object',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -646,28 +672,30 @@ class KYBApi extends \Dojah\CustomApi
     }
 
     /**
-     * Operation getBasicCacAsync
+     * Operation businessSearchAsync
      *
-     * KYB - Get CAC 2
+     * Business Search
      *
-     * @param  int $rc (optional)
-     * @param  string $type (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBasicCac'] to see the possible values for this operation
+     * @param  string $app_id (optional)
+     * @param  string $country_code (optional)
+     * @param  int $company (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['businessSearch'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getBasicCacAsync(
-        $rc = SENTINEL_VALUE,
-        $type = SENTINEL_VALUE,
+    public function businessSearchAsync(
+        $app_id = SENTINEL_VALUE,
+        $country_code = SENTINEL_VALUE,
+        $company = SENTINEL_VALUE,
 
 
-        string $contentType = self::contentTypes['getBasicCac'][0]
+        string $contentType = self::contentTypes['businessSearch'][0]
 
     )
     {
 
-        return $this->getBasicCacAsyncWithHttpInfo($rc, $type, $contentType)
+        return $this->businessSearchAsyncWithHttpInfo($app_id, $country_code, $company, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -676,21 +704,22 @@ class KYBApi extends \Dojah\CustomApi
     }
 
     /**
-     * Operation getBasicCacAsyncWithHttpInfo
+     * Operation businessSearchAsyncWithHttpInfo
      *
-     * KYB - Get CAC 2
+     * Business Search
      *
-     * @param  int $rc (optional)
-     * @param  string $type (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBasicCac'] to see the possible values for this operation
+     * @param  string $app_id (optional)
+     * @param  string $country_code (optional)
+     * @param  int $company (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['businessSearch'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getBasicCacAsyncWithHttpInfo($rc = null, $type = null, string $contentType = self::contentTypes['getBasicCac'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function businessSearchAsyncWithHttpInfo($app_id = null, $country_code = null, $company = null, string $contentType = self::contentTypes['businessSearch'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $returnType = '\Dojah\Model\GetBasicCacResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBasicCacRequest($rc, $type, $contentType);
+        $returnType = 'object';
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->businessSearchRequest($app_id, $country_code, $company, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -732,54 +761,63 @@ class KYBApi extends \Dojah\CustomApi
     }
 
     /**
-     * Create request for operation 'getBasicCac'
+     * Create request for operation 'businessSearch'
      *
-     * @param  int $rc (optional)
-     * @param  string $type (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBasicCac'] to see the possible values for this operation
+     * @param  string $app_id (optional)
+     * @param  string $country_code (optional)
+     * @param  int $company (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['businessSearch'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getBasicCacRequest($rc = SENTINEL_VALUE, $type = SENTINEL_VALUE, string $contentType = self::contentTypes['getBasicCac'][0])
+    public function businessSearchRequest($app_id = SENTINEL_VALUE, $country_code = SENTINEL_VALUE, $company = SENTINEL_VALUE, string $contentType = self::contentTypes['businessSearch'][0])
     {
 
-        // Check if $type is a string
-        if ($type !== SENTINEL_VALUE && !is_string($type)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($type, true), gettype($type)));
+        // Check if $app_id is a string
+        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
+        }
+        // Check if $country_code is a string
+        if ($country_code !== SENTINEL_VALUE && !is_string($country_code)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($country_code, true), gettype($country_code)));
         }
 
 
-        $resourcePath = '/v1/kyc/cac/basic';
+        $resourcePath = '/api/v1/kyb/business/search';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
         $httpBody = '';
         $multipart = false;
 
-        if ($rc !== SENTINEL_VALUE) {
+        if ($country_code !== SENTINEL_VALUE) {
             // query params
             $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-                $rc,
-                'rc', // param base name
-                'integer', // openApiType
-                'form', // style
-                true, // explode
-                false // required
-            ) ?? []);
-        }
-        if ($type !== SENTINEL_VALUE) {
-            // query params
-            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-                $type,
-                'type', // param base name
+                $country_code,
+                'country_code', // param base name
                 'string', // openApiType
                 'form', // style
                 true, // explode
                 false // required
             ) ?? []);
         }
+        if ($company !== SENTINEL_VALUE) {
+            // query params
+            $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+                $company,
+                'company', // param base name
+                'integer', // openApiType
+                'form', // style
+                true, // explode
+                false // required
+            ) ?? []);
+        }
 
+        // header params
+        if ($app_id !== SENTINEL_VALUE) {
+            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
+        }
 
 
 
@@ -814,16 +852,6 @@ class KYBApi extends \Dojah\CustomApi
             }
         }
 
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -857,15 +885,17 @@ class KYBApi extends \Dojah\CustomApi
      *
      * KYC - Get CAC
      *
+     * @param  string $app_id app_id (optional)
      * @param  int $rc_number rc_number (optional)
      * @param  string $company_name company_name (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getCac'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return \Dojah\Model\GetCacResponse
+     * @return \Dojah\Model\KybGetCacResponse
      */
     public function getCac(
+        $app_id = SENTINEL_VALUE,
         $rc_number = SENTINEL_VALUE,
         $company_name = SENTINEL_VALUE,
 
@@ -875,7 +905,7 @@ class KYBApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getCacWithHttpInfo($rc_number, $company_name, $contentType);
+        list($response) = $this->getCacWithHttpInfo($app_id, $rc_number, $company_name, $contentType);
         return $response;
     }
 
@@ -884,17 +914,18 @@ class KYBApi extends \Dojah\CustomApi
      *
      * KYC - Get CAC
      *
+     * @param  string $app_id (optional)
      * @param  int $rc_number (optional)
      * @param  string $company_name (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getCac'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return array of \Dojah\Model\GetCacResponse, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Dojah\Model\KybGetCacResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getCacWithHttpInfo($rc_number = null, $company_name = null, string $contentType = self::contentTypes['getCac'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getCacWithHttpInfo($app_id = null, $rc_number = null, $company_name = null, string $contentType = self::contentTypes['getCac'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getCacRequest($rc_number, $company_name, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getCacRequest($app_id, $rc_number, $company_name, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -910,6 +941,7 @@ class KYBApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getCacWithHttpInfo(
+                        $app_id,
                         $rc_number,
                         $company_name,
                         $contentType,
@@ -949,23 +981,23 @@ class KYBApi extends \Dojah\CustomApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Dojah\Model\GetCacResponse' === '\SplFileObject') {
+                    if ('\Dojah\Model\KybGetCacResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Dojah\Model\GetCacResponse' !== 'string') {
+                        if ('\Dojah\Model\KybGetCacResponse' !== 'string') {
                             $content = json_decode($content);
                         }
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Dojah\Model\GetCacResponse', []),
+                        ObjectSerializer::deserialize($content, '\Dojah\Model\KybGetCacResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
             }
 
-            $returnType = '\Dojah\Model\GetCacResponse';
+            $returnType = '\Dojah\Model\KybGetCacResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -986,7 +1018,7 @@ class KYBApi extends \Dojah\CustomApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Dojah\Model\GetCacResponse',
+                        '\Dojah\Model\KybGetCacResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1001,6 +1033,7 @@ class KYBApi extends \Dojah\CustomApi
      *
      * KYC - Get CAC
      *
+     * @param  string $app_id (optional)
      * @param  int $rc_number (optional)
      * @param  string $company_name (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getCac'] to see the possible values for this operation
@@ -1009,6 +1042,7 @@ class KYBApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getCacAsync(
+        $app_id = SENTINEL_VALUE,
         $rc_number = SENTINEL_VALUE,
         $company_name = SENTINEL_VALUE,
 
@@ -1018,7 +1052,7 @@ class KYBApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getCacAsyncWithHttpInfo($rc_number, $company_name, $contentType)
+        return $this->getCacAsyncWithHttpInfo($app_id, $rc_number, $company_name, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -1031,6 +1065,7 @@ class KYBApi extends \Dojah\CustomApi
      *
      * KYC - Get CAC
      *
+     * @param  string $app_id (optional)
      * @param  int $rc_number (optional)
      * @param  string $company_name (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getCac'] to see the possible values for this operation
@@ -1038,10 +1073,10 @@ class KYBApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getCacAsyncWithHttpInfo($rc_number = null, $company_name = null, string $contentType = self::contentTypes['getCac'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getCacAsyncWithHttpInfo($app_id = null, $rc_number = null, $company_name = null, string $contentType = self::contentTypes['getCac'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $returnType = '\Dojah\Model\GetCacResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getCacRequest($rc_number, $company_name, $contentType);
+        $returnType = '\Dojah\Model\KybGetCacResponse';
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getCacRequest($app_id, $rc_number, $company_name, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -1085,6 +1120,7 @@ class KYBApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getCac'
      *
+     * @param  string $app_id (optional)
      * @param  int $rc_number (optional)
      * @param  string $company_name (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getCac'] to see the possible values for this operation
@@ -1092,16 +1128,20 @@ class KYBApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getCacRequest($rc_number = SENTINEL_VALUE, $company_name = SENTINEL_VALUE, string $contentType = self::contentTypes['getCac'][0])
+    public function getCacRequest($app_id = SENTINEL_VALUE, $rc_number = SENTINEL_VALUE, $company_name = SENTINEL_VALUE, string $contentType = self::contentTypes['getCac'][0])
     {
 
+        // Check if $app_id is a string
+        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
+        }
         // Check if $company_name is a string
         if ($company_name !== SENTINEL_VALUE && !is_string($company_name)) {
             throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($company_name, true), gettype($company_name)));
         }
 
 
-        $resourcePath = '/v1/kyc/cac';
+        $resourcePath = '/api/v1/kyc/cac';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -1131,6 +1171,10 @@ class KYBApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
+        // header params
+        if ($app_id !== SENTINEL_VALUE) {
+            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
+        }
 
 
 
@@ -1165,16 +1209,6 @@ class KYBApi extends \Dojah\CustomApi
             }
         }
 
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -1208,14 +1242,16 @@ class KYBApi extends \Dojah\CustomApi
      *
      * KYC - Fetch Tin
      *
+     * @param  string $app_id app_id (optional)
      * @param  string $tin tin (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getTin'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return \Dojah\Model\GetTinResponse
+     * @return \Dojah\Model\KybGetTinResponse
      */
     public function getTin(
+        $app_id = SENTINEL_VALUE,
         $tin = SENTINEL_VALUE,
 
 
@@ -1224,7 +1260,7 @@ class KYBApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getTinWithHttpInfo($tin, $contentType);
+        list($response) = $this->getTinWithHttpInfo($app_id, $tin, $contentType);
         return $response;
     }
 
@@ -1233,16 +1269,17 @@ class KYBApi extends \Dojah\CustomApi
      *
      * KYC - Fetch Tin
      *
+     * @param  string $app_id (optional)
      * @param  string $tin (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getTin'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return array of \Dojah\Model\GetTinResponse, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Dojah\Model\KybGetTinResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getTinWithHttpInfo($tin = null, string $contentType = self::contentTypes['getTin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getTinWithHttpInfo($app_id = null, $tin = null, string $contentType = self::contentTypes['getTin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getTinRequest($tin, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getTinRequest($app_id, $tin, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -1258,6 +1295,7 @@ class KYBApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getTinWithHttpInfo(
+                        $app_id,
                         $tin,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
@@ -1296,23 +1334,23 @@ class KYBApi extends \Dojah\CustomApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Dojah\Model\GetTinResponse' === '\SplFileObject') {
+                    if ('\Dojah\Model\KybGetTinResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Dojah\Model\GetTinResponse' !== 'string') {
+                        if ('\Dojah\Model\KybGetTinResponse' !== 'string') {
                             $content = json_decode($content);
                         }
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Dojah\Model\GetTinResponse', []),
+                        ObjectSerializer::deserialize($content, '\Dojah\Model\KybGetTinResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
             }
 
-            $returnType = '\Dojah\Model\GetTinResponse';
+            $returnType = '\Dojah\Model\KybGetTinResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -1333,7 +1371,7 @@ class KYBApi extends \Dojah\CustomApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Dojah\Model\GetTinResponse',
+                        '\Dojah\Model\KybGetTinResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1348,6 +1386,7 @@ class KYBApi extends \Dojah\CustomApi
      *
      * KYC - Fetch Tin
      *
+     * @param  string $app_id (optional)
      * @param  string $tin (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getTin'] to see the possible values for this operation
      *
@@ -1355,6 +1394,7 @@ class KYBApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getTinAsync(
+        $app_id = SENTINEL_VALUE,
         $tin = SENTINEL_VALUE,
 
 
@@ -1363,7 +1403,7 @@ class KYBApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getTinAsyncWithHttpInfo($tin, $contentType)
+        return $this->getTinAsyncWithHttpInfo($app_id, $tin, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -1376,16 +1416,17 @@ class KYBApi extends \Dojah\CustomApi
      *
      * KYC - Fetch Tin
      *
+     * @param  string $app_id (optional)
      * @param  string $tin (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getTin'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getTinAsyncWithHttpInfo($tin = null, string $contentType = self::contentTypes['getTin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getTinAsyncWithHttpInfo($app_id = null, $tin = null, string $contentType = self::contentTypes['getTin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $returnType = '\Dojah\Model\GetTinResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getTinRequest($tin, $contentType);
+        $returnType = '\Dojah\Model\KybGetTinResponse';
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getTinRequest($app_id, $tin, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -1429,22 +1470,27 @@ class KYBApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getTin'
      *
+     * @param  string $app_id (optional)
      * @param  string $tin (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getTin'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getTinRequest($tin = SENTINEL_VALUE, string $contentType = self::contentTypes['getTin'][0])
+    public function getTinRequest($app_id = SENTINEL_VALUE, $tin = SENTINEL_VALUE, string $contentType = self::contentTypes['getTin'][0])
     {
 
+        // Check if $app_id is a string
+        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
+        }
         // Check if $tin is a string
         if ($tin !== SENTINEL_VALUE && !is_string($tin)) {
             throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($tin, true), gettype($tin)));
         }
 
 
-        $resourcePath = '/v1/kyc/tin';
+        $resourcePath = '/api/v1/kyc/tin';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -1463,6 +1509,10 @@ class KYBApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
+        // header params
+        if ($app_id !== SENTINEL_VALUE) {
+            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
+        }
 
 
 
@@ -1497,16 +1547,6 @@ class KYBApi extends \Dojah\CustomApi
             }
         }
 
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {

@@ -10,7 +10,7 @@
  */
 
 /**
- * DOJAH APIs
+ * DOJAH Publilc APIs
  *
  * Use Dojah to verify, onboard and manage user identity across Africa!
  *
@@ -58,192 +58,72 @@ class KYCApiTest extends TestCase
     }
 
     /**
-     * Test case for analyzeDocument
+     * Test case for checkLiveness
      *
-     * KYC - Document Analysis.
+     * Liveness Check.
      *
      */
-    public function testAnalyzeDocument()
+    public function testCheckLiveness()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
     }
 
     /**
-     * Test case for getBasicBvn
+     * Test case for getAccounts
      *
-     * KYC - Get Basic BVN Info.
+     * KYC - Fetch Accounts.
      *
      */
-    public function testGetBasicBvn()
+    public function testGetAccounts()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
     }
 
     /**
-     * Test case for getBasicPhoneNumber
+     * Test case for getAddressVerification
      *
-     * KYC Lookup Phone Number Basic.
+     * Fetch Address Verification Data.
      *
      */
-    public function testGetBasicPhoneNumber()
+    public function testGetAddressVerification()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
     }
 
     /**
-     * Test case for getDriversLicense
+     * Test case for getBvnFromNuban
      *
-     * KYC - Get Drivers License Info.
+     * Lookup BVN from NUBAN.
      *
      */
-    public function testGetDriversLicense()
+    public function testGetBvnFromNuban()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
     }
 
     /**
-     * Test case for getEmailReputation
-     *
-     * KYC - Get Email Reputation.
-     *
-     */
-    public function testGetEmailReputation()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test case for getFullBvn
-     *
-     * KYC - Lookup BVN Basic.
-     *
-     */
-    public function testGetFullBvn()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test case for getNuban
-     *
-     * KYC - Get NUBAN Information.
-     *
-     */
-    public function testGetNuban()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test case for getPassport
-     *
-     * KYC - Passport.
-     *
-     */
-    public function testGetPassport()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test case for getPhoneNumber
-     *
-     * KYC - Lookup Phone Number.
-     *
-     */
-    public function testGetPhoneNumber()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test case for getPremiumBvn
-     *
-     * KYC - Lookup BVN Premium.
-     *
-     */
-    public function testGetPremiumBvn()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test case for getVIN
+     * Test case for getVin
      *
      * KYC - Get VIN.
      *
      */
-    public function testGetVIN()
+    public function testGetVin()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
     }
 
     /**
-     * Test case for getVnin
+     * Test case for submitAddress
      *
-     * Lookup VNIN.
-     *
-     */
-    public function testGetVnin()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test case for validateBvn
-     *
-     * KYC - Validate BVN.
+     * Submit Address.
      *
      */
-    public function testValidateBvn()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test case for verifyAge
-     *
-     * KYC - Age Verification.
-     *
-     */
-    public function testVerifyAge()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test case for verifySelfieBvn
-     *
-     * KYC - Selfie BVN Verificatoin.
-     *
-     */
-    public function testVerifySelfieBvn()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test case for verifySelfieNin
-     *
-     * KYC - Selfie NIN Verification.
-     *
-     */
-    public function testVerifySelfieNin()
+    public function testSubmitAddress()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');

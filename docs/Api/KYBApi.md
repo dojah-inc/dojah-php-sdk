@@ -4,19 +4,19 @@ All URIs are relative to https://api.dojah.io, except if the operation defines a
 
 | Method | HTTP request | Description |
 | ------------- | ------------- | ------------- |
-| [**getAdvancedCac()**](KYBApi.md#getAdvancedCac) | **GET** /v1/kyc/cac/advance | KYC - Get CAC Advanced |
-| [**getBasicCac()**](KYBApi.md#getBasicCac) | **GET** /v1/kyc/cac/basic | KYB - Get CAC 2 |
-| [**getCac()**](KYBApi.md#getCac) | **GET** /v1/kyc/cac | KYC - Get CAC |
-| [**getTin()**](KYBApi.md#getTin) | **GET** /v1/kyc/tin | KYC - Fetch Tin |
+| [**businessDetail()**](KYBApi.md#businessDetail) | **GET** /api/v1/kyb/business/detail | Business Detail |
+| [**businessSearch()**](KYBApi.md#businessSearch) | **GET** /api/v1/kyb/business/search | Business Search |
+| [**getCac()**](KYBApi.md#getCac) | **GET** /api/v1/kyc/cac | KYC - Get CAC |
+| [**getTin()**](KYBApi.md#getTin) | **GET** /api/v1/kyc/tin | KYC - Fetch Tin |
 
 
-## `getAdvancedCac()`
+## `businessDetail()`
 
 ```php
-getAdvancedCac($rc, $type, $class): \Dojah\Model\GetAdvancedCacResponse
+businessDetail($app_id, $international_number, $country_code, $full): object
 ```
 
-KYC - Get CAC Advanced
+Business Detail
 
 ### Example
 
@@ -25,41 +25,42 @@ KYC - Get CAC Advanced
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    Authorization: YOUR_AUTHORIZATION,
-    AppId: YOUR_APP_ID,
 );
 
-$rc = 1432074;
-$type = "co";
-$class = "advance";
+$app_id = "{{app_id}}";
+$international_number = "RC-1885308";
+$country_code = "NG";
+$full = True;
 
 try {
-    $result = $dojah->kYB->getAdvancedCac(
-        rc: $rc, 
-        type: $type, 
-        class: $class
+    $result = $dojah->kYB->businessDetail(
+        app_id: $app_id, 
+        international_number: $international_number, 
+        country_code: $country_code, 
+        full: $full
     );
-    print_r($result->$getEntity());
 } catch (\Exception $e) {
-    echo 'Exception when calling KYBApi->getAdvancedCac: ', $e->getMessage(), PHP_EOL;
+    echo 'Exception when calling KYBApi->businessDetail: ', $e->getMessage(), PHP_EOL;
 }
+
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **rc** | **int**|  | [optional] |
-| **type** | **string**|  | [optional] |
-| **class** | **string**|  | [optional] |
+| **app_id** | **string**|  | [optional] |
+| **international_number** | **string**|  | [optional] |
+| **country_code** | **string**|  | [optional] |
+| **full** | **bool**|  | [optional] |
 
 ### Return type
 
-[**\Dojah\Model\GetAdvancedCacResponse**](../Model/GetAdvancedCacResponse.md)
+**object**
 
 ### Authorization
 
-[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
+No authorization required
 
 ### HTTP request headers
 
@@ -70,13 +71,13 @@ try {
 [[Back to Model list]](../../README.md#models)
 [[Back to README]](../../README.md)
 
-## `getBasicCac()`
+## `businessSearch()`
 
 ```php
-getBasicCac($rc, $type): \Dojah\Model\GetBasicCacResponse
+businessSearch($app_id, $country_code, $company): object
 ```
 
-KYB - Get CAC 2
+Business Search
 
 ### Example
 
@@ -85,38 +86,39 @@ KYB - Get CAC 2
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    Authorization: YOUR_AUTHORIZATION,
-    AppId: YOUR_APP_ID,
 );
 
-$rc = 3330883;
-$type = "bn";
+$app_id = "{{app_id}}";
+$country_code = "NG";
+$company = 1885308;
 
 try {
-    $result = $dojah->kYB->getBasicCac(
-        rc: $rc, 
-        type: $type
+    $result = $dojah->kYB->businessSearch(
+        app_id: $app_id, 
+        country_code: $country_code, 
+        company: $company
     );
-    print_r($result->$getEntity());
 } catch (\Exception $e) {
-    echo 'Exception when calling KYBApi->getBasicCac: ', $e->getMessage(), PHP_EOL;
+    echo 'Exception when calling KYBApi->businessSearch: ', $e->getMessage(), PHP_EOL;
 }
+
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **rc** | **int**|  | [optional] |
-| **type** | **string**|  | [optional] |
+| **app_id** | **string**|  | [optional] |
+| **country_code** | **string**|  | [optional] |
+| **company** | **int**|  | [optional] |
 
 ### Return type
 
-[**\Dojah\Model\GetBasicCacResponse**](../Model/GetBasicCacResponse.md)
+**object**
 
 ### Authorization
 
-[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
+No authorization required
 
 ### HTTP request headers
 
@@ -130,7 +132,7 @@ try {
 ## `getCac()`
 
 ```php
-getCac($rc_number, $company_name): \Dojah\Model\GetCacResponse
+getCac($app_id, $rc_number, $company_name): \Dojah\Model\KybGetCacResponse
 ```
 
 KYC - Get CAC
@@ -142,15 +144,15 @@ KYC - Get CAC
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    Authorization: YOUR_AUTHORIZATION,
-    AppId: YOUR_APP_ID,
 );
 
+$app_id = "{{app_id}}";
 $rc_number = 1432074;
 $company_name = "ELTA SOLUTIONS LIMITED";
 
 try {
     $result = $dojah->kYB->getCac(
+        app_id: $app_id, 
         rc_number: $rc_number, 
         company_name: $company_name
     );
@@ -158,22 +160,24 @@ try {
 } catch (\Exception $e) {
     echo 'Exception when calling KYBApi->getCac: ', $e->getMessage(), PHP_EOL;
 }
+
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
+| **app_id** | **string**|  | [optional] |
 | **rc_number** | **int**|  | [optional] |
 | **company_name** | **string**|  | [optional] |
 
 ### Return type
 
-[**\Dojah\Model\GetCacResponse**](../Model/GetCacResponse.md)
+[**\Dojah\Model\KybGetCacResponse**](../Model/KybGetCacResponse.md)
 
 ### Authorization
 
-[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
+[apikeyAuth](../../README.md#apikeyAuth)
 
 ### HTTP request headers
 
@@ -187,7 +191,7 @@ try {
 ## `getTin()`
 
 ```php
-getTin($tin): \Dojah\Model\GetTinResponse
+getTin($app_id, $tin): \Dojah\Model\KybGetTinResponse
 ```
 
 KYC - Fetch Tin
@@ -199,35 +203,37 @@ KYC - Fetch Tin
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    Authorization: YOUR_AUTHORIZATION,
-    AppId: YOUR_APP_ID,
 );
 
-$tin = "21148119-0001";
+$app_id = "{{app_id}}";
+$tin = "24111697-0001";
 
 try {
     $result = $dojah->kYB->getTin(
+        app_id: $app_id, 
         tin: $tin
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling KYBApi->getTin: ', $e->getMessage(), PHP_EOL;
 }
+
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
+| **app_id** | **string**|  | [optional] |
 | **tin** | **string**|  | [optional] |
 
 ### Return type
 
-[**\Dojah\Model\GetTinResponse**](../Model/GetTinResponse.md)
+[**\Dojah\Model\KybGetTinResponse**](../Model/KybGetTinResponse.md)
 
 ### Authorization
 
-[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
+[apikeyAuth](../../README.md#apikeyAuth)
 
 ### HTTP request headers
 

@@ -10,7 +10,7 @@ All URIs are relative to https://api.dojah.io, except if the operation defines a
 ## `getVoter()`
 
 ```php
-getVoter($id, $first_name, $last_name): \Dojah\Model\GetVoterResponse
+getVoter($app_id, $id, $first_name, $last_name): object
 ```
 
 Voters ID
@@ -22,41 +22,42 @@ Voters ID
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    Authorization: YOUR_AUTHORIZATION,
-    AppId: YOUR_APP_ID,
 );
 
+$app_id = "{{app_id}}";
 $id = 67335751;
 $first_name = "Happy";
 $last_name = "Christmas";
 
 try {
     $result = $dojah->ugKyc->getVoter(
+        app_id: $app_id, 
         id: $id, 
         first_name: $first_name, 
         last_name: $last_name
     );
-    print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling UgKycApi->getVoter: ', $e->getMessage(), PHP_EOL;
 }
+
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
+| **app_id** | **string**|  | [optional] |
 | **id** | **int**|  | [optional] |
 | **first_name** | **string**|  | [optional] |
 | **last_name** | **string**|  | [optional] |
 
 ### Return type
 
-[**\Dojah\Model\GetVoterResponse**](../Model/GetVoterResponse.md)
+**object**
 
 ### Authorization
 
-[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
+No authorization required
 
 ### HTTP request headers
 

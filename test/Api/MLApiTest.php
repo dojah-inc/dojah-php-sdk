@@ -10,7 +10,7 @@
  */
 
 /**
- * DOJAH APIs
+ * DOJAH Publilc APIs
  *
  * Use Dojah to verify, onboard and manage user identity across Africa!
  *
@@ -55,42 +55,6 @@ class MLApiTest extends TestCase
      */
     public static function tearDownAfterClass(): void
     {
-    }
-
-    /**
-     * Test case for getDocumentAnalysis
-     *
-     * Document Analysis Drivers License.
-     *
-     */
-    public function testGetDocumentAnalysis()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test case for getGenericOcrText
-     *
-     * Generic OCR Service.
-     *
-     */
-    public function testGetGenericOcrText()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test case for getOcrText
-     *
-     * BVN Ocr.
-     *
-     */
-    public function testGetOcrText()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
     }
 
     /**

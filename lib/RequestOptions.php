@@ -4,6 +4,7 @@ namespace Dojah;
 
 class RequestOptions
 {
+    
     private bool $retryOAuth;
 
     public function __construct(bool $retryOAuth = true)

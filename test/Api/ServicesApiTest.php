@@ -10,7 +10,7 @@
  */
 
 /**
- * DOJAH APIs
+ * DOJAH Publilc APIs
  *
  * Use Dojah to verify, onboard and manage user identity across Africa!
  *
@@ -58,12 +58,12 @@ class ServicesApiTest extends TestCase
     }
 
     /**
-     * Test case for categorizeTransactions
+     * Test case for getWalletBalance
      *
-     * Categorize Transactions.
+     * Get Dojah Wallet Balance.
      *
      */
-    public function testCategorizeTransactions()
+    public function testGetWalletBalance()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');

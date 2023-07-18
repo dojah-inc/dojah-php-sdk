@@ -10,7 +10,7 @@
  */
 
 /**
- * DOJAH APIs
+ * DOJAH Publilc APIs
  *
  * Use Dojah to verify, onboard and manage user identity across Africa!
  *
@@ -28,6 +28,10 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\MultipartStream;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
+use GuzzleHttp\BodySummarizer;
+use GuzzleHttp\Middleware;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Utils;
 use Dojah\ApiException;
 use Dojah\Configuration;
 use Dojah\HeaderSelector;
@@ -57,7 +61,7 @@ class ServicesApi extends \Dojah\CustomApi
 
     /** @var string[] $contentTypes **/
     public const contentTypes = [
-        'categorizeTransactions' => [
+        'getWalletBalance' => [
             'application/json',
         ],
     ];
@@ -74,7 +78,19 @@ class ServicesApi extends \Dojah\CustomApi
         HeaderSelector $selector = null,
         $hostIndex = 0
     ) {
-        $this->client = $client ?: new Client();
+        $clientOptions = [];
+        if (!$config->getVerifySsl()) $clientOptions["verify"] = false;
+
+        // Do not truncate error messages
+        // https://github.com/guzzle/guzzle/issues/2185#issuecomment-800293420
+        $stack = new HandlerStack(Utils::chooseHandler());
+        $stack->push(Middleware::httpErrors(new BodySummarizer(10000)), 'http_errors');
+        $stack->push(Middleware::redirect(), 'allow_redirects');
+        $stack->push(Middleware::cookies(), 'cookies');
+        $stack->push(Middleware::prepareBody(), 'prepare_body');
+        $clientOptions["handler"] = $stack;
+
+        $this->client = $client ?: new Client($clientOptions);
         $this->config = $config ?: new Configuration();
         $this->headerSelector = $selector ?: new HeaderSelector();
         $this->hostIndex = $hostIndex;
@@ -119,53 +135,48 @@ class ServicesApi extends \Dojah\CustomApi
     }
 
     /**
-     * Operation categorizeTransactions
+     * Operation getWalletBalance
      *
-     * Categorize Transactions
+     * Get Dojah Wallet Balance
      *
-     * @param  \Dojah\Model\CategorizeTransactionsRequest $categorize_transactions_request categorize_transactions_request (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['categorizeTransactions'] to see the possible values for this operation
+     * @param  string $app_id app_id (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getWalletBalance'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return \Dojah\Model\CategorizeTransactionsResponse
+     * @return \Dojah\Model\GetWalletBalanceResponse
      */
-    public function categorizeTransactions(
-        $description = SENTINEL_VALUE,
-        $trans_type = SENTINEL_VALUE,
+    public function getWalletBalance(
+        $app_id = SENTINEL_VALUE,
 
 
-        string $contentType = self::contentTypes['categorizeTransactions'][0]
+        string $contentType = self::contentTypes['getWalletBalance'][0]
 
     )
     {
-        $_body = null;
-        $this->setRequestBodyProperty($_body, "description", $description);
-        $this->setRequestBodyProperty($_body, "trans_type", $trans_type);
-        $categorize_transactions_request = $_body;
 
-        list($response) = $this->categorizeTransactionsWithHttpInfo($categorize_transactions_request, $contentType);
+        list($response) = $this->getWalletBalanceWithHttpInfo($app_id, $contentType);
         return $response;
     }
 
     /**
-     * Operation categorizeTransactionsWithHttpInfo
+     * Operation getWalletBalanceWithHttpInfo
      *
-     * Categorize Transactions
+     * Get Dojah Wallet Balance
      *
-     * @param  \Dojah\Model\CategorizeTransactionsRequest $categorize_transactions_request (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['categorizeTransactions'] to see the possible values for this operation
+     * @param  string $app_id (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getWalletBalance'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return array of \Dojah\Model\CategorizeTransactionsResponse, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Dojah\Model\GetWalletBalanceResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function categorizeTransactionsWithHttpInfo($categorize_transactions_request = null, string $contentType = self::contentTypes['categorizeTransactions'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getWalletBalanceWithHttpInfo($app_id = null, string $contentType = self::contentTypes['getWalletBalance'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->categorizeTransactionsRequest($categorize_transactions_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getWalletBalanceRequest($app_id, $contentType);
 
         // Customization hook
-        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         try {
             $options = $this->createHttpClientOption();
@@ -177,8 +188,8 @@ class ServicesApi extends \Dojah\CustomApi
                     !empty($this->getConfig()->getAccessToken()) &&
                     $requestOptions->shouldRetryOAuth()
                 ) {
-                    return $this->categorizeTransactionsWithHttpInfo(
-                        $categorize_transactions_request,
+                    return $this->getWalletBalanceWithHttpInfo(
+                        $app_id,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
                     );
@@ -216,23 +227,23 @@ class ServicesApi extends \Dojah\CustomApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Dojah\Model\CategorizeTransactionsResponse' === '\SplFileObject') {
+                    if ('\Dojah\Model\GetWalletBalanceResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Dojah\Model\CategorizeTransactionsResponse' !== 'string') {
+                        if ('\Dojah\Model\GetWalletBalanceResponse' !== 'string') {
                             $content = json_decode($content);
                         }
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Dojah\Model\CategorizeTransactionsResponse', []),
+                        ObjectSerializer::deserialize($content, '\Dojah\Model\GetWalletBalanceResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
             }
 
-            $returnType = '\Dojah\Model\CategorizeTransactionsResponse';
+            $returnType = '\Dojah\Model\GetWalletBalanceResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -253,7 +264,7 @@ class ServicesApi extends \Dojah\CustomApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Dojah\Model\CategorizeTransactionsResponse',
+                        '\Dojah\Model\GetWalletBalanceResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -264,31 +275,26 @@ class ServicesApi extends \Dojah\CustomApi
     }
 
     /**
-     * Operation categorizeTransactionsAsync
+     * Operation getWalletBalanceAsync
      *
-     * Categorize Transactions
+     * Get Dojah Wallet Balance
      *
-     * @param  \Dojah\Model\CategorizeTransactionsRequest $categorize_transactions_request (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['categorizeTransactions'] to see the possible values for this operation
+     * @param  string $app_id (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getWalletBalance'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function categorizeTransactionsAsync(
-        $description = SENTINEL_VALUE,
-        $trans_type = SENTINEL_VALUE,
+    public function getWalletBalanceAsync(
+        $app_id = SENTINEL_VALUE,
 
 
-        string $contentType = self::contentTypes['categorizeTransactions'][0]
+        string $contentType = self::contentTypes['getWalletBalance'][0]
 
     )
     {
-        $_body = null;
-        $this->setRequestBodyProperty($_body, "description", $description);
-        $this->setRequestBodyProperty($_body, "trans_type", $trans_type);
-        $categorize_transactions_request = $_body;
 
-        return $this->categorizeTransactionsAsyncWithHttpInfo($categorize_transactions_request, $contentType)
+        return $this->getWalletBalanceAsyncWithHttpInfo($app_id, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -297,23 +303,23 @@ class ServicesApi extends \Dojah\CustomApi
     }
 
     /**
-     * Operation categorizeTransactionsAsyncWithHttpInfo
+     * Operation getWalletBalanceAsyncWithHttpInfo
      *
-     * Categorize Transactions
+     * Get Dojah Wallet Balance
      *
-     * @param  \Dojah\Model\CategorizeTransactionsRequest $categorize_transactions_request (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['categorizeTransactions'] to see the possible values for this operation
+     * @param  string $app_id (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getWalletBalance'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function categorizeTransactionsAsyncWithHttpInfo($categorize_transactions_request = null, string $contentType = self::contentTypes['categorizeTransactions'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getWalletBalanceAsyncWithHttpInfo($app_id = null, string $contentType = self::contentTypes['getWalletBalance'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        $returnType = '\Dojah\Model\CategorizeTransactionsResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->categorizeTransactionsRequest($categorize_transactions_request, $contentType);
+        $returnType = '\Dojah\Model\GetWalletBalanceResponse';
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getWalletBalanceRequest($app_id, $contentType);
 
         // Customization hook
-        $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
+        $this->beforeSendHook($request, $requestOptions, $this->config);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -352,28 +358,24 @@ class ServicesApi extends \Dojah\CustomApi
     }
 
     /**
-     * Create request for operation 'categorizeTransactions'
+     * Create request for operation 'getWalletBalance'
      *
-     * @param  \Dojah\Model\CategorizeTransactionsRequest $categorize_transactions_request (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['categorizeTransactions'] to see the possible values for this operation
+     * @param  string $app_id (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getWalletBalance'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function categorizeTransactionsRequest($categorize_transactions_request = SENTINEL_VALUE, string $contentType = self::contentTypes['categorizeTransactions'][0])
+    public function getWalletBalanceRequest($app_id = SENTINEL_VALUE, string $contentType = self::contentTypes['getWalletBalance'][0])
     {
 
-        if ($categorize_transactions_request !== SENTINEL_VALUE) {
-            if (!($categorize_transactions_request instanceof \Dojah\Model\CategorizeTransactionsRequest)) {
-                if (!is_array($categorize_transactions_request))
-                    throw new \InvalidArgumentException('"categorize_transactions_request" must be associative array or an instance of \Dojah\Model\CategorizeTransactionsRequest ServicesApi.categorizeTransactions.');
-                else
-                    $categorize_transactions_request = new \Dojah\Model\CategorizeTransactionsRequest($categorize_transactions_request);
-            }
+        // Check if $app_id is a string
+        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
+            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
         }
 
 
-        $resourcePath = '/v1/ml/categorize_transaction';
+        $resourcePath = '/api/v1/balance';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -381,6 +383,10 @@ class ServicesApi extends \Dojah\CustomApi
         $multipart = false;
 
 
+        // header params
+        if ($app_id !== SENTINEL_VALUE) {
+            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
+        }
 
 
 
@@ -391,14 +397,7 @@ class ServicesApi extends \Dojah\CustomApi
         );
 
         // for model (json/xml)
-        if (isset($categorize_transactions_request)) {
-            if (stripos($headers['Content-Type'], 'application/json') !== false) {
-                # if Content-Type contains "application/json", json_encode the body
-                $httpBody = \GuzzleHttp\json_encode(ObjectSerializer::sanitizeForSerialization($categorize_transactions_request));
-            } else {
-                $httpBody = $categorize_transactions_request;
-            }
-        } elseif (count($formParams) > 0) {
+        if (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
                 foreach ($formParams as $formParamName => $formParamValue) {
@@ -422,16 +421,6 @@ class ServicesApi extends \Dojah\CustomApi
             }
         }
 
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
-        if ($apiKey !== null) {
-            $headers['Authorization'] = $apiKey;
-        }
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
-        if ($apiKey !== null) {
-            $headers['AppId'] = $apiKey;
-        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -444,7 +433,7 @@ class ServicesApi extends \Dojah\CustomApi
             $headers
         );
 
-        $method = 'POST';
+        $method = 'GET';
         $this->beforeCreateRequestHook($method, $resourcePath, $queryParams, $headers, $httpBody);
 
         $operationHost = $this->config->getHost();
