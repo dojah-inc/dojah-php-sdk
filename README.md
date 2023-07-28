@@ -22,7 +22,7 @@ To install the bindings via [Composer](https://getcomposer.org/), add the follow
     }
   ],
   "require": {
-    "konfig/dojah-php-sdk": "4.0.0"
+    "konfig/dojah-php-sdk": "4.1.0"
   }
 }
 ```
