@@ -23,7 +23,8 @@ Get AML Info
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    apiKey: "APPID",
+    Authorization: "AUTHORIZATION",
+    AppId: "APP_ID",
 );
 
 $profile_id = "WC7117469";
@@ -49,7 +50,7 @@ try {
 
 ### Authorization
 
-[appIdAuth](../../README.md#appIdAuth)
+[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -75,7 +76,8 @@ AML Screening
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    apiKey: "APPID",
+    Authorization: "AUTHORIZATION",
+    AppId: "APP_ID",
 );
 
 $first_name = "Tinubu ";
@@ -108,7 +110,7 @@ try {
 
 ### Authorization
 
-[appIdAuth](../../README.md#appIdAuth)
+[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 

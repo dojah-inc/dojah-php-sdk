@@ -49,9 +49,9 @@ class RequestSenderIdResponseEntityInner implements ModelInterface, ArrayAccess,
       * @var string[]
       */
     protected static $openAPITypes = [
-        'sender_id' => 'string',
         'activated' => 'bool',
-        'created_at' => 'string'
+        'created_at' => 'string',
+        'sender_id' => 'string'
     ];
 
     /**
@@ -62,9 +62,9 @@ class RequestSenderIdResponseEntityInner implements ModelInterface, ArrayAccess,
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'sender_id' => null,
         'activated' => null,
-        'created_at' => null
+        'created_at' => null,
+        'sender_id' => null
     ];
 
     /**
@@ -73,9 +73,9 @@ class RequestSenderIdResponseEntityInner implements ModelInterface, ArrayAccess,
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'sender_id' => false,
-		'activated' => false,
-		'created_at' => false
+        'activated' => false,
+		'created_at' => false,
+		'sender_id' => false
     ];
 
     /**
@@ -164,9 +164,9 @@ class RequestSenderIdResponseEntityInner implements ModelInterface, ArrayAccess,
      * @var string[]
      */
     protected static $attributeMap = [
-        'sender_id' => 'sender_id',
         'activated' => 'activated',
-        'created_at' => 'createdAt'
+        'created_at' => 'createdAt',
+        'sender_id' => 'sender_id'
     ];
 
     /**
@@ -175,9 +175,9 @@ class RequestSenderIdResponseEntityInner implements ModelInterface, ArrayAccess,
      * @var string[]
      */
     protected static $setters = [
-        'sender_id' => 'setSenderId',
         'activated' => 'setActivated',
-        'created_at' => 'setCreatedAt'
+        'created_at' => 'setCreatedAt',
+        'sender_id' => 'setSenderId'
     ];
 
     /**
@@ -186,9 +186,9 @@ class RequestSenderIdResponseEntityInner implements ModelInterface, ArrayAccess,
      * @var string[]
      */
     protected static $getters = [
-        'sender_id' => 'getSenderId',
         'activated' => 'getActivated',
-        'created_at' => 'getCreatedAt'
+        'created_at' => 'getCreatedAt',
+        'sender_id' => 'getSenderId'
     ];
 
     /**
@@ -248,9 +248,9 @@ class RequestSenderIdResponseEntityInner implements ModelInterface, ArrayAccess,
      */
     public function __construct(array $data = null)
     {
-        $this->setIfExists('sender_id', $data ?? [], null);
         $this->setIfExists('activated', $data ?? [], null);
         $this->setIfExists('created_at', $data ?? [], null);
+        $this->setIfExists('sender_id', $data ?? [], null);
     }
 
     /**
@@ -294,35 +294,6 @@ class RequestSenderIdResponseEntityInner implements ModelInterface, ArrayAccess,
         return count($this->listInvalidProperties()) === 0;
     }
 
-
-    /**
-     * Gets sender_id
-     *
-     * @return string|null
-     */
-    public function getSenderId()
-    {
-        return $this->container['sender_id'];
-    }
-
-    /**
-     * Sets sender_id
-     *
-     * @param string|null $sender_id sender_id
-     *
-     * @return self
-     */
-    public function setSenderId($sender_id)
-    {
-
-        if (is_null($sender_id)) {
-            throw new \InvalidArgumentException('non-nullable sender_id cannot be null');
-        }
-
-        $this->container['sender_id'] = $sender_id;
-
-        return $this;
-    }
 
     /**
      * Gets activated
@@ -378,6 +349,35 @@ class RequestSenderIdResponseEntityInner implements ModelInterface, ArrayAccess,
         }
 
         $this->container['created_at'] = $created_at;
+
+        return $this;
+    }
+
+    /**
+     * Gets sender_id
+     *
+     * @return string|null
+     */
+    public function getSenderId()
+    {
+        return $this->container['sender_id'];
+    }
+
+    /**
+     * Sets sender_id
+     *
+     * @param string|null $sender_id sender_id
+     *
+     * @return self
+     */
+    public function setSenderId($sender_id)
+    {
+
+        if (is_null($sender_id)) {
+            throw new \InvalidArgumentException('non-nullable sender_id cannot be null');
+        }
+
+        $this->container['sender_id'] = $sender_id;
 
         return $this;
     }

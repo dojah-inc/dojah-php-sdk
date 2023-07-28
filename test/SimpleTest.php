@@ -64,7 +64,8 @@ class SimpleTest extends TestCase
     public function testClient()
     {
         $dojah = new \Dojah\Client(
-    apiKey: "APPID",
+    Authorization: "AUTHORIZATION",
+    AppId: "APP_ID",
 );
     }
 }

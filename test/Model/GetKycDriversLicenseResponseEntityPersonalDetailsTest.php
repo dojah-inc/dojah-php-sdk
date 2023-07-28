@@ -72,51 +72,6 @@ class GetKycDriversLicenseResponseEntityPersonalDetailsTest extends TestCase
     }
 
     /**
-     * Test attribute "firstname"
-     */
-    public function testPropertyFirstname()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "othername"
-     */
-    public function testPropertyOthername()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "surname"
-     */
-    public function testPropertySurname()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "mother_maiden_name"
-     */
-    public function testPropertyMotherMaidenName()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "gender"
-     */
-    public function testPropertyGender()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
      * Test attribute "birth_date"
      */
     public function testPropertyBirthDate()
@@ -135,9 +90,45 @@ class GetKycDriversLicenseResponseEntityPersonalDetailsTest extends TestCase
     }
 
     /**
+     * Test attribute "country"
+     */
+    public function testPropertyCountry()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "disability_reason"
+     */
+    public function testPropertyDisabilityReason()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
      * Test attribute "facial_mark"
      */
     public function testPropertyFacialMark()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "firstname"
+     */
+    public function testPropertyFirstname()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "gender"
+     */
+    public function testPropertyGender()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
@@ -162,36 +153,9 @@ class GetKycDriversLicenseResponseEntityPersonalDetailsTest extends TestCase
     }
 
     /**
-     * Test attribute "universaltax_identity_number"
+     * Test attribute "is_disability"
      */
-    public function testPropertyUniversaltaxIdentityNumber()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "nin_number"
-     */
-    public function testPropertyNinNumber()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "country"
-     */
-    public function testPropertyCountry()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "state"
-     */
-    public function testPropertyState()
+    public function testPropertyIsDisability()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
@@ -207,18 +171,54 @@ class GetKycDriversLicenseResponseEntityPersonalDetailsTest extends TestCase
     }
 
     /**
-     * Test attribute "is_disability"
+     * Test attribute "mother_maiden_name"
      */
-    public function testPropertyIsDisability()
+    public function testPropertyMotherMaidenName()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
     }
 
     /**
-     * Test attribute "disability_reason"
+     * Test attribute "nin_number"
      */
-    public function testPropertyDisabilityReason()
+    public function testPropertyNinNumber()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "othername"
+     */
+    public function testPropertyOthername()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "state"
+     */
+    public function testPropertyState()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "surname"
+     */
+    public function testPropertySurname()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "universaltax_identity_number"
+     */
+    public function testPropertyUniversaltaxIdentityNumber()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');

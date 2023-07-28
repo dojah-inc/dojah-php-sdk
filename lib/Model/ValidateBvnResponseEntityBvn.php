@@ -49,8 +49,8 @@ class ValidateBvnResponseEntityBvn implements ModelInterface, ArrayAccess, \Json
       * @var string[]
       */
     protected static $openAPITypes = [
-        'value' => 'string',
-        'status' => 'bool'
+        'status' => 'bool',
+        'value' => 'string'
     ];
 
     /**
@@ -61,8 +61,8 @@ class ValidateBvnResponseEntityBvn implements ModelInterface, ArrayAccess, \Json
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'value' => null,
-        'status' => null
+        'status' => null,
+        'value' => null
     ];
 
     /**
@@ -71,8 +71,8 @@ class ValidateBvnResponseEntityBvn implements ModelInterface, ArrayAccess, \Json
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'value' => false,
-		'status' => false
+        'status' => false,
+		'value' => false
     ];
 
     /**
@@ -161,8 +161,8 @@ class ValidateBvnResponseEntityBvn implements ModelInterface, ArrayAccess, \Json
      * @var string[]
      */
     protected static $attributeMap = [
-        'value' => 'value',
-        'status' => 'status'
+        'status' => 'status',
+        'value' => 'value'
     ];
 
     /**
@@ -171,8 +171,8 @@ class ValidateBvnResponseEntityBvn implements ModelInterface, ArrayAccess, \Json
      * @var string[]
      */
     protected static $setters = [
-        'value' => 'setValue',
-        'status' => 'setStatus'
+        'status' => 'setStatus',
+        'value' => 'setValue'
     ];
 
     /**
@@ -181,8 +181,8 @@ class ValidateBvnResponseEntityBvn implements ModelInterface, ArrayAccess, \Json
      * @var string[]
      */
     protected static $getters = [
-        'value' => 'getValue',
-        'status' => 'getStatus'
+        'status' => 'getStatus',
+        'value' => 'getValue'
     ];
 
     /**
@@ -242,8 +242,8 @@ class ValidateBvnResponseEntityBvn implements ModelInterface, ArrayAccess, \Json
      */
     public function __construct(array $data = null)
     {
-        $this->setIfExists('value', $data ?? [], null);
         $this->setIfExists('status', $data ?? [], null);
+        $this->setIfExists('value', $data ?? [], null);
     }
 
     /**
@@ -289,35 +289,6 @@ class ValidateBvnResponseEntityBvn implements ModelInterface, ArrayAccess, \Json
 
 
     /**
-     * Gets value
-     *
-     * @return string|null
-     */
-    public function getValue()
-    {
-        return $this->container['value'];
-    }
-
-    /**
-     * Sets value
-     *
-     * @param string|null $value value
-     *
-     * @return self
-     */
-    public function setValue($value)
-    {
-
-        if (is_null($value)) {
-            throw new \InvalidArgumentException('non-nullable value cannot be null');
-        }
-
-        $this->container['value'] = $value;
-
-        return $this;
-    }
-
-    /**
      * Gets status
      *
      * @return bool|null
@@ -342,6 +313,35 @@ class ValidateBvnResponseEntityBvn implements ModelInterface, ArrayAccess, \Json
         }
 
         $this->container['status'] = $status;
+
+        return $this;
+    }
+
+    /**
+     * Gets value
+     *
+     * @return string|null
+     */
+    public function getValue()
+    {
+        return $this->container['value'];
+    }
+
+    /**
+     * Sets value
+     *
+     * @param string|null $value value
+     *
+     * @return self
+     */
+    public function setValue($value)
+    {
+
+        if (is_null($value)) {
+            throw new \InvalidArgumentException('non-nullable value cannot be null');
+        }
+
+        $this->container['value'] = $value;
 
         return $this;
     }

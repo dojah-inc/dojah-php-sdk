@@ -73,8 +73,8 @@ class GetPremiumBvnResponseEntity implements ModelInterface, ArrayAccess, \JsonS
         'residential_address' => 'string',
         'state_of_origin' => 'string',
         'state_of_residence' => 'string',
-        'watch_listed' => 'string',
-        'status' => 'float'
+        'status' => 'float',
+        'watch_listed' => 'string'
     ];
 
     /**
@@ -109,8 +109,8 @@ class GetPremiumBvnResponseEntity implements ModelInterface, ArrayAccess, \JsonS
         'residential_address' => null,
         'state_of_origin' => null,
         'state_of_residence' => null,
-        'watch_listed' => null,
-        'status' => null
+        'status' => null,
+        'watch_listed' => null
     ];
 
     /**
@@ -143,8 +143,8 @@ class GetPremiumBvnResponseEntity implements ModelInterface, ArrayAccess, \JsonS
 		'residential_address' => false,
 		'state_of_origin' => false,
 		'state_of_residence' => false,
-		'watch_listed' => false,
-		'status' => false
+		'status' => false,
+		'watch_listed' => false
     ];
 
     /**
@@ -257,8 +257,8 @@ class GetPremiumBvnResponseEntity implements ModelInterface, ArrayAccess, \JsonS
         'residential_address' => 'residential_address',
         'state_of_origin' => 'state_of_origin',
         'state_of_residence' => 'state_of_residence',
-        'watch_listed' => 'watch_listed',
-        'status' => 'status'
+        'status' => 'status',
+        'watch_listed' => 'watch_listed'
     ];
 
     /**
@@ -291,8 +291,8 @@ class GetPremiumBvnResponseEntity implements ModelInterface, ArrayAccess, \JsonS
         'residential_address' => 'setResidentialAddress',
         'state_of_origin' => 'setStateOfOrigin',
         'state_of_residence' => 'setStateOfResidence',
-        'watch_listed' => 'setWatchListed',
-        'status' => 'setStatus'
+        'status' => 'setStatus',
+        'watch_listed' => 'setWatchListed'
     ];
 
     /**
@@ -325,8 +325,8 @@ class GetPremiumBvnResponseEntity implements ModelInterface, ArrayAccess, \JsonS
         'residential_address' => 'getResidentialAddress',
         'state_of_origin' => 'getStateOfOrigin',
         'state_of_residence' => 'getStateOfResidence',
-        'watch_listed' => 'getWatchListed',
-        'status' => 'getStatus'
+        'status' => 'getStatus',
+        'watch_listed' => 'getWatchListed'
     ];
 
     /**
@@ -410,8 +410,8 @@ class GetPremiumBvnResponseEntity implements ModelInterface, ArrayAccess, \JsonS
         $this->setIfExists('residential_address', $data ?? [], null);
         $this->setIfExists('state_of_origin', $data ?? [], null);
         $this->setIfExists('state_of_residence', $data ?? [], null);
-        $this->setIfExists('watch_listed', $data ?? [], null);
         $this->setIfExists('status', $data ?? [], null);
+        $this->setIfExists('watch_listed', $data ?? [], null);
     }
 
     /**
@@ -1153,35 +1153,6 @@ class GetPremiumBvnResponseEntity implements ModelInterface, ArrayAccess, \JsonS
     }
 
     /**
-     * Gets watch_listed
-     *
-     * @return string|null
-     */
-    public function getWatchListed()
-    {
-        return $this->container['watch_listed'];
-    }
-
-    /**
-     * Sets watch_listed
-     *
-     * @param string|null $watch_listed watch_listed
-     *
-     * @return self
-     */
-    public function setWatchListed($watch_listed)
-    {
-
-        if (is_null($watch_listed)) {
-            throw new \InvalidArgumentException('non-nullable watch_listed cannot be null');
-        }
-
-        $this->container['watch_listed'] = $watch_listed;
-
-        return $this;
-    }
-
-    /**
      * Gets status
      *
      * @return float|null
@@ -1206,6 +1177,35 @@ class GetPremiumBvnResponseEntity implements ModelInterface, ArrayAccess, \JsonS
         }
 
         $this->container['status'] = $status;
+
+        return $this;
+    }
+
+    /**
+     * Gets watch_listed
+     *
+     * @return string|null
+     */
+    public function getWatchListed()
+    {
+        return $this->container['watch_listed'];
+    }
+
+    /**
+     * Sets watch_listed
+     *
+     * @param string|null $watch_listed watch_listed
+     *
+     * @return self
+     */
+    public function setWatchListed($watch_listed)
+    {
+
+        if (is_null($watch_listed)) {
+            throw new \InvalidArgumentException('non-nullable watch_listed cannot be null');
+        }
+
+        $this->container['watch_listed'] = $watch_listed;
 
         return $this;
     }

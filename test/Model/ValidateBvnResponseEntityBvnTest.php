@@ -72,18 +72,18 @@ class ValidateBvnResponseEntityBvnTest extends TestCase
     }
 
     /**
-     * Test attribute "value"
+     * Test attribute "status"
      */
-    public function testPropertyValue()
+    public function testPropertyStatus()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
     }
 
     /**
-     * Test attribute "status"
+     * Test attribute "value"
      */
-    public function testPropertyStatus()
+    public function testPropertyValue()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');

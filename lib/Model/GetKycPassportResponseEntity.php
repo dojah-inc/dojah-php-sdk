@@ -49,17 +49,17 @@ class GetKycPassportResponseEntity implements ModelInterface, ArrayAccess, \Json
       * @var string[]
       */
     protected static $openAPITypes = [
-        'passport_number' => 'string',
-        'date_of_issue' => 'string',
-        'expiry_date' => 'string',
-        'document_type' => 'string',
-        'issue_place' => 'string',
-        'surname' => 'string',
-        'first_name' => 'string',
-        'other_names' => 'string',
         'date_of_birth' => 'string',
+        'date_of_issue' => 'string',
+        'document_type' => 'string',
+        'expiry_date' => 'string',
+        'first_name' => 'string',
         'gender' => 'string',
-        'photo' => 'string'
+        'issue_place' => 'string',
+        'other_names' => 'string',
+        'passport_number' => 'string',
+        'photo' => 'string',
+        'surname' => 'string'
     ];
 
     /**
@@ -70,17 +70,17 @@ class GetKycPassportResponseEntity implements ModelInterface, ArrayAccess, \Json
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'passport_number' => null,
-        'date_of_issue' => null,
-        'expiry_date' => null,
-        'document_type' => null,
-        'issue_place' => null,
-        'surname' => null,
-        'first_name' => null,
-        'other_names' => null,
         'date_of_birth' => null,
+        'date_of_issue' => null,
+        'document_type' => null,
+        'expiry_date' => null,
+        'first_name' => null,
         'gender' => null,
-        'photo' => null
+        'issue_place' => null,
+        'other_names' => null,
+        'passport_number' => null,
+        'photo' => null,
+        'surname' => null
     ];
 
     /**
@@ -89,17 +89,17 @@ class GetKycPassportResponseEntity implements ModelInterface, ArrayAccess, \Json
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'passport_number' => false,
+        'date_of_birth' => false,
 		'date_of_issue' => false,
-		'expiry_date' => false,
 		'document_type' => false,
-		'issue_place' => false,
-		'surname' => false,
+		'expiry_date' => false,
 		'first_name' => false,
-		'other_names' => false,
-		'date_of_birth' => false,
 		'gender' => false,
-		'photo' => false
+		'issue_place' => false,
+		'other_names' => false,
+		'passport_number' => false,
+		'photo' => false,
+		'surname' => false
     ];
 
     /**
@@ -188,17 +188,17 @@ class GetKycPassportResponseEntity implements ModelInterface, ArrayAccess, \Json
      * @var string[]
      */
     protected static $attributeMap = [
-        'passport_number' => 'passport_number',
-        'date_of_issue' => 'date_of_issue',
-        'expiry_date' => 'expiry_date',
-        'document_type' => 'document_type',
-        'issue_place' => 'issue_place',
-        'surname' => 'surname',
-        'first_name' => 'first_name',
-        'other_names' => 'other_names',
         'date_of_birth' => 'date_of_birth',
+        'date_of_issue' => 'date_of_issue',
+        'document_type' => 'document_type',
+        'expiry_date' => 'expiry_date',
+        'first_name' => 'first_name',
         'gender' => 'gender',
-        'photo' => 'photo'
+        'issue_place' => 'issue_place',
+        'other_names' => 'other_names',
+        'passport_number' => 'passport_number',
+        'photo' => 'photo',
+        'surname' => 'surname'
     ];
 
     /**
@@ -207,17 +207,17 @@ class GetKycPassportResponseEntity implements ModelInterface, ArrayAccess, \Json
      * @var string[]
      */
     protected static $setters = [
-        'passport_number' => 'setPassportNumber',
-        'date_of_issue' => 'setDateOfIssue',
-        'expiry_date' => 'setExpiryDate',
-        'document_type' => 'setDocumentType',
-        'issue_place' => 'setIssuePlace',
-        'surname' => 'setSurname',
-        'first_name' => 'setFirstName',
-        'other_names' => 'setOtherNames',
         'date_of_birth' => 'setDateOfBirth',
+        'date_of_issue' => 'setDateOfIssue',
+        'document_type' => 'setDocumentType',
+        'expiry_date' => 'setExpiryDate',
+        'first_name' => 'setFirstName',
         'gender' => 'setGender',
-        'photo' => 'setPhoto'
+        'issue_place' => 'setIssuePlace',
+        'other_names' => 'setOtherNames',
+        'passport_number' => 'setPassportNumber',
+        'photo' => 'setPhoto',
+        'surname' => 'setSurname'
     ];
 
     /**
@@ -226,17 +226,17 @@ class GetKycPassportResponseEntity implements ModelInterface, ArrayAccess, \Json
      * @var string[]
      */
     protected static $getters = [
-        'passport_number' => 'getPassportNumber',
-        'date_of_issue' => 'getDateOfIssue',
-        'expiry_date' => 'getExpiryDate',
-        'document_type' => 'getDocumentType',
-        'issue_place' => 'getIssuePlace',
-        'surname' => 'getSurname',
-        'first_name' => 'getFirstName',
-        'other_names' => 'getOtherNames',
         'date_of_birth' => 'getDateOfBirth',
+        'date_of_issue' => 'getDateOfIssue',
+        'document_type' => 'getDocumentType',
+        'expiry_date' => 'getExpiryDate',
+        'first_name' => 'getFirstName',
         'gender' => 'getGender',
-        'photo' => 'getPhoto'
+        'issue_place' => 'getIssuePlace',
+        'other_names' => 'getOtherNames',
+        'passport_number' => 'getPassportNumber',
+        'photo' => 'getPhoto',
+        'surname' => 'getSurname'
     ];
 
     /**
@@ -296,17 +296,17 @@ class GetKycPassportResponseEntity implements ModelInterface, ArrayAccess, \Json
      */
     public function __construct(array $data = null)
     {
-        $this->setIfExists('passport_number', $data ?? [], null);
-        $this->setIfExists('date_of_issue', $data ?? [], null);
-        $this->setIfExists('expiry_date', $data ?? [], null);
-        $this->setIfExists('document_type', $data ?? [], null);
-        $this->setIfExists('issue_place', $data ?? [], null);
-        $this->setIfExists('surname', $data ?? [], null);
-        $this->setIfExists('first_name', $data ?? [], null);
-        $this->setIfExists('other_names', $data ?? [], null);
         $this->setIfExists('date_of_birth', $data ?? [], null);
+        $this->setIfExists('date_of_issue', $data ?? [], null);
+        $this->setIfExists('document_type', $data ?? [], null);
+        $this->setIfExists('expiry_date', $data ?? [], null);
+        $this->setIfExists('first_name', $data ?? [], null);
         $this->setIfExists('gender', $data ?? [], null);
+        $this->setIfExists('issue_place', $data ?? [], null);
+        $this->setIfExists('other_names', $data ?? [], null);
+        $this->setIfExists('passport_number', $data ?? [], null);
         $this->setIfExists('photo', $data ?? [], null);
+        $this->setIfExists('surname', $data ?? [], null);
     }
 
     /**
@@ -352,30 +352,30 @@ class GetKycPassportResponseEntity implements ModelInterface, ArrayAccess, \Json
 
 
     /**
-     * Gets passport_number
+     * Gets date_of_birth
      *
      * @return string|null
      */
-    public function getPassportNumber()
+    public function getDateOfBirth()
     {
-        return $this->container['passport_number'];
+        return $this->container['date_of_birth'];
     }
 
     /**
-     * Sets passport_number
+     * Sets date_of_birth
      *
-     * @param string|null $passport_number passport_number
+     * @param string|null $date_of_birth date_of_birth
      *
      * @return self
      */
-    public function setPassportNumber($passport_number)
+    public function setDateOfBirth($date_of_birth)
     {
 
-        if (is_null($passport_number)) {
-            throw new \InvalidArgumentException('non-nullable passport_number cannot be null');
+        if (is_null($date_of_birth)) {
+            throw new \InvalidArgumentException('non-nullable date_of_birth cannot be null');
         }
 
-        $this->container['passport_number'] = $passport_number;
+        $this->container['date_of_birth'] = $date_of_birth;
 
         return $this;
     }
@@ -410,35 +410,6 @@ class GetKycPassportResponseEntity implements ModelInterface, ArrayAccess, \Json
     }
 
     /**
-     * Gets expiry_date
-     *
-     * @return string|null
-     */
-    public function getExpiryDate()
-    {
-        return $this->container['expiry_date'];
-    }
-
-    /**
-     * Sets expiry_date
-     *
-     * @param string|null $expiry_date expiry_date
-     *
-     * @return self
-     */
-    public function setExpiryDate($expiry_date)
-    {
-
-        if (is_null($expiry_date)) {
-            throw new \InvalidArgumentException('non-nullable expiry_date cannot be null');
-        }
-
-        $this->container['expiry_date'] = $expiry_date;
-
-        return $this;
-    }
-
-    /**
      * Gets document_type
      *
      * @return string|null
@@ -468,59 +439,30 @@ class GetKycPassportResponseEntity implements ModelInterface, ArrayAccess, \Json
     }
 
     /**
-     * Gets issue_place
+     * Gets expiry_date
      *
      * @return string|null
      */
-    public function getIssuePlace()
+    public function getExpiryDate()
     {
-        return $this->container['issue_place'];
+        return $this->container['expiry_date'];
     }
 
     /**
-     * Sets issue_place
+     * Sets expiry_date
      *
-     * @param string|null $issue_place issue_place
+     * @param string|null $expiry_date expiry_date
      *
      * @return self
      */
-    public function setIssuePlace($issue_place)
+    public function setExpiryDate($expiry_date)
     {
 
-        if (is_null($issue_place)) {
-            throw new \InvalidArgumentException('non-nullable issue_place cannot be null');
+        if (is_null($expiry_date)) {
+            throw new \InvalidArgumentException('non-nullable expiry_date cannot be null');
         }
 
-        $this->container['issue_place'] = $issue_place;
-
-        return $this;
-    }
-
-    /**
-     * Gets surname
-     *
-     * @return string|null
-     */
-    public function getSurname()
-    {
-        return $this->container['surname'];
-    }
-
-    /**
-     * Sets surname
-     *
-     * @param string|null $surname surname
-     *
-     * @return self
-     */
-    public function setSurname($surname)
-    {
-
-        if (is_null($surname)) {
-            throw new \InvalidArgumentException('non-nullable surname cannot be null');
-        }
-
-        $this->container['surname'] = $surname;
+        $this->container['expiry_date'] = $expiry_date;
 
         return $this;
     }
@@ -555,64 +497,6 @@ class GetKycPassportResponseEntity implements ModelInterface, ArrayAccess, \Json
     }
 
     /**
-     * Gets other_names
-     *
-     * @return string|null
-     */
-    public function getOtherNames()
-    {
-        return $this->container['other_names'];
-    }
-
-    /**
-     * Sets other_names
-     *
-     * @param string|null $other_names other_names
-     *
-     * @return self
-     */
-    public function setOtherNames($other_names)
-    {
-
-        if (is_null($other_names)) {
-            throw new \InvalidArgumentException('non-nullable other_names cannot be null');
-        }
-
-        $this->container['other_names'] = $other_names;
-
-        return $this;
-    }
-
-    /**
-     * Gets date_of_birth
-     *
-     * @return string|null
-     */
-    public function getDateOfBirth()
-    {
-        return $this->container['date_of_birth'];
-    }
-
-    /**
-     * Sets date_of_birth
-     *
-     * @param string|null $date_of_birth date_of_birth
-     *
-     * @return self
-     */
-    public function setDateOfBirth($date_of_birth)
-    {
-
-        if (is_null($date_of_birth)) {
-            throw new \InvalidArgumentException('non-nullable date_of_birth cannot be null');
-        }
-
-        $this->container['date_of_birth'] = $date_of_birth;
-
-        return $this;
-    }
-
-    /**
      * Gets gender
      *
      * @return string|null
@@ -642,6 +526,93 @@ class GetKycPassportResponseEntity implements ModelInterface, ArrayAccess, \Json
     }
 
     /**
+     * Gets issue_place
+     *
+     * @return string|null
+     */
+    public function getIssuePlace()
+    {
+        return $this->container['issue_place'];
+    }
+
+    /**
+     * Sets issue_place
+     *
+     * @param string|null $issue_place issue_place
+     *
+     * @return self
+     */
+    public function setIssuePlace($issue_place)
+    {
+
+        if (is_null($issue_place)) {
+            throw new \InvalidArgumentException('non-nullable issue_place cannot be null');
+        }
+
+        $this->container['issue_place'] = $issue_place;
+
+        return $this;
+    }
+
+    /**
+     * Gets other_names
+     *
+     * @return string|null
+     */
+    public function getOtherNames()
+    {
+        return $this->container['other_names'];
+    }
+
+    /**
+     * Sets other_names
+     *
+     * @param string|null $other_names other_names
+     *
+     * @return self
+     */
+    public function setOtherNames($other_names)
+    {
+
+        if (is_null($other_names)) {
+            throw new \InvalidArgumentException('non-nullable other_names cannot be null');
+        }
+
+        $this->container['other_names'] = $other_names;
+
+        return $this;
+    }
+
+    /**
+     * Gets passport_number
+     *
+     * @return string|null
+     */
+    public function getPassportNumber()
+    {
+        return $this->container['passport_number'];
+    }
+
+    /**
+     * Sets passport_number
+     *
+     * @param string|null $passport_number passport_number
+     *
+     * @return self
+     */
+    public function setPassportNumber($passport_number)
+    {
+
+        if (is_null($passport_number)) {
+            throw new \InvalidArgumentException('non-nullable passport_number cannot be null');
+        }
+
+        $this->container['passport_number'] = $passport_number;
+
+        return $this;
+    }
+
+    /**
      * Gets photo
      *
      * @return string|null
@@ -666,6 +637,35 @@ class GetKycPassportResponseEntity implements ModelInterface, ArrayAccess, \Json
         }
 
         $this->container['photo'] = $photo;
+
+        return $this;
+    }
+
+    /**
+     * Gets surname
+     *
+     * @return string|null
+     */
+    public function getSurname()
+    {
+        return $this->container['surname'];
+    }
+
+    /**
+     * Sets surname
+     *
+     * @param string|null $surname surname
+     *
+     * @return self
+     */
+    public function setSurname($surname)
+    {
+
+        if (is_null($surname)) {
+            throw new \InvalidArgumentException('non-nullable surname cannot be null');
+        }
+
+        $this->container['surname'] = $surname;
 
         return $this;
     }

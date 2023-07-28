@@ -26,7 +26,8 @@ KYC - Validate BVN
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    apiKey: "APPID",
+    Authorization: "AUTHORIZATION",
+    AppId: "APP_ID",
 );
 
 $bvn = 22250148240;
@@ -84,7 +85,8 @@ KYC - Age Verification
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    apiKey: "APPID",
+    Authorization: "AUTHORIZATION",
+    AppId: "APP_ID",
 );
 
 $mode = "account_number";
@@ -152,7 +154,8 @@ KYV - Selfie BVN Verificatoin
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    apiKey: "APPID",
+    Authorization: "AUTHORIZATION",
+    AppId: "APP_ID",
 );
 
 $bvn = "22468537919";
@@ -207,7 +210,8 @@ KYC - Selfie NIN Verification
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    apiKey: "APPID",
+    Authorization: "AUTHORIZATION",
+    AppId: "APP_ID",
 );
 
 $nin = "79628483753";
@@ -261,7 +265,8 @@ KYC - Selfie vNIN verification
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    apiKey: "APPID",
+    Authorization: "AUTHORIZATION",
+    AppId: "APP_ID",
 );
 
 $vnin = "79628483753";
@@ -289,7 +294,7 @@ try {
 
 ### Authorization
 
-[appIdAuth](../../README.md#appIdAuth)
+[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 

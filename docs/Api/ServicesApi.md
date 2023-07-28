@@ -22,7 +22,8 @@ Get Dojah Wallet Balance
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    apiKey: "APPID",
+    Authorization: "AUTHORIZATION",
+    AppId: "APP_ID",
 );
 
 
@@ -44,7 +45,7 @@ This endpoint does not need any parameter.
 
 ### Authorization
 
-[appIdAuth](../../README.md#appIdAuth), [noauthAuth](../../README.md#noauthAuth)
+[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 

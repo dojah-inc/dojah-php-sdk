@@ -72,15 +72,6 @@ class RequestSenderIdResponseEntityInnerTest extends TestCase
     }
 
     /**
-     * Test attribute "sender_id"
-     */
-    public function testPropertySenderId()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
      * Test attribute "activated"
      */
     public function testPropertyActivated()
@@ -93,6 +84,15 @@ class RequestSenderIdResponseEntityInnerTest extends TestCase
      * Test attribute "created_at"
      */
     public function testPropertyCreatedAt()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "sender_id"
+     */
+    public function testPropertySenderId()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');

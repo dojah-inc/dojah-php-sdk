@@ -72,18 +72,9 @@ class GetBasicBvnResponseEntityTest extends TestCase
     }
 
     /**
-     * Test attribute "first_name"
+     * Test attribute "bvn"
      */
-    public function testPropertyFirstName()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "last_name"
-     */
-    public function testPropertyLastName()
+    public function testPropertyBvn()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
@@ -99,6 +90,15 @@ class GetBasicBvnResponseEntityTest extends TestCase
     }
 
     /**
+     * Test attribute "first_name"
+     */
+    public function testPropertyFirstName()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
      * Test attribute "formatted_dob"
      */
     public function testPropertyFormattedDob()
@@ -108,18 +108,18 @@ class GetBasicBvnResponseEntityTest extends TestCase
     }
 
     /**
-     * Test attribute "mobile"
+     * Test attribute "last_name"
      */
-    public function testPropertyMobile()
+    public function testPropertyLastName()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
     }
 
     /**
-     * Test attribute "bvn"
+     * Test attribute "mobile"
      */
-    public function testPropertyBvn()
+    public function testPropertyMobile()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');

@@ -50,34 +50,34 @@ class GetPhoneNumber404ResponseEntity implements ModelInterface, ArrayAccess, \J
       */
     protected static $openAPITypes = [
         'title' => 'string',
-        'msisdn' => 'string',
-        'first_name' => 'string',
-        'middle_name' => 'string',
-        'last_name' => 'string',
-        'marital_status' => 'string',
-        'gender' => 'string',
         'birth_date' => 'string',
         'birth_lga' => 'string',
         'birth_state' => 'string',
         'educational_level' => 'string',
         'emplyment_status' => 'string',
+        'first_name' => 'string',
+        'gender' => 'string',
+        'height' => 'string',
+        'last_name' => 'string',
+        'lga' => 'string',
+        'marital_status' => 'string',
+        'middle_name' => 'string',
+        'msisdn' => 'string',
+        'nin' => 'string',
         'nspoken_lang' => 'string',
         'ospokenlang' => 'string',
+        'picture' => 'string',
         'profession' => 'string',
         'religion' => 'string',
         'residence_address_line1' => 'string',
-        'residence_town' => 'string',
         'residence_lga' => 'string',
         'residence_state' => 'string',
         'residence_status' => 'string',
+        'residence_town' => 'string',
         'self_origin_lga' => 'string',
         'self_origin_place' => 'string',
         'self_origin_state' => 'string',
         'state' => 'string',
-        'lga' => 'string',
-        'nin' => 'string',
-        'height' => 'string',
-        'picture' => 'string',
         'status' => 'float'
     ];
 
@@ -90,34 +90,34 @@ class GetPhoneNumber404ResponseEntity implements ModelInterface, ArrayAccess, \J
       */
     protected static $openAPIFormats = [
         'title' => null,
-        'msisdn' => null,
-        'first_name' => null,
-        'middle_name' => null,
-        'last_name' => null,
-        'marital_status' => null,
-        'gender' => null,
         'birth_date' => null,
         'birth_lga' => null,
         'birth_state' => null,
         'educational_level' => null,
         'emplyment_status' => null,
+        'first_name' => null,
+        'gender' => null,
+        'height' => null,
+        'last_name' => null,
+        'lga' => null,
+        'marital_status' => null,
+        'middle_name' => null,
+        'msisdn' => null,
+        'nin' => null,
         'nspoken_lang' => null,
         'ospokenlang' => null,
+        'picture' => null,
         'profession' => null,
         'religion' => null,
         'residence_address_line1' => null,
-        'residence_town' => null,
         'residence_lga' => null,
         'residence_state' => null,
         'residence_status' => null,
+        'residence_town' => null,
         'self_origin_lga' => null,
         'self_origin_place' => null,
         'self_origin_state' => null,
         'state' => null,
-        'lga' => null,
-        'nin' => null,
-        'height' => null,
-        'picture' => null,
         'status' => null
     ];
 
@@ -128,34 +128,34 @@ class GetPhoneNumber404ResponseEntity implements ModelInterface, ArrayAccess, \J
       */
     protected static array $openAPINullables = [
         'title' => false,
-		'msisdn' => false,
-		'first_name' => false,
-		'middle_name' => false,
-		'last_name' => false,
-		'marital_status' => false,
-		'gender' => false,
 		'birth_date' => false,
 		'birth_lga' => false,
 		'birth_state' => false,
 		'educational_level' => false,
 		'emplyment_status' => false,
+		'first_name' => false,
+		'gender' => false,
+		'height' => false,
+		'last_name' => false,
+		'lga' => false,
+		'marital_status' => false,
+		'middle_name' => false,
+		'msisdn' => false,
+		'nin' => false,
 		'nspoken_lang' => false,
 		'ospokenlang' => false,
+		'picture' => false,
 		'profession' => false,
 		'religion' => false,
 		'residence_address_line1' => false,
-		'residence_town' => false,
 		'residence_lga' => false,
 		'residence_state' => false,
 		'residence_status' => false,
+		'residence_town' => false,
 		'self_origin_lga' => false,
 		'self_origin_place' => false,
 		'self_origin_state' => false,
 		'state' => false,
-		'lga' => false,
-		'nin' => false,
-		'height' => false,
-		'picture' => false,
 		'status' => false
     ];
 
@@ -246,34 +246,34 @@ class GetPhoneNumber404ResponseEntity implements ModelInterface, ArrayAccess, \J
      */
     protected static $attributeMap = [
         'title' => 'title',
-        'msisdn' => 'msisdn',
-        'first_name' => 'firstName',
-        'middle_name' => 'middleName',
-        'last_name' => 'lastName',
-        'marital_status' => 'maritalStatus',
-        'gender' => 'gender',
         'birth_date' => 'birthDate',
         'birth_lga' => 'birthLga',
         'birth_state' => 'birthState',
         'educational_level' => 'educationalLevel',
         'emplyment_status' => 'emplymentStatus',
+        'first_name' => 'firstName',
+        'gender' => 'gender',
+        'height' => 'height',
+        'last_name' => 'lastName',
+        'lga' => 'lga',
+        'marital_status' => 'maritalStatus',
+        'middle_name' => 'middleName',
+        'msisdn' => 'msisdn',
+        'nin' => 'nin',
         'nspoken_lang' => 'nspokenLang',
         'ospokenlang' => 'ospokenlang',
+        'picture' => 'picture',
         'profession' => 'profession',
         'religion' => 'religion',
         'residence_address_line1' => 'residenceAddressLine1',
-        'residence_town' => 'residenceTown',
         'residence_lga' => 'residenceLga',
         'residence_state' => 'residenceState',
         'residence_status' => 'residenceStatus',
+        'residence_town' => 'residenceTown',
         'self_origin_lga' => 'selfOriginLga',
         'self_origin_place' => 'selfOriginPlace',
         'self_origin_state' => 'selfOriginState',
         'state' => 'state',
-        'lga' => 'lga',
-        'nin' => 'nin',
-        'height' => 'height',
-        'picture' => 'picture',
         'status' => 'status'
     ];
 
@@ -284,34 +284,34 @@ class GetPhoneNumber404ResponseEntity implements ModelInterface, ArrayAccess, \J
      */
     protected static $setters = [
         'title' => 'setTitle',
-        'msisdn' => 'setMsisdn',
-        'first_name' => 'setFirstName',
-        'middle_name' => 'setMiddleName',
-        'last_name' => 'setLastName',
-        'marital_status' => 'setMaritalStatus',
-        'gender' => 'setGender',
         'birth_date' => 'setBirthDate',
         'birth_lga' => 'setBirthLga',
         'birth_state' => 'setBirthState',
         'educational_level' => 'setEducationalLevel',
         'emplyment_status' => 'setEmplymentStatus',
+        'first_name' => 'setFirstName',
+        'gender' => 'setGender',
+        'height' => 'setHeight',
+        'last_name' => 'setLastName',
+        'lga' => 'setLga',
+        'marital_status' => 'setMaritalStatus',
+        'middle_name' => 'setMiddleName',
+        'msisdn' => 'setMsisdn',
+        'nin' => 'setNin',
         'nspoken_lang' => 'setNspokenLang',
         'ospokenlang' => 'setOspokenlang',
+        'picture' => 'setPicture',
         'profession' => 'setProfession',
         'religion' => 'setReligion',
         'residence_address_line1' => 'setResidenceAddressLine1',
-        'residence_town' => 'setResidenceTown',
         'residence_lga' => 'setResidenceLga',
         'residence_state' => 'setResidenceState',
         'residence_status' => 'setResidenceStatus',
+        'residence_town' => 'setResidenceTown',
         'self_origin_lga' => 'setSelfOriginLga',
         'self_origin_place' => 'setSelfOriginPlace',
         'self_origin_state' => 'setSelfOriginState',
         'state' => 'setState',
-        'lga' => 'setLga',
-        'nin' => 'setNin',
-        'height' => 'setHeight',
-        'picture' => 'setPicture',
         'status' => 'setStatus'
     ];
 
@@ -322,34 +322,34 @@ class GetPhoneNumber404ResponseEntity implements ModelInterface, ArrayAccess, \J
      */
     protected static $getters = [
         'title' => 'getTitle',
-        'msisdn' => 'getMsisdn',
-        'first_name' => 'getFirstName',
-        'middle_name' => 'getMiddleName',
-        'last_name' => 'getLastName',
-        'marital_status' => 'getMaritalStatus',
-        'gender' => 'getGender',
         'birth_date' => 'getBirthDate',
         'birth_lga' => 'getBirthLga',
         'birth_state' => 'getBirthState',
         'educational_level' => 'getEducationalLevel',
         'emplyment_status' => 'getEmplymentStatus',
+        'first_name' => 'getFirstName',
+        'gender' => 'getGender',
+        'height' => 'getHeight',
+        'last_name' => 'getLastName',
+        'lga' => 'getLga',
+        'marital_status' => 'getMaritalStatus',
+        'middle_name' => 'getMiddleName',
+        'msisdn' => 'getMsisdn',
+        'nin' => 'getNin',
         'nspoken_lang' => 'getNspokenLang',
         'ospokenlang' => 'getOspokenlang',
+        'picture' => 'getPicture',
         'profession' => 'getProfession',
         'religion' => 'getReligion',
         'residence_address_line1' => 'getResidenceAddressLine1',
-        'residence_town' => 'getResidenceTown',
         'residence_lga' => 'getResidenceLga',
         'residence_state' => 'getResidenceState',
         'residence_status' => 'getResidenceStatus',
+        'residence_town' => 'getResidenceTown',
         'self_origin_lga' => 'getSelfOriginLga',
         'self_origin_place' => 'getSelfOriginPlace',
         'self_origin_state' => 'getSelfOriginState',
         'state' => 'getState',
-        'lga' => 'getLga',
-        'nin' => 'getNin',
-        'height' => 'getHeight',
-        'picture' => 'getPicture',
         'status' => 'getStatus'
     ];
 
@@ -411,34 +411,34 @@ class GetPhoneNumber404ResponseEntity implements ModelInterface, ArrayAccess, \J
     public function __construct(array $data = null)
     {
         $this->setIfExists('title', $data ?? [], null);
-        $this->setIfExists('msisdn', $data ?? [], null);
-        $this->setIfExists('first_name', $data ?? [], null);
-        $this->setIfExists('middle_name', $data ?? [], null);
-        $this->setIfExists('last_name', $data ?? [], null);
-        $this->setIfExists('marital_status', $data ?? [], null);
-        $this->setIfExists('gender', $data ?? [], null);
         $this->setIfExists('birth_date', $data ?? [], null);
         $this->setIfExists('birth_lga', $data ?? [], null);
         $this->setIfExists('birth_state', $data ?? [], null);
         $this->setIfExists('educational_level', $data ?? [], null);
         $this->setIfExists('emplyment_status', $data ?? [], null);
+        $this->setIfExists('first_name', $data ?? [], null);
+        $this->setIfExists('gender', $data ?? [], null);
+        $this->setIfExists('height', $data ?? [], null);
+        $this->setIfExists('last_name', $data ?? [], null);
+        $this->setIfExists('lga', $data ?? [], null);
+        $this->setIfExists('marital_status', $data ?? [], null);
+        $this->setIfExists('middle_name', $data ?? [], null);
+        $this->setIfExists('msisdn', $data ?? [], null);
+        $this->setIfExists('nin', $data ?? [], null);
         $this->setIfExists('nspoken_lang', $data ?? [], null);
         $this->setIfExists('ospokenlang', $data ?? [], null);
+        $this->setIfExists('picture', $data ?? [], null);
         $this->setIfExists('profession', $data ?? [], null);
         $this->setIfExists('religion', $data ?? [], null);
         $this->setIfExists('residence_address_line1', $data ?? [], null);
-        $this->setIfExists('residence_town', $data ?? [], null);
         $this->setIfExists('residence_lga', $data ?? [], null);
         $this->setIfExists('residence_state', $data ?? [], null);
         $this->setIfExists('residence_status', $data ?? [], null);
+        $this->setIfExists('residence_town', $data ?? [], null);
         $this->setIfExists('self_origin_lga', $data ?? [], null);
         $this->setIfExists('self_origin_place', $data ?? [], null);
         $this->setIfExists('self_origin_state', $data ?? [], null);
         $this->setIfExists('state', $data ?? [], null);
-        $this->setIfExists('lga', $data ?? [], null);
-        $this->setIfExists('nin', $data ?? [], null);
-        $this->setIfExists('height', $data ?? [], null);
-        $this->setIfExists('picture', $data ?? [], null);
         $this->setIfExists('status', $data ?? [], null);
     }
 
@@ -509,180 +509,6 @@ class GetPhoneNumber404ResponseEntity implements ModelInterface, ArrayAccess, \J
         }
 
         $this->container['title'] = $title;
-
-        return $this;
-    }
-
-    /**
-     * Gets msisdn
-     *
-     * @return string|null
-     */
-    public function getMsisdn()
-    {
-        return $this->container['msisdn'];
-    }
-
-    /**
-     * Sets msisdn
-     *
-     * @param string|null $msisdn msisdn
-     *
-     * @return self
-     */
-    public function setMsisdn($msisdn)
-    {
-
-        if (is_null($msisdn)) {
-            throw new \InvalidArgumentException('non-nullable msisdn cannot be null');
-        }
-
-        $this->container['msisdn'] = $msisdn;
-
-        return $this;
-    }
-
-    /**
-     * Gets first_name
-     *
-     * @return string|null
-     */
-    public function getFirstName()
-    {
-        return $this->container['first_name'];
-    }
-
-    /**
-     * Sets first_name
-     *
-     * @param string|null $first_name first_name
-     *
-     * @return self
-     */
-    public function setFirstName($first_name)
-    {
-
-        if (is_null($first_name)) {
-            throw new \InvalidArgumentException('non-nullable first_name cannot be null');
-        }
-
-        $this->container['first_name'] = $first_name;
-
-        return $this;
-    }
-
-    /**
-     * Gets middle_name
-     *
-     * @return string|null
-     */
-    public function getMiddleName()
-    {
-        return $this->container['middle_name'];
-    }
-
-    /**
-     * Sets middle_name
-     *
-     * @param string|null $middle_name middle_name
-     *
-     * @return self
-     */
-    public function setMiddleName($middle_name)
-    {
-
-        if (is_null($middle_name)) {
-            throw new \InvalidArgumentException('non-nullable middle_name cannot be null');
-        }
-
-        $this->container['middle_name'] = $middle_name;
-
-        return $this;
-    }
-
-    /**
-     * Gets last_name
-     *
-     * @return string|null
-     */
-    public function getLastName()
-    {
-        return $this->container['last_name'];
-    }
-
-    /**
-     * Sets last_name
-     *
-     * @param string|null $last_name last_name
-     *
-     * @return self
-     */
-    public function setLastName($last_name)
-    {
-
-        if (is_null($last_name)) {
-            throw new \InvalidArgumentException('non-nullable last_name cannot be null');
-        }
-
-        $this->container['last_name'] = $last_name;
-
-        return $this;
-    }
-
-    /**
-     * Gets marital_status
-     *
-     * @return string|null
-     */
-    public function getMaritalStatus()
-    {
-        return $this->container['marital_status'];
-    }
-
-    /**
-     * Sets marital_status
-     *
-     * @param string|null $marital_status marital_status
-     *
-     * @return self
-     */
-    public function setMaritalStatus($marital_status)
-    {
-
-        if (is_null($marital_status)) {
-            throw new \InvalidArgumentException('non-nullable marital_status cannot be null');
-        }
-
-        $this->container['marital_status'] = $marital_status;
-
-        return $this;
-    }
-
-    /**
-     * Gets gender
-     *
-     * @return string|null
-     */
-    public function getGender()
-    {
-        return $this->container['gender'];
-    }
-
-    /**
-     * Sets gender
-     *
-     * @param string|null $gender gender
-     *
-     * @return self
-     */
-    public function setGender($gender)
-    {
-
-        if (is_null($gender)) {
-            throw new \InvalidArgumentException('non-nullable gender cannot be null');
-        }
-
-        $this->container['gender'] = $gender;
 
         return $this;
     }
@@ -833,6 +659,267 @@ class GetPhoneNumber404ResponseEntity implements ModelInterface, ArrayAccess, \J
     }
 
     /**
+     * Gets first_name
+     *
+     * @return string|null
+     */
+    public function getFirstName()
+    {
+        return $this->container['first_name'];
+    }
+
+    /**
+     * Sets first_name
+     *
+     * @param string|null $first_name first_name
+     *
+     * @return self
+     */
+    public function setFirstName($first_name)
+    {
+
+        if (is_null($first_name)) {
+            throw new \InvalidArgumentException('non-nullable first_name cannot be null');
+        }
+
+        $this->container['first_name'] = $first_name;
+
+        return $this;
+    }
+
+    /**
+     * Gets gender
+     *
+     * @return string|null
+     */
+    public function getGender()
+    {
+        return $this->container['gender'];
+    }
+
+    /**
+     * Sets gender
+     *
+     * @param string|null $gender gender
+     *
+     * @return self
+     */
+    public function setGender($gender)
+    {
+
+        if (is_null($gender)) {
+            throw new \InvalidArgumentException('non-nullable gender cannot be null');
+        }
+
+        $this->container['gender'] = $gender;
+
+        return $this;
+    }
+
+    /**
+     * Gets height
+     *
+     * @return string|null
+     */
+    public function getHeight()
+    {
+        return $this->container['height'];
+    }
+
+    /**
+     * Sets height
+     *
+     * @param string|null $height height
+     *
+     * @return self
+     */
+    public function setHeight($height)
+    {
+
+        if (is_null($height)) {
+            throw new \InvalidArgumentException('non-nullable height cannot be null');
+        }
+
+        $this->container['height'] = $height;
+
+        return $this;
+    }
+
+    /**
+     * Gets last_name
+     *
+     * @return string|null
+     */
+    public function getLastName()
+    {
+        return $this->container['last_name'];
+    }
+
+    /**
+     * Sets last_name
+     *
+     * @param string|null $last_name last_name
+     *
+     * @return self
+     */
+    public function setLastName($last_name)
+    {
+
+        if (is_null($last_name)) {
+            throw new \InvalidArgumentException('non-nullable last_name cannot be null');
+        }
+
+        $this->container['last_name'] = $last_name;
+
+        return $this;
+    }
+
+    /**
+     * Gets lga
+     *
+     * @return string|null
+     */
+    public function getLga()
+    {
+        return $this->container['lga'];
+    }
+
+    /**
+     * Sets lga
+     *
+     * @param string|null $lga lga
+     *
+     * @return self
+     */
+    public function setLga($lga)
+    {
+
+        if (is_null($lga)) {
+            throw new \InvalidArgumentException('non-nullable lga cannot be null');
+        }
+
+        $this->container['lga'] = $lga;
+
+        return $this;
+    }
+
+    /**
+     * Gets marital_status
+     *
+     * @return string|null
+     */
+    public function getMaritalStatus()
+    {
+        return $this->container['marital_status'];
+    }
+
+    /**
+     * Sets marital_status
+     *
+     * @param string|null $marital_status marital_status
+     *
+     * @return self
+     */
+    public function setMaritalStatus($marital_status)
+    {
+
+        if (is_null($marital_status)) {
+            throw new \InvalidArgumentException('non-nullable marital_status cannot be null');
+        }
+
+        $this->container['marital_status'] = $marital_status;
+
+        return $this;
+    }
+
+    /**
+     * Gets middle_name
+     *
+     * @return string|null
+     */
+    public function getMiddleName()
+    {
+        return $this->container['middle_name'];
+    }
+
+    /**
+     * Sets middle_name
+     *
+     * @param string|null $middle_name middle_name
+     *
+     * @return self
+     */
+    public function setMiddleName($middle_name)
+    {
+
+        if (is_null($middle_name)) {
+            throw new \InvalidArgumentException('non-nullable middle_name cannot be null');
+        }
+
+        $this->container['middle_name'] = $middle_name;
+
+        return $this;
+    }
+
+    /**
+     * Gets msisdn
+     *
+     * @return string|null
+     */
+    public function getMsisdn()
+    {
+        return $this->container['msisdn'];
+    }
+
+    /**
+     * Sets msisdn
+     *
+     * @param string|null $msisdn msisdn
+     *
+     * @return self
+     */
+    public function setMsisdn($msisdn)
+    {
+
+        if (is_null($msisdn)) {
+            throw new \InvalidArgumentException('non-nullable msisdn cannot be null');
+        }
+
+        $this->container['msisdn'] = $msisdn;
+
+        return $this;
+    }
+
+    /**
+     * Gets nin
+     *
+     * @return string|null
+     */
+    public function getNin()
+    {
+        return $this->container['nin'];
+    }
+
+    /**
+     * Sets nin
+     *
+     * @param string|null $nin nin
+     *
+     * @return self
+     */
+    public function setNin($nin)
+    {
+
+        if (is_null($nin)) {
+            throw new \InvalidArgumentException('non-nullable nin cannot be null');
+        }
+
+        $this->container['nin'] = $nin;
+
+        return $this;
+    }
+
+    /**
      * Gets nspoken_lang
      *
      * @return string|null
@@ -886,6 +973,35 @@ class GetPhoneNumber404ResponseEntity implements ModelInterface, ArrayAccess, \J
         }
 
         $this->container['ospokenlang'] = $ospokenlang;
+
+        return $this;
+    }
+
+    /**
+     * Gets picture
+     *
+     * @return string|null
+     */
+    public function getPicture()
+    {
+        return $this->container['picture'];
+    }
+
+    /**
+     * Sets picture
+     *
+     * @param string|null $picture picture
+     *
+     * @return self
+     */
+    public function setPicture($picture)
+    {
+
+        if (is_null($picture)) {
+            throw new \InvalidArgumentException('non-nullable picture cannot be null');
+        }
+
+        $this->container['picture'] = $picture;
 
         return $this;
     }
@@ -978,35 +1094,6 @@ class GetPhoneNumber404ResponseEntity implements ModelInterface, ArrayAccess, \J
     }
 
     /**
-     * Gets residence_town
-     *
-     * @return string|null
-     */
-    public function getResidenceTown()
-    {
-        return $this->container['residence_town'];
-    }
-
-    /**
-     * Sets residence_town
-     *
-     * @param string|null $residence_town residence_town
-     *
-     * @return self
-     */
-    public function setResidenceTown($residence_town)
-    {
-
-        if (is_null($residence_town)) {
-            throw new \InvalidArgumentException('non-nullable residence_town cannot be null');
-        }
-
-        $this->container['residence_town'] = $residence_town;
-
-        return $this;
-    }
-
-    /**
      * Gets residence_lga
      *
      * @return string|null
@@ -1089,6 +1176,35 @@ class GetPhoneNumber404ResponseEntity implements ModelInterface, ArrayAccess, \J
         }
 
         $this->container['residence_status'] = $residence_status;
+
+        return $this;
+    }
+
+    /**
+     * Gets residence_town
+     *
+     * @return string|null
+     */
+    public function getResidenceTown()
+    {
+        return $this->container['residence_town'];
+    }
+
+    /**
+     * Sets residence_town
+     *
+     * @param string|null $residence_town residence_town
+     *
+     * @return self
+     */
+    public function setResidenceTown($residence_town)
+    {
+
+        if (is_null($residence_town)) {
+            throw new \InvalidArgumentException('non-nullable residence_town cannot be null');
+        }
+
+        $this->container['residence_town'] = $residence_town;
 
         return $this;
     }
@@ -1205,122 +1321,6 @@ class GetPhoneNumber404ResponseEntity implements ModelInterface, ArrayAccess, \J
         }
 
         $this->container['state'] = $state;
-
-        return $this;
-    }
-
-    /**
-     * Gets lga
-     *
-     * @return string|null
-     */
-    public function getLga()
-    {
-        return $this->container['lga'];
-    }
-
-    /**
-     * Sets lga
-     *
-     * @param string|null $lga lga
-     *
-     * @return self
-     */
-    public function setLga($lga)
-    {
-
-        if (is_null($lga)) {
-            throw new \InvalidArgumentException('non-nullable lga cannot be null');
-        }
-
-        $this->container['lga'] = $lga;
-
-        return $this;
-    }
-
-    /**
-     * Gets nin
-     *
-     * @return string|null
-     */
-    public function getNin()
-    {
-        return $this->container['nin'];
-    }
-
-    /**
-     * Sets nin
-     *
-     * @param string|null $nin nin
-     *
-     * @return self
-     */
-    public function setNin($nin)
-    {
-
-        if (is_null($nin)) {
-            throw new \InvalidArgumentException('non-nullable nin cannot be null');
-        }
-
-        $this->container['nin'] = $nin;
-
-        return $this;
-    }
-
-    /**
-     * Gets height
-     *
-     * @return string|null
-     */
-    public function getHeight()
-    {
-        return $this->container['height'];
-    }
-
-    /**
-     * Sets height
-     *
-     * @param string|null $height height
-     *
-     * @return self
-     */
-    public function setHeight($height)
-    {
-
-        if (is_null($height)) {
-            throw new \InvalidArgumentException('non-nullable height cannot be null');
-        }
-
-        $this->container['height'] = $height;
-
-        return $this;
-    }
-
-    /**
-     * Gets picture
-     *
-     * @return string|null
-     */
-    public function getPicture()
-    {
-        return $this->container['picture'];
-    }
-
-    /**
-     * Sets picture
-     *
-     * @param string|null $picture picture
-     *
-     * @return self
-     */
-    public function setPicture($picture)
-    {
-
-        if (is_null($picture)) {
-            throw new \InvalidArgumentException('non-nullable picture cannot be null');
-        }
-
-        $this->container['picture'] = $picture;
 
         return $this;
     }

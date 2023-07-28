@@ -49,11 +49,11 @@ class AnalyzeDocumentResponseEntityStatus implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $openAPITypes = [
-        'overall_status' => 'float',
         'document_images' => 'string',
-        'text' => 'string',
         'document_type' => 'string',
-        'expiry' => 'string'
+        'expiry' => 'string',
+        'overall_status' => 'float',
+        'text' => 'string'
     ];
 
     /**
@@ -64,11 +64,11 @@ class AnalyzeDocumentResponseEntityStatus implements ModelInterface, ArrayAccess
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'overall_status' => null,
         'document_images' => null,
-        'text' => null,
         'document_type' => null,
-        'expiry' => null
+        'expiry' => null,
+        'overall_status' => null,
+        'text' => null
     ];
 
     /**
@@ -77,11 +77,11 @@ class AnalyzeDocumentResponseEntityStatus implements ModelInterface, ArrayAccess
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'overall_status' => false,
-		'document_images' => false,
-		'text' => false,
+        'document_images' => false,
 		'document_type' => false,
-		'expiry' => false
+		'expiry' => false,
+		'overall_status' => false,
+		'text' => false
     ];
 
     /**
@@ -170,11 +170,11 @@ class AnalyzeDocumentResponseEntityStatus implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $attributeMap = [
-        'overall_status' => 'overall_status',
         'document_images' => 'document_images',
-        'text' => 'text',
         'document_type' => 'document_type',
-        'expiry' => 'expiry'
+        'expiry' => 'expiry',
+        'overall_status' => 'overall_status',
+        'text' => 'text'
     ];
 
     /**
@@ -183,11 +183,11 @@ class AnalyzeDocumentResponseEntityStatus implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $setters = [
-        'overall_status' => 'setOverallStatus',
         'document_images' => 'setDocumentImages',
-        'text' => 'setText',
         'document_type' => 'setDocumentType',
-        'expiry' => 'setExpiry'
+        'expiry' => 'setExpiry',
+        'overall_status' => 'setOverallStatus',
+        'text' => 'setText'
     ];
 
     /**
@@ -196,11 +196,11 @@ class AnalyzeDocumentResponseEntityStatus implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $getters = [
-        'overall_status' => 'getOverallStatus',
         'document_images' => 'getDocumentImages',
-        'text' => 'getText',
         'document_type' => 'getDocumentType',
-        'expiry' => 'getExpiry'
+        'expiry' => 'getExpiry',
+        'overall_status' => 'getOverallStatus',
+        'text' => 'getText'
     ];
 
     /**
@@ -260,11 +260,11 @@ class AnalyzeDocumentResponseEntityStatus implements ModelInterface, ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->setIfExists('overall_status', $data ?? [], null);
         $this->setIfExists('document_images', $data ?? [], null);
-        $this->setIfExists('text', $data ?? [], null);
         $this->setIfExists('document_type', $data ?? [], null);
         $this->setIfExists('expiry', $data ?? [], null);
+        $this->setIfExists('overall_status', $data ?? [], null);
+        $this->setIfExists('text', $data ?? [], null);
     }
 
     /**
@@ -310,35 +310,6 @@ class AnalyzeDocumentResponseEntityStatus implements ModelInterface, ArrayAccess
 
 
     /**
-     * Gets overall_status
-     *
-     * @return float|null
-     */
-    public function getOverallStatus()
-    {
-        return $this->container['overall_status'];
-    }
-
-    /**
-     * Sets overall_status
-     *
-     * @param float|null $overall_status overall_status
-     *
-     * @return self
-     */
-    public function setOverallStatus($overall_status)
-    {
-
-        if (is_null($overall_status)) {
-            throw new \InvalidArgumentException('non-nullable overall_status cannot be null');
-        }
-
-        $this->container['overall_status'] = $overall_status;
-
-        return $this;
-    }
-
-    /**
      * Gets document_images
      *
      * @return string|null
@@ -363,35 +334,6 @@ class AnalyzeDocumentResponseEntityStatus implements ModelInterface, ArrayAccess
         }
 
         $this->container['document_images'] = $document_images;
-
-        return $this;
-    }
-
-    /**
-     * Gets text
-     *
-     * @return string|null
-     */
-    public function getText()
-    {
-        return $this->container['text'];
-    }
-
-    /**
-     * Sets text
-     *
-     * @param string|null $text text
-     *
-     * @return self
-     */
-    public function setText($text)
-    {
-
-        if (is_null($text)) {
-            throw new \InvalidArgumentException('non-nullable text cannot be null');
-        }
-
-        $this->container['text'] = $text;
 
         return $this;
     }
@@ -450,6 +392,64 @@ class AnalyzeDocumentResponseEntityStatus implements ModelInterface, ArrayAccess
         }
 
         $this->container['expiry'] = $expiry;
+
+        return $this;
+    }
+
+    /**
+     * Gets overall_status
+     *
+     * @return float|null
+     */
+    public function getOverallStatus()
+    {
+        return $this->container['overall_status'];
+    }
+
+    /**
+     * Sets overall_status
+     *
+     * @param float|null $overall_status overall_status
+     *
+     * @return self
+     */
+    public function setOverallStatus($overall_status)
+    {
+
+        if (is_null($overall_status)) {
+            throw new \InvalidArgumentException('non-nullable overall_status cannot be null');
+        }
+
+        $this->container['overall_status'] = $overall_status;
+
+        return $this;
+    }
+
+    /**
+     * Gets text
+     *
+     * @return string|null
+     */
+    public function getText()
+    {
+        return $this->container['text'];
+    }
+
+    /**
+     * Sets text
+     *
+     * @param string|null $text text
+     *
+     * @return self
+     */
+    public function setText($text)
+    {
+
+        if (is_null($text)) {
+            throw new \InvalidArgumentException('non-nullable text cannot be null');
+        }
+
+        $this->container['text'] = $text;
 
         return $this;
     }

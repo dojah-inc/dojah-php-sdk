@@ -22,7 +22,8 @@ Purchase - Send Airtime
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    apiKey: "APPID",
+    Authorization: "AUTHORIZATION",
+    AppId: "APP_ID",
 );
 
 $destination = "08068810228";
@@ -51,7 +52,7 @@ try {
 
 ### Authorization
 
-[appIdAuth](../../README.md#appIdAuth), [noauthAuth](../../README.md#noauthAuth)
+[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 

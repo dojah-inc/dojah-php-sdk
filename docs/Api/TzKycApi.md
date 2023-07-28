@@ -22,7 +22,8 @@ Lookup TZ NIN
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    apiKey: "APPID",
+    Authorization: "AUTHORIZATION",
+    AppId: "APP_ID",
 );
 
 $first_name = "khafsa";
@@ -60,7 +61,7 @@ try {
 
 ### Authorization
 
-[appIdAuth](../../README.md#appIdAuth)
+[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 

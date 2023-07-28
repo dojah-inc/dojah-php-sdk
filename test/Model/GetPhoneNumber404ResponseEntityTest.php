@@ -81,60 +81,6 @@ class GetPhoneNumber404ResponseEntityTest extends TestCase
     }
 
     /**
-     * Test attribute "msisdn"
-     */
-    public function testPropertyMsisdn()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "first_name"
-     */
-    public function testPropertyFirstName()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "middle_name"
-     */
-    public function testPropertyMiddleName()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "last_name"
-     */
-    public function testPropertyLastName()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "marital_status"
-     */
-    public function testPropertyMaritalStatus()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "gender"
-     */
-    public function testPropertyGender()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
      * Test attribute "birth_date"
      */
     public function testPropertyBirthDate()
@@ -180,6 +126,87 @@ class GetPhoneNumber404ResponseEntityTest extends TestCase
     }
 
     /**
+     * Test attribute "first_name"
+     */
+    public function testPropertyFirstName()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "gender"
+     */
+    public function testPropertyGender()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "height"
+     */
+    public function testPropertyHeight()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "last_name"
+     */
+    public function testPropertyLastName()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "lga"
+     */
+    public function testPropertyLga()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "marital_status"
+     */
+    public function testPropertyMaritalStatus()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "middle_name"
+     */
+    public function testPropertyMiddleName()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "msisdn"
+     */
+    public function testPropertyMsisdn()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "nin"
+     */
+    public function testPropertyNin()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
      * Test attribute "nspoken_lang"
      */
     public function testPropertyNspokenLang()
@@ -192,6 +219,15 @@ class GetPhoneNumber404ResponseEntityTest extends TestCase
      * Test attribute "ospokenlang"
      */
     public function testPropertyOspokenlang()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "picture"
+     */
+    public function testPropertyPicture()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
@@ -225,15 +261,6 @@ class GetPhoneNumber404ResponseEntityTest extends TestCase
     }
 
     /**
-     * Test attribute "residence_town"
-     */
-    public function testPropertyResidenceTown()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
      * Test attribute "residence_lga"
      */
     public function testPropertyResidenceLga()
@@ -255,6 +282,15 @@ class GetPhoneNumber404ResponseEntityTest extends TestCase
      * Test attribute "residence_status"
      */
     public function testPropertyResidenceStatus()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "residence_town"
+     */
+    public function testPropertyResidenceTown()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
@@ -291,42 +327,6 @@ class GetPhoneNumber404ResponseEntityTest extends TestCase
      * Test attribute "state"
      */
     public function testPropertyState()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "lga"
-     */
-    public function testPropertyLga()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "nin"
-     */
-    public function testPropertyNin()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "height"
-     */
-    public function testPropertyHeight()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "picture"
-     */
-    public function testPropertyPicture()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');

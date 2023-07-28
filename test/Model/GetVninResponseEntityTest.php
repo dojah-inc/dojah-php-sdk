@@ -72,9 +72,9 @@ class GetVninResponseEntityTest extends TestCase
     }
 
     /**
-     * Test attribute "vnin"
+     * Test attribute "date_of_birth"
      */
-    public function testPropertyVnin()
+    public function testPropertyDateOfBirth()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
@@ -90,9 +90,36 @@ class GetVninResponseEntityTest extends TestCase
     }
 
     /**
+     * Test attribute "gender"
+     */
+    public function testPropertyGender()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
      * Test attribute "middlename"
      */
     public function testPropertyMiddlename()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "mobile"
+     */
+    public function testPropertyMobile()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "photo"
+     */
+    public function testPropertyPhoto()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
@@ -117,36 +144,9 @@ class GetVninResponseEntityTest extends TestCase
     }
 
     /**
-     * Test attribute "gender"
+     * Test attribute "vnin"
      */
-    public function testPropertyGender()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "mobile"
-     */
-    public function testPropertyMobile()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "date_of_birth"
-     */
-    public function testPropertyDateOfBirth()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "photo"
-     */
-    public function testPropertyPhoto()
+    public function testPropertyVnin()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');

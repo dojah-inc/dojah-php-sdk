@@ -49,9 +49,9 @@ class AnalyzeDocumentResponseEntity implements ModelInterface, ArrayAccess, \Jso
       * @var string[]
       */
     protected static $openAPITypes = [
-        'status' => '\Dojah\Model\AnalyzeDocumentResponseEntityStatus',
-        'document_type' => '\Dojah\Model\AnalyzeDocumentResponseEntityDocumentType',
         'document_images' => '\Dojah\Model\AnalyzeDocumentResponseEntityDocumentImages',
+        'document_type' => '\Dojah\Model\AnalyzeDocumentResponseEntityDocumentType',
+        'status' => '\Dojah\Model\AnalyzeDocumentResponseEntityStatus',
         'text_data' => '\Dojah\Model\AnalyzeDocumentResponseEntityTextDataInner[]'
     ];
 
@@ -63,9 +63,9 @@ class AnalyzeDocumentResponseEntity implements ModelInterface, ArrayAccess, \Jso
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'status' => null,
-        'document_type' => null,
         'document_images' => null,
+        'document_type' => null,
+        'status' => null,
         'text_data' => null
     ];
 
@@ -75,9 +75,9 @@ class AnalyzeDocumentResponseEntity implements ModelInterface, ArrayAccess, \Jso
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'status' => false,
+        'document_images' => false,
 		'document_type' => false,
-		'document_images' => false,
+		'status' => false,
 		'text_data' => false
     ];
 
@@ -167,9 +167,9 @@ class AnalyzeDocumentResponseEntity implements ModelInterface, ArrayAccess, \Jso
      * @var string[]
      */
     protected static $attributeMap = [
-        'status' => 'status',
-        'document_type' => 'document_type',
         'document_images' => 'document_images',
+        'document_type' => 'document_type',
+        'status' => 'status',
         'text_data' => 'text_data'
     ];
 
@@ -179,9 +179,9 @@ class AnalyzeDocumentResponseEntity implements ModelInterface, ArrayAccess, \Jso
      * @var string[]
      */
     protected static $setters = [
-        'status' => 'setStatus',
-        'document_type' => 'setDocumentType',
         'document_images' => 'setDocumentImages',
+        'document_type' => 'setDocumentType',
+        'status' => 'setStatus',
         'text_data' => 'setTextData'
     ];
 
@@ -191,9 +191,9 @@ class AnalyzeDocumentResponseEntity implements ModelInterface, ArrayAccess, \Jso
      * @var string[]
      */
     protected static $getters = [
-        'status' => 'getStatus',
-        'document_type' => 'getDocumentType',
         'document_images' => 'getDocumentImages',
+        'document_type' => 'getDocumentType',
+        'status' => 'getStatus',
         'text_data' => 'getTextData'
     ];
 
@@ -254,9 +254,9 @@ class AnalyzeDocumentResponseEntity implements ModelInterface, ArrayAccess, \Jso
      */
     public function __construct(array $data = null)
     {
-        $this->setIfExists('status', $data ?? [], null);
-        $this->setIfExists('document_type', $data ?? [], null);
         $this->setIfExists('document_images', $data ?? [], null);
+        $this->setIfExists('document_type', $data ?? [], null);
+        $this->setIfExists('status', $data ?? [], null);
         $this->setIfExists('text_data', $data ?? [], null);
     }
 
@@ -303,30 +303,30 @@ class AnalyzeDocumentResponseEntity implements ModelInterface, ArrayAccess, \Jso
 
 
     /**
-     * Gets status
+     * Gets document_images
      *
-     * @return \Dojah\Model\AnalyzeDocumentResponseEntityStatus|null
+     * @return \Dojah\Model\AnalyzeDocumentResponseEntityDocumentImages|null
      */
-    public function getStatus()
+    public function getDocumentImages()
     {
-        return $this->container['status'];
+        return $this->container['document_images'];
     }
 
     /**
-     * Sets status
+     * Sets document_images
      *
-     * @param \Dojah\Model\AnalyzeDocumentResponseEntityStatus|null $status status
+     * @param \Dojah\Model\AnalyzeDocumentResponseEntityDocumentImages|null $document_images document_images
      *
      * @return self
      */
-    public function setStatus($status)
+    public function setDocumentImages($document_images)
     {
 
-        if (is_null($status)) {
-            throw new \InvalidArgumentException('non-nullable status cannot be null');
+        if (is_null($document_images)) {
+            throw new \InvalidArgumentException('non-nullable document_images cannot be null');
         }
 
-        $this->container['status'] = $status;
+        $this->container['document_images'] = $document_images;
 
         return $this;
     }
@@ -361,30 +361,30 @@ class AnalyzeDocumentResponseEntity implements ModelInterface, ArrayAccess, \Jso
     }
 
     /**
-     * Gets document_images
+     * Gets status
      *
-     * @return \Dojah\Model\AnalyzeDocumentResponseEntityDocumentImages|null
+     * @return \Dojah\Model\AnalyzeDocumentResponseEntityStatus|null
      */
-    public function getDocumentImages()
+    public function getStatus()
     {
-        return $this->container['document_images'];
+        return $this->container['status'];
     }
 
     /**
-     * Sets document_images
+     * Sets status
      *
-     * @param \Dojah\Model\AnalyzeDocumentResponseEntityDocumentImages|null $document_images document_images
+     * @param \Dojah\Model\AnalyzeDocumentResponseEntityStatus|null $status status
      *
      * @return self
      */
-    public function setDocumentImages($document_images)
+    public function setStatus($status)
     {
 
-        if (is_null($document_images)) {
-            throw new \InvalidArgumentException('non-nullable document_images cannot be null');
+        if (is_null($status)) {
+            throw new \InvalidArgumentException('non-nullable status cannot be null');
         }
 
-        $this->container['document_images'] = $document_images;
+        $this->container['status'] = $status;
 
         return $this;
     }

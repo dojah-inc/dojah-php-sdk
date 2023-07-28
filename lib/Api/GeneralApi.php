@@ -412,9 +412,14 @@ class GeneralApi extends \Dojah\CustomApi
         }
 
         // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
         if ($apiKey !== null) {
-            $headers['Appid'] = $apiKey;
+            $headers['Authorization'] = $apiKey;
+        }
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
+        if ($apiKey !== null) {
+            $headers['AppId'] = $apiKey;
         }
 
         $defaultHeaders = [];
@@ -735,9 +740,14 @@ class GeneralApi extends \Dojah\CustomApi
         }
 
         // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
         if ($apiKey !== null) {
-            $headers['Appid'] = $apiKey;
+            $headers['Authorization'] = $apiKey;
+        }
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
+        if ($apiKey !== null) {
+            $headers['AppId'] = $apiKey;
         }
 
         $defaultHeaders = [];
@@ -1077,9 +1087,14 @@ class GeneralApi extends \Dojah\CustomApi
         }
 
         // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
         if ($apiKey !== null) {
-            $headers['Appid'] = $apiKey;
+            $headers['Authorization'] = $apiKey;
+        }
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('AppId');
+        if ($apiKey !== null) {
+            $headers['AppId'] = $apiKey;
         }
 
         $defaultHeaders = [];

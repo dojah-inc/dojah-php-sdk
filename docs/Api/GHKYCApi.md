@@ -25,7 +25,8 @@ Driver's License
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    apiKey: "APPID",
+    Authorization: "AUTHORIZATION",
+    AppId: "APP_ID",
 );
 
 $id = "V0000000";
@@ -58,7 +59,7 @@ try {
 
 ### Authorization
 
-[appIdAuth](../../README.md#appIdAuth)
+[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -84,7 +85,8 @@ Passport
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    apiKey: "APPID",
+    Authorization: "AUTHORIZATION",
+    AppId: "APP_ID",
 );
 
 $id = "G111235468";
@@ -123,7 +125,7 @@ try {
 
 ### Authorization
 
-[appIdAuth](../../README.md#appIdAuth)
+[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -149,7 +151,8 @@ SSNIT
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    apiKey: "APPID",
+    Authorization: "AUTHORIZATION",
+    AppId: "APP_ID",
 );
 
 $id = "G0000000";
@@ -182,7 +185,7 @@ try {
 
 ### Authorization
 
-[appIdAuth](../../README.md#appIdAuth)
+[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -208,7 +211,8 @@ Voter ID Lookup
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    apiKey: "APPID",
+    Authorization: "AUTHORIZATION",
+    AppId: "APP_ID",
 );
 
 $id = 6423007613;
@@ -240,7 +244,7 @@ try {
 
 ### Authorization
 
-[appIdAuth](../../README.md#appIdAuth)
+[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 

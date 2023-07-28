@@ -49,23 +49,23 @@ class GetKycDriversLicenseResponseEntityPersonalDetails implements ModelInterfac
       * @var string[]
       */
     protected static $openAPITypes = [
-        'firstname' => 'string',
-        'othername' => 'string',
-        'surname' => 'string',
-        'mother_maiden_name' => 'string',
-        'gender' => 'string',
         'birth_date' => 'string',
         'blood_group_id' => 'string',
+        'country' => 'string',
+        'disability_reason' => 'string',
         'facial_mark' => 'string',
+        'firstname' => 'string',
+        'gender' => 'string',
         'glasses' => 'string',
         'height' => 'string',
-        'universaltax_identity_number' => 'string',
-        'nin_number' => 'string',
-        'country' => 'string',
-        'state' => 'string',
-        'lga' => 'string',
         'is_disability' => 'string',
-        'disability_reason' => 'string'
+        'lga' => 'string',
+        'mother_maiden_name' => 'string',
+        'nin_number' => 'string',
+        'othername' => 'string',
+        'state' => 'string',
+        'surname' => 'string',
+        'universaltax_identity_number' => 'string'
     ];
 
     /**
@@ -76,23 +76,23 @@ class GetKycDriversLicenseResponseEntityPersonalDetails implements ModelInterfac
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'firstname' => null,
-        'othername' => null,
-        'surname' => null,
-        'mother_maiden_name' => null,
-        'gender' => null,
         'birth_date' => null,
         'blood_group_id' => null,
+        'country' => null,
+        'disability_reason' => null,
         'facial_mark' => null,
+        'firstname' => null,
+        'gender' => null,
         'glasses' => null,
         'height' => null,
-        'universaltax_identity_number' => null,
-        'nin_number' => null,
-        'country' => null,
-        'state' => null,
-        'lga' => null,
         'is_disability' => null,
-        'disability_reason' => null
+        'lga' => null,
+        'mother_maiden_name' => null,
+        'nin_number' => null,
+        'othername' => null,
+        'state' => null,
+        'surname' => null,
+        'universaltax_identity_number' => null
     ];
 
     /**
@@ -101,23 +101,23 @@ class GetKycDriversLicenseResponseEntityPersonalDetails implements ModelInterfac
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'firstname' => false,
-		'othername' => false,
-		'surname' => false,
-		'mother_maiden_name' => false,
-		'gender' => false,
-		'birth_date' => false,
+        'birth_date' => false,
 		'blood_group_id' => false,
+		'country' => false,
+		'disability_reason' => false,
 		'facial_mark' => false,
+		'firstname' => false,
+		'gender' => false,
 		'glasses' => false,
 		'height' => false,
-		'universaltax_identity_number' => false,
-		'nin_number' => false,
-		'country' => false,
-		'state' => false,
-		'lga' => false,
 		'is_disability' => false,
-		'disability_reason' => false
+		'lga' => false,
+		'mother_maiden_name' => false,
+		'nin_number' => false,
+		'othername' => false,
+		'state' => false,
+		'surname' => false,
+		'universaltax_identity_number' => false
     ];
 
     /**
@@ -206,23 +206,23 @@ class GetKycDriversLicenseResponseEntityPersonalDetails implements ModelInterfac
      * @var string[]
      */
     protected static $attributeMap = [
-        'firstname' => 'firstname',
-        'othername' => 'othername',
-        'surname' => 'surname',
-        'mother_maiden_name' => 'mother_maiden_name',
-        'gender' => 'gender',
         'birth_date' => 'birth_date',
         'blood_group_id' => 'blood_group_id',
+        'country' => 'country',
+        'disability_reason' => 'disability_reason',
         'facial_mark' => 'facial_mark',
+        'firstname' => 'firstname',
+        'gender' => 'gender',
         'glasses' => 'glasses',
         'height' => 'height',
-        'universaltax_identity_number' => 'universaltax_identity_number',
-        'nin_number' => 'nin_number',
-        'country' => 'country',
-        'state' => 'state',
-        'lga' => 'lga',
         'is_disability' => 'is_disability',
-        'disability_reason' => 'disability_reason'
+        'lga' => 'lga',
+        'mother_maiden_name' => 'mother_maiden_name',
+        'nin_number' => 'nin_number',
+        'othername' => 'othername',
+        'state' => 'state',
+        'surname' => 'surname',
+        'universaltax_identity_number' => 'universaltax_identity_number'
     ];
 
     /**
@@ -231,23 +231,23 @@ class GetKycDriversLicenseResponseEntityPersonalDetails implements ModelInterfac
      * @var string[]
      */
     protected static $setters = [
-        'firstname' => 'setFirstname',
-        'othername' => 'setOthername',
-        'surname' => 'setSurname',
-        'mother_maiden_name' => 'setMotherMaidenName',
-        'gender' => 'setGender',
         'birth_date' => 'setBirthDate',
         'blood_group_id' => 'setBloodGroupId',
+        'country' => 'setCountry',
+        'disability_reason' => 'setDisabilityReason',
         'facial_mark' => 'setFacialMark',
+        'firstname' => 'setFirstname',
+        'gender' => 'setGender',
         'glasses' => 'setGlasses',
         'height' => 'setHeight',
-        'universaltax_identity_number' => 'setUniversaltaxIdentityNumber',
-        'nin_number' => 'setNinNumber',
-        'country' => 'setCountry',
-        'state' => 'setState',
-        'lga' => 'setLga',
         'is_disability' => 'setIsDisability',
-        'disability_reason' => 'setDisabilityReason'
+        'lga' => 'setLga',
+        'mother_maiden_name' => 'setMotherMaidenName',
+        'nin_number' => 'setNinNumber',
+        'othername' => 'setOthername',
+        'state' => 'setState',
+        'surname' => 'setSurname',
+        'universaltax_identity_number' => 'setUniversaltaxIdentityNumber'
     ];
 
     /**
@@ -256,23 +256,23 @@ class GetKycDriversLicenseResponseEntityPersonalDetails implements ModelInterfac
      * @var string[]
      */
     protected static $getters = [
-        'firstname' => 'getFirstname',
-        'othername' => 'getOthername',
-        'surname' => 'getSurname',
-        'mother_maiden_name' => 'getMotherMaidenName',
-        'gender' => 'getGender',
         'birth_date' => 'getBirthDate',
         'blood_group_id' => 'getBloodGroupId',
+        'country' => 'getCountry',
+        'disability_reason' => 'getDisabilityReason',
         'facial_mark' => 'getFacialMark',
+        'firstname' => 'getFirstname',
+        'gender' => 'getGender',
         'glasses' => 'getGlasses',
         'height' => 'getHeight',
-        'universaltax_identity_number' => 'getUniversaltaxIdentityNumber',
-        'nin_number' => 'getNinNumber',
-        'country' => 'getCountry',
-        'state' => 'getState',
-        'lga' => 'getLga',
         'is_disability' => 'getIsDisability',
-        'disability_reason' => 'getDisabilityReason'
+        'lga' => 'getLga',
+        'mother_maiden_name' => 'getMotherMaidenName',
+        'nin_number' => 'getNinNumber',
+        'othername' => 'getOthername',
+        'state' => 'getState',
+        'surname' => 'getSurname',
+        'universaltax_identity_number' => 'getUniversaltaxIdentityNumber'
     ];
 
     /**
@@ -332,23 +332,23 @@ class GetKycDriversLicenseResponseEntityPersonalDetails implements ModelInterfac
      */
     public function __construct(array $data = null)
     {
-        $this->setIfExists('firstname', $data ?? [], null);
-        $this->setIfExists('othername', $data ?? [], null);
-        $this->setIfExists('surname', $data ?? [], null);
-        $this->setIfExists('mother_maiden_name', $data ?? [], null);
-        $this->setIfExists('gender', $data ?? [], null);
         $this->setIfExists('birth_date', $data ?? [], null);
         $this->setIfExists('blood_group_id', $data ?? [], null);
+        $this->setIfExists('country', $data ?? [], null);
+        $this->setIfExists('disability_reason', $data ?? [], null);
         $this->setIfExists('facial_mark', $data ?? [], null);
+        $this->setIfExists('firstname', $data ?? [], null);
+        $this->setIfExists('gender', $data ?? [], null);
         $this->setIfExists('glasses', $data ?? [], null);
         $this->setIfExists('height', $data ?? [], null);
-        $this->setIfExists('universaltax_identity_number', $data ?? [], null);
-        $this->setIfExists('nin_number', $data ?? [], null);
-        $this->setIfExists('country', $data ?? [], null);
-        $this->setIfExists('state', $data ?? [], null);
-        $this->setIfExists('lga', $data ?? [], null);
         $this->setIfExists('is_disability', $data ?? [], null);
-        $this->setIfExists('disability_reason', $data ?? [], null);
+        $this->setIfExists('lga', $data ?? [], null);
+        $this->setIfExists('mother_maiden_name', $data ?? [], null);
+        $this->setIfExists('nin_number', $data ?? [], null);
+        $this->setIfExists('othername', $data ?? [], null);
+        $this->setIfExists('state', $data ?? [], null);
+        $this->setIfExists('surname', $data ?? [], null);
+        $this->setIfExists('universaltax_identity_number', $data ?? [], null);
     }
 
     /**
@@ -392,151 +392,6 @@ class GetKycDriversLicenseResponseEntityPersonalDetails implements ModelInterfac
         return count($this->listInvalidProperties()) === 0;
     }
 
-
-    /**
-     * Gets firstname
-     *
-     * @return string|null
-     */
-    public function getFirstname()
-    {
-        return $this->container['firstname'];
-    }
-
-    /**
-     * Sets firstname
-     *
-     * @param string|null $firstname firstname
-     *
-     * @return self
-     */
-    public function setFirstname($firstname)
-    {
-
-        if (is_null($firstname)) {
-            throw new \InvalidArgumentException('non-nullable firstname cannot be null');
-        }
-
-        $this->container['firstname'] = $firstname;
-
-        return $this;
-    }
-
-    /**
-     * Gets othername
-     *
-     * @return string|null
-     */
-    public function getOthername()
-    {
-        return $this->container['othername'];
-    }
-
-    /**
-     * Sets othername
-     *
-     * @param string|null $othername othername
-     *
-     * @return self
-     */
-    public function setOthername($othername)
-    {
-
-        if (is_null($othername)) {
-            throw new \InvalidArgumentException('non-nullable othername cannot be null');
-        }
-
-        $this->container['othername'] = $othername;
-
-        return $this;
-    }
-
-    /**
-     * Gets surname
-     *
-     * @return string|null
-     */
-    public function getSurname()
-    {
-        return $this->container['surname'];
-    }
-
-    /**
-     * Sets surname
-     *
-     * @param string|null $surname surname
-     *
-     * @return self
-     */
-    public function setSurname($surname)
-    {
-
-        if (is_null($surname)) {
-            throw new \InvalidArgumentException('non-nullable surname cannot be null');
-        }
-
-        $this->container['surname'] = $surname;
-
-        return $this;
-    }
-
-    /**
-     * Gets mother_maiden_name
-     *
-     * @return string|null
-     */
-    public function getMotherMaidenName()
-    {
-        return $this->container['mother_maiden_name'];
-    }
-
-    /**
-     * Sets mother_maiden_name
-     *
-     * @param string|null $mother_maiden_name mother_maiden_name
-     *
-     * @return self
-     */
-    public function setMotherMaidenName($mother_maiden_name)
-    {
-
-        if (is_null($mother_maiden_name)) {
-            throw new \InvalidArgumentException('non-nullable mother_maiden_name cannot be null');
-        }
-
-        $this->container['mother_maiden_name'] = $mother_maiden_name;
-
-        return $this;
-    }
-
-    /**
-     * Gets gender
-     *
-     * @return string|null
-     */
-    public function getGender()
-    {
-        return $this->container['gender'];
-    }
-
-    /**
-     * Sets gender
-     *
-     * @param string|null $gender gender
-     *
-     * @return self
-     */
-    public function setGender($gender)
-    {
-
-        if (is_null($gender)) {
-            throw new \InvalidArgumentException('non-nullable gender cannot be null');
-        }
-
-        $this->container['gender'] = $gender;
-
-        return $this;
-    }
 
     /**
      * Gets birth_date
@@ -597,6 +452,64 @@ class GetKycDriversLicenseResponseEntityPersonalDetails implements ModelInterfac
     }
 
     /**
+     * Gets country
+     *
+     * @return string|null
+     */
+    public function getCountry()
+    {
+        return $this->container['country'];
+    }
+
+    /**
+     * Sets country
+     *
+     * @param string|null $country country
+     *
+     * @return self
+     */
+    public function setCountry($country)
+    {
+
+        if (is_null($country)) {
+            throw new \InvalidArgumentException('non-nullable country cannot be null');
+        }
+
+        $this->container['country'] = $country;
+
+        return $this;
+    }
+
+    /**
+     * Gets disability_reason
+     *
+     * @return string|null
+     */
+    public function getDisabilityReason()
+    {
+        return $this->container['disability_reason'];
+    }
+
+    /**
+     * Sets disability_reason
+     *
+     * @param string|null $disability_reason disability_reason
+     *
+     * @return self
+     */
+    public function setDisabilityReason($disability_reason)
+    {
+
+        if (is_null($disability_reason)) {
+            throw new \InvalidArgumentException('non-nullable disability_reason cannot be null');
+        }
+
+        $this->container['disability_reason'] = $disability_reason;
+
+        return $this;
+    }
+
+    /**
      * Gets facial_mark
      *
      * @return string|null
@@ -621,6 +534,64 @@ class GetKycDriversLicenseResponseEntityPersonalDetails implements ModelInterfac
         }
 
         $this->container['facial_mark'] = $facial_mark;
+
+        return $this;
+    }
+
+    /**
+     * Gets firstname
+     *
+     * @return string|null
+     */
+    public function getFirstname()
+    {
+        return $this->container['firstname'];
+    }
+
+    /**
+     * Sets firstname
+     *
+     * @param string|null $firstname firstname
+     *
+     * @return self
+     */
+    public function setFirstname($firstname)
+    {
+
+        if (is_null($firstname)) {
+            throw new \InvalidArgumentException('non-nullable firstname cannot be null');
+        }
+
+        $this->container['firstname'] = $firstname;
+
+        return $this;
+    }
+
+    /**
+     * Gets gender
+     *
+     * @return string|null
+     */
+    public function getGender()
+    {
+        return $this->container['gender'];
+    }
+
+    /**
+     * Sets gender
+     *
+     * @param string|null $gender gender
+     *
+     * @return self
+     */
+    public function setGender($gender)
+    {
+
+        if (is_null($gender)) {
+            throw new \InvalidArgumentException('non-nullable gender cannot be null');
+        }
+
+        $this->container['gender'] = $gender;
 
         return $this;
     }
@@ -684,117 +655,30 @@ class GetKycDriversLicenseResponseEntityPersonalDetails implements ModelInterfac
     }
 
     /**
-     * Gets universaltax_identity_number
+     * Gets is_disability
      *
      * @return string|null
      */
-    public function getUniversaltaxIdentityNumber()
+    public function getIsDisability()
     {
-        return $this->container['universaltax_identity_number'];
+        return $this->container['is_disability'];
     }
 
     /**
-     * Sets universaltax_identity_number
+     * Sets is_disability
      *
-     * @param string|null $universaltax_identity_number universaltax_identity_number
+     * @param string|null $is_disability is_disability
      *
      * @return self
      */
-    public function setUniversaltaxIdentityNumber($universaltax_identity_number)
+    public function setIsDisability($is_disability)
     {
 
-        if (is_null($universaltax_identity_number)) {
-            throw new \InvalidArgumentException('non-nullable universaltax_identity_number cannot be null');
+        if (is_null($is_disability)) {
+            throw new \InvalidArgumentException('non-nullable is_disability cannot be null');
         }
 
-        $this->container['universaltax_identity_number'] = $universaltax_identity_number;
-
-        return $this;
-    }
-
-    /**
-     * Gets nin_number
-     *
-     * @return string|null
-     */
-    public function getNinNumber()
-    {
-        return $this->container['nin_number'];
-    }
-
-    /**
-     * Sets nin_number
-     *
-     * @param string|null $nin_number nin_number
-     *
-     * @return self
-     */
-    public function setNinNumber($nin_number)
-    {
-
-        if (is_null($nin_number)) {
-            throw new \InvalidArgumentException('non-nullable nin_number cannot be null');
-        }
-
-        $this->container['nin_number'] = $nin_number;
-
-        return $this;
-    }
-
-    /**
-     * Gets country
-     *
-     * @return string|null
-     */
-    public function getCountry()
-    {
-        return $this->container['country'];
-    }
-
-    /**
-     * Sets country
-     *
-     * @param string|null $country country
-     *
-     * @return self
-     */
-    public function setCountry($country)
-    {
-
-        if (is_null($country)) {
-            throw new \InvalidArgumentException('non-nullable country cannot be null');
-        }
-
-        $this->container['country'] = $country;
-
-        return $this;
-    }
-
-    /**
-     * Gets state
-     *
-     * @return string|null
-     */
-    public function getState()
-    {
-        return $this->container['state'];
-    }
-
-    /**
-     * Sets state
-     *
-     * @param string|null $state state
-     *
-     * @return self
-     */
-    public function setState($state)
-    {
-
-        if (is_null($state)) {
-            throw new \InvalidArgumentException('non-nullable state cannot be null');
-        }
-
-        $this->container['state'] = $state;
+        $this->container['is_disability'] = $is_disability;
 
         return $this;
     }
@@ -829,59 +713,175 @@ class GetKycDriversLicenseResponseEntityPersonalDetails implements ModelInterfac
     }
 
     /**
-     * Gets is_disability
+     * Gets mother_maiden_name
      *
      * @return string|null
      */
-    public function getIsDisability()
+    public function getMotherMaidenName()
     {
-        return $this->container['is_disability'];
+        return $this->container['mother_maiden_name'];
     }
 
     /**
-     * Sets is_disability
+     * Sets mother_maiden_name
      *
-     * @param string|null $is_disability is_disability
+     * @param string|null $mother_maiden_name mother_maiden_name
      *
      * @return self
      */
-    public function setIsDisability($is_disability)
+    public function setMotherMaidenName($mother_maiden_name)
     {
 
-        if (is_null($is_disability)) {
-            throw new \InvalidArgumentException('non-nullable is_disability cannot be null');
+        if (is_null($mother_maiden_name)) {
+            throw new \InvalidArgumentException('non-nullable mother_maiden_name cannot be null');
         }
 
-        $this->container['is_disability'] = $is_disability;
+        $this->container['mother_maiden_name'] = $mother_maiden_name;
 
         return $this;
     }
 
     /**
-     * Gets disability_reason
+     * Gets nin_number
      *
      * @return string|null
      */
-    public function getDisabilityReason()
+    public function getNinNumber()
     {
-        return $this->container['disability_reason'];
+        return $this->container['nin_number'];
     }
 
     /**
-     * Sets disability_reason
+     * Sets nin_number
      *
-     * @param string|null $disability_reason disability_reason
+     * @param string|null $nin_number nin_number
      *
      * @return self
      */
-    public function setDisabilityReason($disability_reason)
+    public function setNinNumber($nin_number)
     {
 
-        if (is_null($disability_reason)) {
-            throw new \InvalidArgumentException('non-nullable disability_reason cannot be null');
+        if (is_null($nin_number)) {
+            throw new \InvalidArgumentException('non-nullable nin_number cannot be null');
         }
 
-        $this->container['disability_reason'] = $disability_reason;
+        $this->container['nin_number'] = $nin_number;
+
+        return $this;
+    }
+
+    /**
+     * Gets othername
+     *
+     * @return string|null
+     */
+    public function getOthername()
+    {
+        return $this->container['othername'];
+    }
+
+    /**
+     * Sets othername
+     *
+     * @param string|null $othername othername
+     *
+     * @return self
+     */
+    public function setOthername($othername)
+    {
+
+        if (is_null($othername)) {
+            throw new \InvalidArgumentException('non-nullable othername cannot be null');
+        }
+
+        $this->container['othername'] = $othername;
+
+        return $this;
+    }
+
+    /**
+     * Gets state
+     *
+     * @return string|null
+     */
+    public function getState()
+    {
+        return $this->container['state'];
+    }
+
+    /**
+     * Sets state
+     *
+     * @param string|null $state state
+     *
+     * @return self
+     */
+    public function setState($state)
+    {
+
+        if (is_null($state)) {
+            throw new \InvalidArgumentException('non-nullable state cannot be null');
+        }
+
+        $this->container['state'] = $state;
+
+        return $this;
+    }
+
+    /**
+     * Gets surname
+     *
+     * @return string|null
+     */
+    public function getSurname()
+    {
+        return $this->container['surname'];
+    }
+
+    /**
+     * Sets surname
+     *
+     * @param string|null $surname surname
+     *
+     * @return self
+     */
+    public function setSurname($surname)
+    {
+
+        if (is_null($surname)) {
+            throw new \InvalidArgumentException('non-nullable surname cannot be null');
+        }
+
+        $this->container['surname'] = $surname;
+
+        return $this;
+    }
+
+    /**
+     * Gets universaltax_identity_number
+     *
+     * @return string|null
+     */
+    public function getUniversaltaxIdentityNumber()
+    {
+        return $this->container['universaltax_identity_number'];
+    }
+
+    /**
+     * Sets universaltax_identity_number
+     *
+     * @param string|null $universaltax_identity_number universaltax_identity_number
+     *
+     * @return self
+     */
+    public function setUniversaltaxIdentityNumber($universaltax_identity_number)
+    {
+
+        if (is_null($universaltax_identity_number)) {
+            throw new \InvalidArgumentException('non-nullable universaltax_identity_number cannot be null');
+        }
+
+        $this->container['universaltax_identity_number'] = $universaltax_identity_number;
 
         return $this;
     }

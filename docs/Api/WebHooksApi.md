@@ -25,7 +25,8 @@ Delete Webhook
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    apiKey: "APPID",
+    Authorization: "AUTHORIZATION",
+    AppId: "APP_ID",
 );
 
 
@@ -73,7 +74,8 @@ Fetch All Webhooks
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    apiKey: "APPID",
+    Authorization: "AUTHORIZATION",
+    AppId: "APP_ID",
 );
 
 
@@ -121,7 +123,8 @@ Post Hook
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    apiKey: "APPID",
+    Authorization: "AUTHORIZATION",
+    AppId: "APP_ID",
 );
 
 $subject = "kyc_widget";
@@ -152,7 +155,7 @@ try {
 
 ### Authorization
 
-[appIdAuth](../../README.md#appIdAuth)
+[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -178,7 +181,8 @@ Subscribe to service
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    apiKey: "APPID",
+    Authorization: "AUTHORIZATION",
+    AppId: "APP_ID",
 );
 
 $webhook = "https://webhook.site/bc33b503-bf38-4b65-88e5-349d86378d4a";
@@ -207,7 +211,7 @@ try {
 
 ### Authorization
 
-[appIdAuth](../../README.md#appIdAuth), [noauthAuth](../../README.md#noauthAuth)
+[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 

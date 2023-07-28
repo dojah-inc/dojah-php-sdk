@@ -72,9 +72,9 @@ class AnalyzeDocumentResponseEntityTest extends TestCase
     }
 
     /**
-     * Test attribute "status"
+     * Test attribute "document_images"
      */
-    public function testPropertyStatus()
+    public function testPropertyDocumentImages()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
@@ -90,9 +90,9 @@ class AnalyzeDocumentResponseEntityTest extends TestCase
     }
 
     /**
-     * Test attribute "document_images"
+     * Test attribute "status"
      */
-    public function testPropertyDocumentImages()
+    public function testPropertyStatus()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');

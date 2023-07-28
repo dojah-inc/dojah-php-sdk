@@ -28,7 +28,7 @@ Name | Type | Description | Notes
 **residential_address** | **string** |  | [optional]
 **state_of_origin** | **string** |  | [optional]
 **state_of_residence** | **string** |  | [optional]
-**watch_listed** | **string** |  | [optional]
 **status** | **float** |  | [optional]
+**watch_listed** | **string** |  | [optional]
 
 [[Back to Model list]](../../README.md#models) [[Back to API list]](../../README.md#endpoints) [[Back to README]](../../README.md)

@@ -49,9 +49,9 @@ class AnalyzeDocumentResponseEntityDocumentImages implements ModelInterface, Arr
       * @var string[]
       */
     protected static $openAPITypes = [
-        'portrait' => 'string',
+        'document_front_side' => 'string',
         'fingerprint' => 'string',
-        'document_front_side' => 'string'
+        'portrait' => 'string'
     ];
 
     /**
@@ -62,9 +62,9 @@ class AnalyzeDocumentResponseEntityDocumentImages implements ModelInterface, Arr
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'portrait' => null,
+        'document_front_side' => null,
         'fingerprint' => null,
-        'document_front_side' => null
+        'portrait' => null
     ];
 
     /**
@@ -73,9 +73,9 @@ class AnalyzeDocumentResponseEntityDocumentImages implements ModelInterface, Arr
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'portrait' => false,
+        'document_front_side' => false,
 		'fingerprint' => false,
-		'document_front_side' => false
+		'portrait' => false
     ];
 
     /**
@@ -164,9 +164,9 @@ class AnalyzeDocumentResponseEntityDocumentImages implements ModelInterface, Arr
      * @var string[]
      */
     protected static $attributeMap = [
-        'portrait' => 'Portrait',
+        'document_front_side' => 'Document front side',
         'fingerprint' => 'Fingerprint',
-        'document_front_side' => 'Document front side'
+        'portrait' => 'Portrait'
     ];
 
     /**
@@ -175,9 +175,9 @@ class AnalyzeDocumentResponseEntityDocumentImages implements ModelInterface, Arr
      * @var string[]
      */
     protected static $setters = [
-        'portrait' => 'setPortrait',
+        'document_front_side' => 'setDocumentFrontSide',
         'fingerprint' => 'setFingerprint',
-        'document_front_side' => 'setDocumentFrontSide'
+        'portrait' => 'setPortrait'
     ];
 
     /**
@@ -186,9 +186,9 @@ class AnalyzeDocumentResponseEntityDocumentImages implements ModelInterface, Arr
      * @var string[]
      */
     protected static $getters = [
-        'portrait' => 'getPortrait',
+        'document_front_side' => 'getDocumentFrontSide',
         'fingerprint' => 'getFingerprint',
-        'document_front_side' => 'getDocumentFrontSide'
+        'portrait' => 'getPortrait'
     ];
 
     /**
@@ -248,9 +248,9 @@ class AnalyzeDocumentResponseEntityDocumentImages implements ModelInterface, Arr
      */
     public function __construct(array $data = null)
     {
-        $this->setIfExists('portrait', $data ?? [], null);
-        $this->setIfExists('fingerprint', $data ?? [], null);
         $this->setIfExists('document_front_side', $data ?? [], null);
+        $this->setIfExists('fingerprint', $data ?? [], null);
+        $this->setIfExists('portrait', $data ?? [], null);
     }
 
     /**
@@ -296,30 +296,30 @@ class AnalyzeDocumentResponseEntityDocumentImages implements ModelInterface, Arr
 
 
     /**
-     * Gets portrait
+     * Gets document_front_side
      *
      * @return string|null
      */
-    public function getPortrait()
+    public function getDocumentFrontSide()
     {
-        return $this->container['portrait'];
+        return $this->container['document_front_side'];
     }
 
     /**
-     * Sets portrait
+     * Sets document_front_side
      *
-     * @param string|null $portrait portrait
+     * @param string|null $document_front_side document_front_side
      *
      * @return self
      */
-    public function setPortrait($portrait)
+    public function setDocumentFrontSide($document_front_side)
     {
 
-        if (is_null($portrait)) {
-            throw new \InvalidArgumentException('non-nullable portrait cannot be null');
+        if (is_null($document_front_side)) {
+            throw new \InvalidArgumentException('non-nullable document_front_side cannot be null');
         }
 
-        $this->container['portrait'] = $portrait;
+        $this->container['document_front_side'] = $document_front_side;
 
         return $this;
     }
@@ -354,30 +354,30 @@ class AnalyzeDocumentResponseEntityDocumentImages implements ModelInterface, Arr
     }
 
     /**
-     * Gets document_front_side
+     * Gets portrait
      *
      * @return string|null
      */
-    public function getDocumentFrontSide()
+    public function getPortrait()
     {
-        return $this->container['document_front_side'];
+        return $this->container['portrait'];
     }
 
     /**
-     * Sets document_front_side
+     * Sets portrait
      *
-     * @param string|null $document_front_side document_front_side
+     * @param string|null $portrait portrait
      *
      * @return self
      */
-    public function setDocumentFrontSide($document_front_side)
+    public function setPortrait($portrait)
     {
 
-        if (is_null($document_front_side)) {
-            throw new \InvalidArgumentException('non-nullable document_front_side cannot be null');
+        if (is_null($portrait)) {
+            throw new \InvalidArgumentException('non-nullable portrait cannot be null');
         }
 
-        $this->container['document_front_side'] = $document_front_side;
+        $this->container['portrait'] = $portrait;
 
         return $this;
     }

@@ -72,9 +72,9 @@ class AnalyzeDocumentResponseEntityDocumentTypeTest extends TestCase
     }
 
     /**
-     * Test attribute "document_name"
+     * Test attribute "document_country_code"
      */
-    public function testPropertyDocumentName()
+    public function testPropertyDocumentCountryCode()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
@@ -90,9 +90,9 @@ class AnalyzeDocumentResponseEntityDocumentTypeTest extends TestCase
     }
 
     /**
-     * Test attribute "document_country_code"
+     * Test attribute "document_name"
      */
-    public function testPropertyDocumentCountryCode()
+    public function testPropertyDocumentName()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');

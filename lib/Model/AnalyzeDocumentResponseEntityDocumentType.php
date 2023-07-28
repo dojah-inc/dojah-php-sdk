@@ -49,9 +49,9 @@ class AnalyzeDocumentResponseEntityDocumentType implements ModelInterface, Array
       * @var string[]
       */
     protected static $openAPITypes = [
-        'document_name' => 'string',
-        'document_country_name' => 'string',
         'document_country_code' => 'string',
+        'document_country_name' => 'string',
+        'document_name' => 'string',
         'document_type_id' => 'float',
         'document_year' => 'string'
     ];
@@ -64,9 +64,9 @@ class AnalyzeDocumentResponseEntityDocumentType implements ModelInterface, Array
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'document_name' => null,
-        'document_country_name' => null,
         'document_country_code' => null,
+        'document_country_name' => null,
+        'document_name' => null,
         'document_type_id' => null,
         'document_year' => null
     ];
@@ -77,9 +77,9 @@ class AnalyzeDocumentResponseEntityDocumentType implements ModelInterface, Array
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'document_name' => false,
+        'document_country_code' => false,
 		'document_country_name' => false,
-		'document_country_code' => false,
+		'document_name' => false,
 		'document_type_id' => false,
 		'document_year' => false
     ];
@@ -170,9 +170,9 @@ class AnalyzeDocumentResponseEntityDocumentType implements ModelInterface, Array
      * @var string[]
      */
     protected static $attributeMap = [
-        'document_name' => 'document_name',
-        'document_country_name' => 'document_country_name',
         'document_country_code' => 'document_country_code',
+        'document_country_name' => 'document_country_name',
+        'document_name' => 'document_name',
         'document_type_id' => 'document_type_id',
         'document_year' => 'document_year'
     ];
@@ -183,9 +183,9 @@ class AnalyzeDocumentResponseEntityDocumentType implements ModelInterface, Array
      * @var string[]
      */
     protected static $setters = [
-        'document_name' => 'setDocumentName',
-        'document_country_name' => 'setDocumentCountryName',
         'document_country_code' => 'setDocumentCountryCode',
+        'document_country_name' => 'setDocumentCountryName',
+        'document_name' => 'setDocumentName',
         'document_type_id' => 'setDocumentTypeId',
         'document_year' => 'setDocumentYear'
     ];
@@ -196,9 +196,9 @@ class AnalyzeDocumentResponseEntityDocumentType implements ModelInterface, Array
      * @var string[]
      */
     protected static $getters = [
-        'document_name' => 'getDocumentName',
-        'document_country_name' => 'getDocumentCountryName',
         'document_country_code' => 'getDocumentCountryCode',
+        'document_country_name' => 'getDocumentCountryName',
+        'document_name' => 'getDocumentName',
         'document_type_id' => 'getDocumentTypeId',
         'document_year' => 'getDocumentYear'
     ];
@@ -260,9 +260,9 @@ class AnalyzeDocumentResponseEntityDocumentType implements ModelInterface, Array
      */
     public function __construct(array $data = null)
     {
-        $this->setIfExists('document_name', $data ?? [], null);
-        $this->setIfExists('document_country_name', $data ?? [], null);
         $this->setIfExists('document_country_code', $data ?? [], null);
+        $this->setIfExists('document_country_name', $data ?? [], null);
+        $this->setIfExists('document_name', $data ?? [], null);
         $this->setIfExists('document_type_id', $data ?? [], null);
         $this->setIfExists('document_year', $data ?? [], null);
     }
@@ -310,30 +310,30 @@ class AnalyzeDocumentResponseEntityDocumentType implements ModelInterface, Array
 
 
     /**
-     * Gets document_name
+     * Gets document_country_code
      *
      * @return string|null
      */
-    public function getDocumentName()
+    public function getDocumentCountryCode()
     {
-        return $this->container['document_name'];
+        return $this->container['document_country_code'];
     }
 
     /**
-     * Sets document_name
+     * Sets document_country_code
      *
-     * @param string|null $document_name document_name
+     * @param string|null $document_country_code document_country_code
      *
      * @return self
      */
-    public function setDocumentName($document_name)
+    public function setDocumentCountryCode($document_country_code)
     {
 
-        if (is_null($document_name)) {
-            throw new \InvalidArgumentException('non-nullable document_name cannot be null');
+        if (is_null($document_country_code)) {
+            throw new \InvalidArgumentException('non-nullable document_country_code cannot be null');
         }
 
-        $this->container['document_name'] = $document_name;
+        $this->container['document_country_code'] = $document_country_code;
 
         return $this;
     }
@@ -368,30 +368,30 @@ class AnalyzeDocumentResponseEntityDocumentType implements ModelInterface, Array
     }
 
     /**
-     * Gets document_country_code
+     * Gets document_name
      *
      * @return string|null
      */
-    public function getDocumentCountryCode()
+    public function getDocumentName()
     {
-        return $this->container['document_country_code'];
+        return $this->container['document_name'];
     }
 
     /**
-     * Sets document_country_code
+     * Sets document_name
      *
-     * @param string|null $document_country_code document_country_code
+     * @param string|null $document_name document_name
      *
      * @return self
      */
-    public function setDocumentCountryCode($document_country_code)
+    public function setDocumentName($document_name)
     {
 
-        if (is_null($document_country_code)) {
-            throw new \InvalidArgumentException('non-nullable document_country_code cannot be null');
+        if (is_null($document_name)) {
+            throw new \InvalidArgumentException('non-nullable document_name cannot be null');
         }
 
-        $this->container['document_country_code'] = $document_country_code;
+        $this->container['document_name'] = $document_name;
 
         return $this;
     }

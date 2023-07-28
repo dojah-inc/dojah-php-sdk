@@ -49,15 +49,15 @@ class GetVninResponseEntity implements ModelInterface, ArrayAccess, \JsonSeriali
       * @var string[]
       */
     protected static $openAPITypes = [
-        'vnin' => 'string',
+        'date_of_birth' => 'string',
         'firstname' => 'string',
+        'gender' => 'string',
         'middlename' => 'string',
+        'mobile' => 'string',
+        'photo' => 'string',
         'surname' => 'string',
         'user_id' => 'string',
-        'gender' => 'string',
-        'mobile' => 'string',
-        'date_of_birth' => 'string',
-        'photo' => 'string'
+        'vnin' => 'string'
     ];
 
     /**
@@ -68,15 +68,15 @@ class GetVninResponseEntity implements ModelInterface, ArrayAccess, \JsonSeriali
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'vnin' => null,
+        'date_of_birth' => null,
         'firstname' => null,
+        'gender' => null,
         'middlename' => null,
+        'mobile' => null,
+        'photo' => null,
         'surname' => null,
         'user_id' => null,
-        'gender' => null,
-        'mobile' => null,
-        'date_of_birth' => null,
-        'photo' => null
+        'vnin' => null
     ];
 
     /**
@@ -85,15 +85,15 @@ class GetVninResponseEntity implements ModelInterface, ArrayAccess, \JsonSeriali
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'vnin' => false,
+        'date_of_birth' => false,
 		'firstname' => false,
+		'gender' => false,
 		'middlename' => false,
+		'mobile' => false,
+		'photo' => false,
 		'surname' => false,
 		'user_id' => false,
-		'gender' => false,
-		'mobile' => false,
-		'date_of_birth' => false,
-		'photo' => false
+		'vnin' => false
     ];
 
     /**
@@ -182,15 +182,15 @@ class GetVninResponseEntity implements ModelInterface, ArrayAccess, \JsonSeriali
      * @var string[]
      */
     protected static $attributeMap = [
-        'vnin' => 'vnin',
+        'date_of_birth' => 'dateOfBirth',
         'firstname' => 'firstname',
+        'gender' => 'gender',
         'middlename' => 'middlename',
+        'mobile' => 'mobile',
+        'photo' => 'photo',
         'surname' => 'surname',
         'user_id' => 'user_id',
-        'gender' => 'gender',
-        'mobile' => 'mobile',
-        'date_of_birth' => 'dateOfBirth',
-        'photo' => 'photo'
+        'vnin' => 'vnin'
     ];
 
     /**
@@ -199,15 +199,15 @@ class GetVninResponseEntity implements ModelInterface, ArrayAccess, \JsonSeriali
      * @var string[]
      */
     protected static $setters = [
-        'vnin' => 'setVnin',
+        'date_of_birth' => 'setDateOfBirth',
         'firstname' => 'setFirstname',
+        'gender' => 'setGender',
         'middlename' => 'setMiddlename',
+        'mobile' => 'setMobile',
+        'photo' => 'setPhoto',
         'surname' => 'setSurname',
         'user_id' => 'setUserId',
-        'gender' => 'setGender',
-        'mobile' => 'setMobile',
-        'date_of_birth' => 'setDateOfBirth',
-        'photo' => 'setPhoto'
+        'vnin' => 'setVnin'
     ];
 
     /**
@@ -216,15 +216,15 @@ class GetVninResponseEntity implements ModelInterface, ArrayAccess, \JsonSeriali
      * @var string[]
      */
     protected static $getters = [
-        'vnin' => 'getVnin',
+        'date_of_birth' => 'getDateOfBirth',
         'firstname' => 'getFirstname',
+        'gender' => 'getGender',
         'middlename' => 'getMiddlename',
+        'mobile' => 'getMobile',
+        'photo' => 'getPhoto',
         'surname' => 'getSurname',
         'user_id' => 'getUserId',
-        'gender' => 'getGender',
-        'mobile' => 'getMobile',
-        'date_of_birth' => 'getDateOfBirth',
-        'photo' => 'getPhoto'
+        'vnin' => 'getVnin'
     ];
 
     /**
@@ -284,15 +284,15 @@ class GetVninResponseEntity implements ModelInterface, ArrayAccess, \JsonSeriali
      */
     public function __construct(array $data = null)
     {
-        $this->setIfExists('vnin', $data ?? [], null);
+        $this->setIfExists('date_of_birth', $data ?? [], null);
         $this->setIfExists('firstname', $data ?? [], null);
+        $this->setIfExists('gender', $data ?? [], null);
         $this->setIfExists('middlename', $data ?? [], null);
+        $this->setIfExists('mobile', $data ?? [], null);
+        $this->setIfExists('photo', $data ?? [], null);
         $this->setIfExists('surname', $data ?? [], null);
         $this->setIfExists('user_id', $data ?? [], null);
-        $this->setIfExists('gender', $data ?? [], null);
-        $this->setIfExists('mobile', $data ?? [], null);
-        $this->setIfExists('date_of_birth', $data ?? [], null);
-        $this->setIfExists('photo', $data ?? [], null);
+        $this->setIfExists('vnin', $data ?? [], null);
     }
 
     /**
@@ -338,30 +338,30 @@ class GetVninResponseEntity implements ModelInterface, ArrayAccess, \JsonSeriali
 
 
     /**
-     * Gets vnin
+     * Gets date_of_birth
      *
      * @return string|null
      */
-    public function getVnin()
+    public function getDateOfBirth()
     {
-        return $this->container['vnin'];
+        return $this->container['date_of_birth'];
     }
 
     /**
-     * Sets vnin
+     * Sets date_of_birth
      *
-     * @param string|null $vnin vnin
+     * @param string|null $date_of_birth date_of_birth
      *
      * @return self
      */
-    public function setVnin($vnin)
+    public function setDateOfBirth($date_of_birth)
     {
 
-        if (is_null($vnin)) {
-            throw new \InvalidArgumentException('non-nullable vnin cannot be null');
+        if (is_null($date_of_birth)) {
+            throw new \InvalidArgumentException('non-nullable date_of_birth cannot be null');
         }
 
-        $this->container['vnin'] = $vnin;
+        $this->container['date_of_birth'] = $date_of_birth;
 
         return $this;
     }
@@ -396,6 +396,35 @@ class GetVninResponseEntity implements ModelInterface, ArrayAccess, \JsonSeriali
     }
 
     /**
+     * Gets gender
+     *
+     * @return string|null
+     */
+    public function getGender()
+    {
+        return $this->container['gender'];
+    }
+
+    /**
+     * Sets gender
+     *
+     * @param string|null $gender gender
+     *
+     * @return self
+     */
+    public function setGender($gender)
+    {
+
+        if (is_null($gender)) {
+            throw new \InvalidArgumentException('non-nullable gender cannot be null');
+        }
+
+        $this->container['gender'] = $gender;
+
+        return $this;
+    }
+
+    /**
      * Gets middlename
      *
      * @return string|null
@@ -420,6 +449,64 @@ class GetVninResponseEntity implements ModelInterface, ArrayAccess, \JsonSeriali
         }
 
         $this->container['middlename'] = $middlename;
+
+        return $this;
+    }
+
+    /**
+     * Gets mobile
+     *
+     * @return string|null
+     */
+    public function getMobile()
+    {
+        return $this->container['mobile'];
+    }
+
+    /**
+     * Sets mobile
+     *
+     * @param string|null $mobile mobile
+     *
+     * @return self
+     */
+    public function setMobile($mobile)
+    {
+
+        if (is_null($mobile)) {
+            throw new \InvalidArgumentException('non-nullable mobile cannot be null');
+        }
+
+        $this->container['mobile'] = $mobile;
+
+        return $this;
+    }
+
+    /**
+     * Gets photo
+     *
+     * @return string|null
+     */
+    public function getPhoto()
+    {
+        return $this->container['photo'];
+    }
+
+    /**
+     * Sets photo
+     *
+     * @param string|null $photo photo
+     *
+     * @return self
+     */
+    public function setPhoto($photo)
+    {
+
+        if (is_null($photo)) {
+            throw new \InvalidArgumentException('non-nullable photo cannot be null');
+        }
+
+        $this->container['photo'] = $photo;
 
         return $this;
     }
@@ -483,117 +570,30 @@ class GetVninResponseEntity implements ModelInterface, ArrayAccess, \JsonSeriali
     }
 
     /**
-     * Gets gender
+     * Gets vnin
      *
      * @return string|null
      */
-    public function getGender()
+    public function getVnin()
     {
-        return $this->container['gender'];
+        return $this->container['vnin'];
     }
 
     /**
-     * Sets gender
+     * Sets vnin
      *
-     * @param string|null $gender gender
+     * @param string|null $vnin vnin
      *
      * @return self
      */
-    public function setGender($gender)
+    public function setVnin($vnin)
     {
 
-        if (is_null($gender)) {
-            throw new \InvalidArgumentException('non-nullable gender cannot be null');
+        if (is_null($vnin)) {
+            throw new \InvalidArgumentException('non-nullable vnin cannot be null');
         }
 
-        $this->container['gender'] = $gender;
-
-        return $this;
-    }
-
-    /**
-     * Gets mobile
-     *
-     * @return string|null
-     */
-    public function getMobile()
-    {
-        return $this->container['mobile'];
-    }
-
-    /**
-     * Sets mobile
-     *
-     * @param string|null $mobile mobile
-     *
-     * @return self
-     */
-    public function setMobile($mobile)
-    {
-
-        if (is_null($mobile)) {
-            throw new \InvalidArgumentException('non-nullable mobile cannot be null');
-        }
-
-        $this->container['mobile'] = $mobile;
-
-        return $this;
-    }
-
-    /**
-     * Gets date_of_birth
-     *
-     * @return string|null
-     */
-    public function getDateOfBirth()
-    {
-        return $this->container['date_of_birth'];
-    }
-
-    /**
-     * Sets date_of_birth
-     *
-     * @param string|null $date_of_birth date_of_birth
-     *
-     * @return self
-     */
-    public function setDateOfBirth($date_of_birth)
-    {
-
-        if (is_null($date_of_birth)) {
-            throw new \InvalidArgumentException('non-nullable date_of_birth cannot be null');
-        }
-
-        $this->container['date_of_birth'] = $date_of_birth;
-
-        return $this;
-    }
-
-    /**
-     * Gets photo
-     *
-     * @return string|null
-     */
-    public function getPhoto()
-    {
-        return $this->container['photo'];
-    }
-
-    /**
-     * Sets photo
-     *
-     * @param string|null $photo photo
-     *
-     * @return self
-     */
-    public function setPhoto($photo)
-    {
-
-        if (is_null($photo)) {
-            throw new \InvalidArgumentException('non-nullable photo cannot be null');
-        }
-
-        $this->container['photo'] = $photo;
+        $this->container['vnin'] = $vnin;
 
         return $this;
     }

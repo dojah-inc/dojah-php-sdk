@@ -288,18 +288,18 @@ class GetPremiumBvnResponseEntityTest extends TestCase
     }
 
     /**
-     * Test attribute "watch_listed"
+     * Test attribute "status"
      */
-    public function testPropertyWatchListed()
+    public function testPropertyStatus()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
     }
 
     /**
-     * Test attribute "status"
+     * Test attribute "watch_listed"
      */
-    public function testPropertyStatus()
+    public function testPropertyWatchListed()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');

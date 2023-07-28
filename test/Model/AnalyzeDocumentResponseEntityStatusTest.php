@@ -72,27 +72,9 @@ class AnalyzeDocumentResponseEntityStatusTest extends TestCase
     }
 
     /**
-     * Test attribute "overall_status"
-     */
-    public function testPropertyOverallStatus()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
      * Test attribute "document_images"
      */
     public function testPropertyDocumentImages()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "text"
-     */
-    public function testPropertyText()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
@@ -111,6 +93,24 @@ class AnalyzeDocumentResponseEntityStatusTest extends TestCase
      * Test attribute "expiry"
      */
     public function testPropertyExpiry()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "overall_status"
+     */
+    public function testPropertyOverallStatus()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "text"
+     */
+    public function testPropertyText()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');

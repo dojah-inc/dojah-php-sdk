@@ -72,9 +72,9 @@ class GetKycPassportResponseEntityTest extends TestCase
     }
 
     /**
-     * Test attribute "passport_number"
+     * Test attribute "date_of_birth"
      */
-    public function testPropertyPassportNumber()
+    public function testPropertyDateOfBirth()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
@@ -90,15 +90,6 @@ class GetKycPassportResponseEntityTest extends TestCase
     }
 
     /**
-     * Test attribute "expiry_date"
-     */
-    public function testPropertyExpiryDate()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
      * Test attribute "document_type"
      */
     public function testPropertyDocumentType()
@@ -108,18 +99,9 @@ class GetKycPassportResponseEntityTest extends TestCase
     }
 
     /**
-     * Test attribute "issue_place"
+     * Test attribute "expiry_date"
      */
-    public function testPropertyIssuePlace()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "surname"
-     */
-    public function testPropertySurname()
+    public function testPropertyExpiryDate()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
@@ -135,24 +117,6 @@ class GetKycPassportResponseEntityTest extends TestCase
     }
 
     /**
-     * Test attribute "other_names"
-     */
-    public function testPropertyOtherNames()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "date_of_birth"
-     */
-    public function testPropertyDateOfBirth()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
      * Test attribute "gender"
      */
     public function testPropertyGender()
@@ -162,9 +126,45 @@ class GetKycPassportResponseEntityTest extends TestCase
     }
 
     /**
+     * Test attribute "issue_place"
+     */
+    public function testPropertyIssuePlace()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "other_names"
+     */
+    public function testPropertyOtherNames()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "passport_number"
+     */
+    public function testPropertyPassportNumber()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
      * Test attribute "photo"
      */
     public function testPropertyPhoto()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "surname"
+     */
+    public function testPropertySurname()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');

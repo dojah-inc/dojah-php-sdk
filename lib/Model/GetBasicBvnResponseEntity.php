@@ -49,12 +49,12 @@ class GetBasicBvnResponseEntity implements ModelInterface, ArrayAccess, \JsonSer
       * @var string[]
       */
     protected static $openAPITypes = [
-        'first_name' => 'string',
-        'last_name' => 'string',
+        'bvn' => 'string',
         'dob' => 'string',
+        'first_name' => 'string',
         'formatted_dob' => 'string',
-        'mobile' => 'string',
-        'bvn' => 'string'
+        'last_name' => 'string',
+        'mobile' => 'string'
     ];
 
     /**
@@ -65,12 +65,12 @@ class GetBasicBvnResponseEntity implements ModelInterface, ArrayAccess, \JsonSer
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'first_name' => null,
-        'last_name' => null,
+        'bvn' => null,
         'dob' => null,
+        'first_name' => null,
         'formatted_dob' => null,
-        'mobile' => null,
-        'bvn' => null
+        'last_name' => null,
+        'mobile' => null
     ];
 
     /**
@@ -79,12 +79,12 @@ class GetBasicBvnResponseEntity implements ModelInterface, ArrayAccess, \JsonSer
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'first_name' => false,
-		'last_name' => false,
+        'bvn' => false,
 		'dob' => false,
+		'first_name' => false,
 		'formatted_dob' => false,
-		'mobile' => false,
-		'bvn' => false
+		'last_name' => false,
+		'mobile' => false
     ];
 
     /**
@@ -173,12 +173,12 @@ class GetBasicBvnResponseEntity implements ModelInterface, ArrayAccess, \JsonSer
      * @var string[]
      */
     protected static $attributeMap = [
-        'first_name' => 'first_name',
-        'last_name' => 'last_name',
+        'bvn' => 'bvn',
         'dob' => 'dob',
+        'first_name' => 'first_name',
         'formatted_dob' => 'formatted_dob',
-        'mobile' => 'mobile',
-        'bvn' => 'bvn'
+        'last_name' => 'last_name',
+        'mobile' => 'mobile'
     ];
 
     /**
@@ -187,12 +187,12 @@ class GetBasicBvnResponseEntity implements ModelInterface, ArrayAccess, \JsonSer
      * @var string[]
      */
     protected static $setters = [
-        'first_name' => 'setFirstName',
-        'last_name' => 'setLastName',
+        'bvn' => 'setBvn',
         'dob' => 'setDob',
+        'first_name' => 'setFirstName',
         'formatted_dob' => 'setFormattedDob',
-        'mobile' => 'setMobile',
-        'bvn' => 'setBvn'
+        'last_name' => 'setLastName',
+        'mobile' => 'setMobile'
     ];
 
     /**
@@ -201,12 +201,12 @@ class GetBasicBvnResponseEntity implements ModelInterface, ArrayAccess, \JsonSer
      * @var string[]
      */
     protected static $getters = [
-        'first_name' => 'getFirstName',
-        'last_name' => 'getLastName',
+        'bvn' => 'getBvn',
         'dob' => 'getDob',
+        'first_name' => 'getFirstName',
         'formatted_dob' => 'getFormattedDob',
-        'mobile' => 'getMobile',
-        'bvn' => 'getBvn'
+        'last_name' => 'getLastName',
+        'mobile' => 'getMobile'
     ];
 
     /**
@@ -266,12 +266,12 @@ class GetBasicBvnResponseEntity implements ModelInterface, ArrayAccess, \JsonSer
      */
     public function __construct(array $data = null)
     {
-        $this->setIfExists('first_name', $data ?? [], null);
-        $this->setIfExists('last_name', $data ?? [], null);
-        $this->setIfExists('dob', $data ?? [], null);
-        $this->setIfExists('formatted_dob', $data ?? [], null);
-        $this->setIfExists('mobile', $data ?? [], null);
         $this->setIfExists('bvn', $data ?? [], null);
+        $this->setIfExists('dob', $data ?? [], null);
+        $this->setIfExists('first_name', $data ?? [], null);
+        $this->setIfExists('formatted_dob', $data ?? [], null);
+        $this->setIfExists('last_name', $data ?? [], null);
+        $this->setIfExists('mobile', $data ?? [], null);
     }
 
     /**
@@ -317,59 +317,30 @@ class GetBasicBvnResponseEntity implements ModelInterface, ArrayAccess, \JsonSer
 
 
     /**
-     * Gets first_name
+     * Gets bvn
      *
      * @return string|null
      */
-    public function getFirstName()
+    public function getBvn()
     {
-        return $this->container['first_name'];
+        return $this->container['bvn'];
     }
 
     /**
-     * Sets first_name
+     * Sets bvn
      *
-     * @param string|null $first_name first_name
+     * @param string|null $bvn bvn
      *
      * @return self
      */
-    public function setFirstName($first_name)
+    public function setBvn($bvn)
     {
 
-        if (is_null($first_name)) {
-            throw new \InvalidArgumentException('non-nullable first_name cannot be null');
+        if (is_null($bvn)) {
+            throw new \InvalidArgumentException('non-nullable bvn cannot be null');
         }
 
-        $this->container['first_name'] = $first_name;
-
-        return $this;
-    }
-
-    /**
-     * Gets last_name
-     *
-     * @return string|null
-     */
-    public function getLastName()
-    {
-        return $this->container['last_name'];
-    }
-
-    /**
-     * Sets last_name
-     *
-     * @param string|null $last_name last_name
-     *
-     * @return self
-     */
-    public function setLastName($last_name)
-    {
-
-        if (is_null($last_name)) {
-            throw new \InvalidArgumentException('non-nullable last_name cannot be null');
-        }
-
-        $this->container['last_name'] = $last_name;
+        $this->container['bvn'] = $bvn;
 
         return $this;
     }
@@ -404,6 +375,35 @@ class GetBasicBvnResponseEntity implements ModelInterface, ArrayAccess, \JsonSer
     }
 
     /**
+     * Gets first_name
+     *
+     * @return string|null
+     */
+    public function getFirstName()
+    {
+        return $this->container['first_name'];
+    }
+
+    /**
+     * Sets first_name
+     *
+     * @param string|null $first_name first_name
+     *
+     * @return self
+     */
+    public function setFirstName($first_name)
+    {
+
+        if (is_null($first_name)) {
+            throw new \InvalidArgumentException('non-nullable first_name cannot be null');
+        }
+
+        $this->container['first_name'] = $first_name;
+
+        return $this;
+    }
+
+    /**
      * Gets formatted_dob
      *
      * @return string|null
@@ -433,6 +433,35 @@ class GetBasicBvnResponseEntity implements ModelInterface, ArrayAccess, \JsonSer
     }
 
     /**
+     * Gets last_name
+     *
+     * @return string|null
+     */
+    public function getLastName()
+    {
+        return $this->container['last_name'];
+    }
+
+    /**
+     * Sets last_name
+     *
+     * @param string|null $last_name last_name
+     *
+     * @return self
+     */
+    public function setLastName($last_name)
+    {
+
+        if (is_null($last_name)) {
+            throw new \InvalidArgumentException('non-nullable last_name cannot be null');
+        }
+
+        $this->container['last_name'] = $last_name;
+
+        return $this;
+    }
+
+    /**
      * Gets mobile
      *
      * @return string|null
@@ -457,35 +486,6 @@ class GetBasicBvnResponseEntity implements ModelInterface, ArrayAccess, \JsonSer
         }
 
         $this->container['mobile'] = $mobile;
-
-        return $this;
-    }
-
-    /**
-     * Gets bvn
-     *
-     * @return string|null
-     */
-    public function getBvn()
-    {
-        return $this->container['bvn'];
-    }
-
-    /**
-     * Sets bvn
-     *
-     * @param string|null $bvn bvn
-     *
-     * @return self
-     */
-    public function setBvn($bvn)
-    {
-
-        if (is_null($bvn)) {
-            throw new \InvalidArgumentException('non-nullable bvn cannot be null');
-        }
-
-        $this->container['bvn'] = $bvn;
 
         return $this;
     }

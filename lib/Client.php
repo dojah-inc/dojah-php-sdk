@@ -49,7 +49,8 @@ class Client
      * Constructor
      */
     public function __construct(
-        string $apiKey = null,
+        string $Authorization = null,
+        string $AppId = null,
         bool $verifySsl = null,
         string $host = 'https://api.dojah.io',
         \Dojah\Configuration $config = null
@@ -57,7 +58,8 @@ class Client
     {
         if ($config == null) {
             $config = new \Dojah\Configuration(
-                apiKey: $apiKey,
+                Authorization: $Authorization,
+                AppId: $AppId,
             );
             if ($host !== null) $config->setHost($host);
             if ($verifySsl !== null) $config->setVerifySsl($verifySsl);

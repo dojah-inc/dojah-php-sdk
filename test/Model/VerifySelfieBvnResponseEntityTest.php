@@ -81,33 +81,6 @@ class VerifySelfieBvnResponseEntityTest extends TestCase
     }
 
     /**
-     * Test attribute "first_name"
-     */
-    public function testPropertyFirstName()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "middle_name"
-     */
-    public function testPropertyMiddleName()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "last_name"
-     */
-    public function testPropertyLastName()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
      * Test attribute "date_of_birth"
      */
     public function testPropertyDateOfBirth()
@@ -117,27 +90,9 @@ class VerifySelfieBvnResponseEntityTest extends TestCase
     }
 
     /**
-     * Test attribute "phone_number1"
+     * Test attribute "email"
      */
-    public function testPropertyPhoneNumber1()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "phone_number2"
-     */
-    public function testPropertyPhoneNumber2()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "gender"
-     */
-    public function testPropertyGender()
+    public function testPropertyEmail()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
@@ -162,9 +117,45 @@ class VerifySelfieBvnResponseEntityTest extends TestCase
     }
 
     /**
-     * Test attribute "email"
+     * Test attribute "first_name"
      */
-    public function testPropertyEmail()
+    public function testPropertyFirstName()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "gender"
+     */
+    public function testPropertyGender()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "image"
+     */
+    public function testPropertyImage()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "last_name"
+     */
+    public function testPropertyLastName()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "level_of_account"
+     */
+    public function testPropertyLevelOfAccount()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
@@ -198,9 +189,9 @@ class VerifySelfieBvnResponseEntityTest extends TestCase
     }
 
     /**
-     * Test attribute "nin"
+     * Test attribute "middle_name"
      */
-    public function testPropertyNin()
+    public function testPropertyMiddleName()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
@@ -216,9 +207,54 @@ class VerifySelfieBvnResponseEntityTest extends TestCase
     }
 
     /**
+     * Test attribute "nin"
+     */
+    public function testPropertyNin()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "phone_number1"
+     */
+    public function testPropertyPhoneNumber1()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "phone_number2"
+     */
+    public function testPropertyPhoneNumber2()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "registration_date"
+     */
+    public function testPropertyRegistrationDate()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
      * Test attribute "residential_address"
      */
     public function testPropertyResidentialAddress()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "selfie_verification"
+     */
+    public function testPropertySelfieVerification()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
@@ -246,42 +282,6 @@ class VerifySelfieBvnResponseEntityTest extends TestCase
      * Test attribute "watch_listed"
      */
     public function testPropertyWatchListed()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "level_of_account"
-     */
-    public function testPropertyLevelOfAccount()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "registration_date"
-     */
-    public function testPropertyRegistrationDate()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "image"
-     */
-    public function testPropertyImage()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "selfie_verification"
-     */
-    public function testPropertySelfieVerification()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');

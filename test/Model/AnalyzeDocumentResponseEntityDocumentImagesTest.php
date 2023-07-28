@@ -72,9 +72,9 @@ class AnalyzeDocumentResponseEntityDocumentImagesTest extends TestCase
     }
 
     /**
-     * Test attribute "portrait"
+     * Test attribute "document_front_side"
      */
-    public function testPropertyPortrait()
+    public function testPropertyDocumentFrontSide()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
@@ -90,9 +90,9 @@ class AnalyzeDocumentResponseEntityDocumentImagesTest extends TestCase
     }
 
     /**
-     * Test attribute "document_front_side"
+     * Test attribute "portrait"
      */
-    public function testPropertyDocumentFrontSide()
+    public function testPropertyPortrait()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
