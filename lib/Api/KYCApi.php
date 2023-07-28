@@ -155,7 +155,6 @@ class KYCApi extends \Dojah\CustomApi
      * Liveness Check
      *
      * @param  \Dojah\Model\KycCheckLivenessRequest $kyc_check_liveness_request kyc_check_liveness_request (required)
-     * @param  string $app_id app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['checkLiveness'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
@@ -165,7 +164,6 @@ class KYCApi extends \Dojah\CustomApi
     public function checkLiveness(
 
         $image = SENTINEL_VALUE,
-        $app_id = SENTINEL_VALUE,
 
         string $contentType = self::contentTypes['checkLiveness'][0]
 
@@ -175,7 +173,7 @@ class KYCApi extends \Dojah\CustomApi
         $this->setRequestBodyProperty($_body, "image", $image);
         $kyc_check_liveness_request = $_body;
 
-        list($response) = $this->checkLivenessWithHttpInfo($kyc_check_liveness_request, $app_id, $contentType);
+        list($response) = $this->checkLivenessWithHttpInfo($kyc_check_liveness_request, $contentType);
         return $response;
     }
 
@@ -185,16 +183,15 @@ class KYCApi extends \Dojah\CustomApi
      * Liveness Check
      *
      * @param  \Dojah\Model\KycCheckLivenessRequest $kyc_check_liveness_request (required)
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['checkLiveness'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return array of object, HTTP status code, HTTP response headers (array of strings)
      */
-    public function checkLivenessWithHttpInfo($kyc_check_liveness_request, $app_id = null, string $contentType = self::contentTypes['checkLiveness'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function checkLivenessWithHttpInfo($kyc_check_liveness_request, string $contentType = self::contentTypes['checkLiveness'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->checkLivenessRequest($kyc_check_liveness_request, $app_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->checkLivenessRequest($kyc_check_liveness_request, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
@@ -211,7 +208,6 @@ class KYCApi extends \Dojah\CustomApi
                 ) {
                     return $this->checkLivenessWithHttpInfo(
                         $kyc_check_liveness_request,
-                        $app_id,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
                     );
@@ -302,7 +298,6 @@ class KYCApi extends \Dojah\CustomApi
      * Liveness Check
      *
      * @param  \Dojah\Model\KycCheckLivenessRequest $kyc_check_liveness_request (required)
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['checkLiveness'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
@@ -311,7 +306,6 @@ class KYCApi extends \Dojah\CustomApi
     public function checkLivenessAsync(
 
         $image = SENTINEL_VALUE,
-        $app_id = SENTINEL_VALUE,
 
         string $contentType = self::contentTypes['checkLiveness'][0]
 
@@ -321,7 +315,7 @@ class KYCApi extends \Dojah\CustomApi
         $this->setRequestBodyProperty($_body, "image", $image);
         $kyc_check_liveness_request = $_body;
 
-        return $this->checkLivenessAsyncWithHttpInfo($kyc_check_liveness_request, $app_id, $contentType)
+        return $this->checkLivenessAsyncWithHttpInfo($kyc_check_liveness_request, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -335,16 +329,15 @@ class KYCApi extends \Dojah\CustomApi
      * Liveness Check
      *
      * @param  \Dojah\Model\KycCheckLivenessRequest $kyc_check_liveness_request (required)
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['checkLiveness'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function checkLivenessAsyncWithHttpInfo($kyc_check_liveness_request, $app_id = null, string $contentType = self::contentTypes['checkLiveness'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function checkLivenessAsyncWithHttpInfo($kyc_check_liveness_request, string $contentType = self::contentTypes['checkLiveness'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = 'object';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->checkLivenessRequest($kyc_check_liveness_request, $app_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->checkLivenessRequest($kyc_check_liveness_request, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
@@ -389,13 +382,12 @@ class KYCApi extends \Dojah\CustomApi
      * Create request for operation 'checkLiveness'
      *
      * @param  \Dojah\Model\KycCheckLivenessRequest $kyc_check_liveness_request (required)
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['checkLiveness'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function checkLivenessRequest($kyc_check_liveness_request, $app_id = SENTINEL_VALUE, string $contentType = self::contentTypes['checkLiveness'][0])
+    public function checkLivenessRequest($kyc_check_liveness_request, string $contentType = self::contentTypes['checkLiveness'][0])
     {
 
         if ($kyc_check_liveness_request !== SENTINEL_VALUE) {
@@ -412,10 +404,6 @@ class KYCApi extends \Dojah\CustomApi
                 'Missing the required parameter kyc_check_liveness_request when calling checkLiveness'
             );
         }
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
 
 
         $resourcePath = '/api/v1/ml/liveness';
@@ -426,10 +414,6 @@ class KYCApi extends \Dojah\CustomApi
         $multipart = false;
 
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -471,6 +455,11 @@ class KYCApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -504,7 +493,6 @@ class KYCApi extends \Dojah\CustomApi
      *
      * KYC - Fetch Accounts
      *
-     * @param  string $app_id app_id (optional)
      * @param  string $bvn bvn (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAccounts'] to see the possible values for this operation
      *
@@ -513,7 +501,6 @@ class KYCApi extends \Dojah\CustomApi
      * @return object
      */
     public function getAccounts(
-        $app_id = SENTINEL_VALUE,
         $bvn = SENTINEL_VALUE,
 
 
@@ -522,7 +509,7 @@ class KYCApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getAccountsWithHttpInfo($app_id, $bvn, $contentType);
+        list($response) = $this->getAccountsWithHttpInfo($bvn, $contentType);
         return $response;
     }
 
@@ -531,7 +518,6 @@ class KYCApi extends \Dojah\CustomApi
      *
      * KYC - Fetch Accounts
      *
-     * @param  string $app_id (optional)
      * @param  string $bvn (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAccounts'] to see the possible values for this operation
      *
@@ -539,9 +525,9 @@ class KYCApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of object, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getAccountsWithHttpInfo($app_id = null, $bvn = null, string $contentType = self::contentTypes['getAccounts'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getAccountsWithHttpInfo($bvn = null, string $contentType = self::contentTypes['getAccounts'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getAccountsRequest($app_id, $bvn, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getAccountsRequest($bvn, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -557,7 +543,6 @@ class KYCApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getAccountsWithHttpInfo(
-                        $app_id,
                         $bvn,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
@@ -648,7 +633,6 @@ class KYCApi extends \Dojah\CustomApi
      *
      * KYC - Fetch Accounts
      *
-     * @param  string $app_id (optional)
      * @param  string $bvn (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAccounts'] to see the possible values for this operation
      *
@@ -656,7 +640,6 @@ class KYCApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getAccountsAsync(
-        $app_id = SENTINEL_VALUE,
         $bvn = SENTINEL_VALUE,
 
 
@@ -665,7 +648,7 @@ class KYCApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getAccountsAsyncWithHttpInfo($app_id, $bvn, $contentType)
+        return $this->getAccountsAsyncWithHttpInfo($bvn, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -678,17 +661,16 @@ class KYCApi extends \Dojah\CustomApi
      *
      * KYC - Fetch Accounts
      *
-     * @param  string $app_id (optional)
      * @param  string $bvn (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAccounts'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getAccountsAsyncWithHttpInfo($app_id = null, $bvn = null, string $contentType = self::contentTypes['getAccounts'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getAccountsAsyncWithHttpInfo($bvn = null, string $contentType = self::contentTypes['getAccounts'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = 'object';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getAccountsRequest($app_id, $bvn, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getAccountsRequest($bvn, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -732,20 +714,15 @@ class KYCApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getAccounts'
      *
-     * @param  string $app_id (optional)
      * @param  string $bvn (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAccounts'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getAccountsRequest($app_id = SENTINEL_VALUE, $bvn = SENTINEL_VALUE, string $contentType = self::contentTypes['getAccounts'][0])
+    public function getAccountsRequest($bvn = SENTINEL_VALUE, string $contentType = self::contentTypes['getAccounts'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
         // Check if $bvn is a string
         if ($bvn !== SENTINEL_VALUE && !is_string($bvn)) {
             throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($bvn, true), gettype($bvn)));
@@ -771,10 +748,6 @@ class KYCApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -809,6 +782,11 @@ class KYCApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -842,7 +820,6 @@ class KYCApi extends \Dojah\CustomApi
      *
      * Fetch Address Verification Data
      *
-     * @param  string $app_id app_id (optional)
      * @param  string $reference_id reference_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAddressVerification'] to see the possible values for this operation
      *
@@ -851,7 +828,6 @@ class KYCApi extends \Dojah\CustomApi
      * @return object
      */
     public function getAddressVerification(
-        $app_id = SENTINEL_VALUE,
         $reference_id = SENTINEL_VALUE,
 
 
@@ -860,7 +836,7 @@ class KYCApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getAddressVerificationWithHttpInfo($app_id, $reference_id, $contentType);
+        list($response) = $this->getAddressVerificationWithHttpInfo($reference_id, $contentType);
         return $response;
     }
 
@@ -869,7 +845,6 @@ class KYCApi extends \Dojah\CustomApi
      *
      * Fetch Address Verification Data
      *
-     * @param  string $app_id (optional)
      * @param  string $reference_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAddressVerification'] to see the possible values for this operation
      *
@@ -877,9 +852,9 @@ class KYCApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of object, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getAddressVerificationWithHttpInfo($app_id = null, $reference_id = null, string $contentType = self::contentTypes['getAddressVerification'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getAddressVerificationWithHttpInfo($reference_id = null, string $contentType = self::contentTypes['getAddressVerification'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getAddressVerificationRequest($app_id, $reference_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getAddressVerificationRequest($reference_id, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -895,7 +870,6 @@ class KYCApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getAddressVerificationWithHttpInfo(
-                        $app_id,
                         $reference_id,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
@@ -986,7 +960,6 @@ class KYCApi extends \Dojah\CustomApi
      *
      * Fetch Address Verification Data
      *
-     * @param  string $app_id (optional)
      * @param  string $reference_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAddressVerification'] to see the possible values for this operation
      *
@@ -994,7 +967,6 @@ class KYCApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getAddressVerificationAsync(
-        $app_id = SENTINEL_VALUE,
         $reference_id = SENTINEL_VALUE,
 
 
@@ -1003,7 +975,7 @@ class KYCApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getAddressVerificationAsyncWithHttpInfo($app_id, $reference_id, $contentType)
+        return $this->getAddressVerificationAsyncWithHttpInfo($reference_id, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -1016,17 +988,16 @@ class KYCApi extends \Dojah\CustomApi
      *
      * Fetch Address Verification Data
      *
-     * @param  string $app_id (optional)
      * @param  string $reference_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAddressVerification'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getAddressVerificationAsyncWithHttpInfo($app_id = null, $reference_id = null, string $contentType = self::contentTypes['getAddressVerification'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getAddressVerificationAsyncWithHttpInfo($reference_id = null, string $contentType = self::contentTypes['getAddressVerification'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = 'object';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getAddressVerificationRequest($app_id, $reference_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getAddressVerificationRequest($reference_id, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -1070,20 +1041,15 @@ class KYCApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getAddressVerification'
      *
-     * @param  string $app_id (optional)
      * @param  string $reference_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getAddressVerification'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getAddressVerificationRequest($app_id = SENTINEL_VALUE, $reference_id = SENTINEL_VALUE, string $contentType = self::contentTypes['getAddressVerification'][0])
+    public function getAddressVerificationRequest($reference_id = SENTINEL_VALUE, string $contentType = self::contentTypes['getAddressVerification'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
         // Check if $reference_id is a string
         if ($reference_id !== SENTINEL_VALUE && !is_string($reference_id)) {
             throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($reference_id, true), gettype($reference_id)));
@@ -1109,10 +1075,6 @@ class KYCApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -1147,6 +1109,11 @@ class KYCApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -1180,7 +1147,6 @@ class KYCApi extends \Dojah\CustomApi
      *
      * Lookup BVN from NUBAN
      *
-     * @param  string $app_id app_id (optional)
      * @param  int $bank_code bank_code (optional)
      * @param  int $account_number account_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBvnFromNuban'] to see the possible values for this operation
@@ -1190,7 +1156,6 @@ class KYCApi extends \Dojah\CustomApi
      * @return object
      */
     public function getBvnFromNuban(
-        $app_id = SENTINEL_VALUE,
         $bank_code = SENTINEL_VALUE,
         $account_number = SENTINEL_VALUE,
 
@@ -1200,7 +1165,7 @@ class KYCApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getBvnFromNubanWithHttpInfo($app_id, $bank_code, $account_number, $contentType);
+        list($response) = $this->getBvnFromNubanWithHttpInfo($bank_code, $account_number, $contentType);
         return $response;
     }
 
@@ -1209,7 +1174,6 @@ class KYCApi extends \Dojah\CustomApi
      *
      * Lookup BVN from NUBAN
      *
-     * @param  string $app_id (optional)
      * @param  int $bank_code (optional)
      * @param  int $account_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBvnFromNuban'] to see the possible values for this operation
@@ -1218,9 +1182,9 @@ class KYCApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of object, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getBvnFromNubanWithHttpInfo($app_id = null, $bank_code = null, $account_number = null, string $contentType = self::contentTypes['getBvnFromNuban'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getBvnFromNubanWithHttpInfo($bank_code = null, $account_number = null, string $contentType = self::contentTypes['getBvnFromNuban'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBvnFromNubanRequest($app_id, $bank_code, $account_number, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBvnFromNubanRequest($bank_code, $account_number, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -1236,7 +1200,6 @@ class KYCApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getBvnFromNubanWithHttpInfo(
-                        $app_id,
                         $bank_code,
                         $account_number,
                         $contentType,
@@ -1328,7 +1291,6 @@ class KYCApi extends \Dojah\CustomApi
      *
      * Lookup BVN from NUBAN
      *
-     * @param  string $app_id (optional)
      * @param  int $bank_code (optional)
      * @param  int $account_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBvnFromNuban'] to see the possible values for this operation
@@ -1337,7 +1299,6 @@ class KYCApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getBvnFromNubanAsync(
-        $app_id = SENTINEL_VALUE,
         $bank_code = SENTINEL_VALUE,
         $account_number = SENTINEL_VALUE,
 
@@ -1347,7 +1308,7 @@ class KYCApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getBvnFromNubanAsyncWithHttpInfo($app_id, $bank_code, $account_number, $contentType)
+        return $this->getBvnFromNubanAsyncWithHttpInfo($bank_code, $account_number, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -1360,7 +1321,6 @@ class KYCApi extends \Dojah\CustomApi
      *
      * Lookup BVN from NUBAN
      *
-     * @param  string $app_id (optional)
      * @param  int $bank_code (optional)
      * @param  int $account_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBvnFromNuban'] to see the possible values for this operation
@@ -1368,10 +1328,10 @@ class KYCApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getBvnFromNubanAsyncWithHttpInfo($app_id = null, $bank_code = null, $account_number = null, string $contentType = self::contentTypes['getBvnFromNuban'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getBvnFromNubanAsyncWithHttpInfo($bank_code = null, $account_number = null, string $contentType = self::contentTypes['getBvnFromNuban'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = 'object';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBvnFromNubanRequest($app_id, $bank_code, $account_number, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBvnFromNubanRequest($bank_code, $account_number, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -1415,7 +1375,6 @@ class KYCApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getBvnFromNuban'
      *
-     * @param  string $app_id (optional)
      * @param  int $bank_code (optional)
      * @param  int $account_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBvnFromNuban'] to see the possible values for this operation
@@ -1423,13 +1382,9 @@ class KYCApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getBvnFromNubanRequest($app_id = SENTINEL_VALUE, $bank_code = SENTINEL_VALUE, $account_number = SENTINEL_VALUE, string $contentType = self::contentTypes['getBvnFromNuban'][0])
+    public function getBvnFromNubanRequest($bank_code = SENTINEL_VALUE, $account_number = SENTINEL_VALUE, string $contentType = self::contentTypes['getBvnFromNuban'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
 
 
         $resourcePath = '/api/v1/kyc/nuban/bvn';
@@ -1462,10 +1417,6 @@ class KYCApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -1500,6 +1451,11 @@ class KYCApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -1533,7 +1489,6 @@ class KYCApi extends \Dojah\CustomApi
      *
      * KYC - Get VIN
      *
-     * @param  string $app_id app_id (optional)
      * @param  string $vin vin (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getVin'] to see the possible values for this operation
      *
@@ -1542,7 +1497,6 @@ class KYCApi extends \Dojah\CustomApi
      * @return \Dojah\Model\GetVinResponse
      */
     public function getVin(
-        $app_id = SENTINEL_VALUE,
         $vin = SENTINEL_VALUE,
 
 
@@ -1551,7 +1505,7 @@ class KYCApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getVinWithHttpInfo($app_id, $vin, $contentType);
+        list($response) = $this->getVinWithHttpInfo($vin, $contentType);
         return $response;
     }
 
@@ -1560,7 +1514,6 @@ class KYCApi extends \Dojah\CustomApi
      *
      * KYC - Get VIN
      *
-     * @param  string $app_id (optional)
      * @param  string $vin (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getVin'] to see the possible values for this operation
      *
@@ -1568,9 +1521,9 @@ class KYCApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetVinResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getVinWithHttpInfo($app_id = null, $vin = null, string $contentType = self::contentTypes['getVin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getVinWithHttpInfo($vin = null, string $contentType = self::contentTypes['getVin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getVinRequest($app_id, $vin, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getVinRequest($vin, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -1586,7 +1539,6 @@ class KYCApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getVinWithHttpInfo(
-                        $app_id,
                         $vin,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
@@ -1677,7 +1629,6 @@ class KYCApi extends \Dojah\CustomApi
      *
      * KYC - Get VIN
      *
-     * @param  string $app_id (optional)
      * @param  string $vin (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getVin'] to see the possible values for this operation
      *
@@ -1685,7 +1636,6 @@ class KYCApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getVinAsync(
-        $app_id = SENTINEL_VALUE,
         $vin = SENTINEL_VALUE,
 
 
@@ -1694,7 +1644,7 @@ class KYCApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getVinAsyncWithHttpInfo($app_id, $vin, $contentType)
+        return $this->getVinAsyncWithHttpInfo($vin, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -1707,17 +1657,16 @@ class KYCApi extends \Dojah\CustomApi
      *
      * KYC - Get VIN
      *
-     * @param  string $app_id (optional)
      * @param  string $vin (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getVin'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getVinAsyncWithHttpInfo($app_id = null, $vin = null, string $contentType = self::contentTypes['getVin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getVinAsyncWithHttpInfo($vin = null, string $contentType = self::contentTypes['getVin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetVinResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getVinRequest($app_id, $vin, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getVinRequest($vin, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -1761,20 +1710,15 @@ class KYCApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getVin'
      *
-     * @param  string $app_id (optional)
      * @param  string $vin (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getVin'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getVinRequest($app_id = SENTINEL_VALUE, $vin = SENTINEL_VALUE, string $contentType = self::contentTypes['getVin'][0])
+    public function getVinRequest($vin = SENTINEL_VALUE, string $contentType = self::contentTypes['getVin'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
         // Check if $vin is a string
         if ($vin !== SENTINEL_VALUE && !is_string($vin)) {
             throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($vin, true), gettype($vin)));
@@ -1800,10 +1744,6 @@ class KYCApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -1838,6 +1778,11 @@ class KYCApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -1871,7 +1816,6 @@ class KYCApi extends \Dojah\CustomApi
      *
      * Submit Address
      *
-     * @param  string $app_id app_id (optional)
      * @param  \Dojah\Model\KycSubmitAddressRequest $kyc_submit_address_request kyc_submit_address_request (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['submitAddress'] to see the possible values for this operation
      *
@@ -1890,7 +1834,6 @@ class KYCApi extends \Dojah\CustomApi
         $dob = SENTINEL_VALUE,
         $gender = SENTINEL_VALUE,
         $mobile = SENTINEL_VALUE,
-        $app_id = SENTINEL_VALUE,
 
 
         string $contentType = self::contentTypes['submitAddress'][0]
@@ -1910,7 +1853,7 @@ class KYCApi extends \Dojah\CustomApi
         $this->setRequestBodyProperty($_body, "mobile", $mobile);
         $kyc_submit_address_request = $_body;
 
-        list($response) = $this->submitAddressWithHttpInfo($app_id, $kyc_submit_address_request, $contentType);
+        list($response) = $this->submitAddressWithHttpInfo($kyc_submit_address_request, $contentType);
         return $response;
     }
 
@@ -1919,7 +1862,6 @@ class KYCApi extends \Dojah\CustomApi
      *
      * Submit Address
      *
-     * @param  string $app_id (optional)
      * @param  \Dojah\Model\KycSubmitAddressRequest $kyc_submit_address_request (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['submitAddress'] to see the possible values for this operation
      *
@@ -1927,9 +1869,9 @@ class KYCApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\KycSubmitAddressResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function submitAddressWithHttpInfo($app_id = null, $kyc_submit_address_request = null, string $contentType = self::contentTypes['submitAddress'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function submitAddressWithHttpInfo($kyc_submit_address_request = null, string $contentType = self::contentTypes['submitAddress'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->submitAddressRequest($app_id, $kyc_submit_address_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->submitAddressRequest($kyc_submit_address_request, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
@@ -1945,7 +1887,6 @@ class KYCApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->submitAddressWithHttpInfo(
-                        $app_id,
                         $kyc_submit_address_request,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
@@ -2036,7 +1977,6 @@ class KYCApi extends \Dojah\CustomApi
      *
      * Submit Address
      *
-     * @param  string $app_id (optional)
      * @param  \Dojah\Model\KycSubmitAddressRequest $kyc_submit_address_request (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['submitAddress'] to see the possible values for this operation
      *
@@ -2054,7 +1994,6 @@ class KYCApi extends \Dojah\CustomApi
         $dob = SENTINEL_VALUE,
         $gender = SENTINEL_VALUE,
         $mobile = SENTINEL_VALUE,
-        $app_id = SENTINEL_VALUE,
 
 
         string $contentType = self::contentTypes['submitAddress'][0]
@@ -2074,7 +2013,7 @@ class KYCApi extends \Dojah\CustomApi
         $this->setRequestBodyProperty($_body, "mobile", $mobile);
         $kyc_submit_address_request = $_body;
 
-        return $this->submitAddressAsyncWithHttpInfo($app_id, $kyc_submit_address_request, $contentType)
+        return $this->submitAddressAsyncWithHttpInfo($kyc_submit_address_request, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -2087,17 +2026,16 @@ class KYCApi extends \Dojah\CustomApi
      *
      * Submit Address
      *
-     * @param  string $app_id (optional)
      * @param  \Dojah\Model\KycSubmitAddressRequest $kyc_submit_address_request (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['submitAddress'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function submitAddressAsyncWithHttpInfo($app_id = null, $kyc_submit_address_request = null, string $contentType = self::contentTypes['submitAddress'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function submitAddressAsyncWithHttpInfo($kyc_submit_address_request = null, string $contentType = self::contentTypes['submitAddress'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\KycSubmitAddressResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->submitAddressRequest($app_id, $kyc_submit_address_request, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->submitAddressRequest($kyc_submit_address_request, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
@@ -2141,20 +2079,15 @@ class KYCApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'submitAddress'
      *
-     * @param  string $app_id (optional)
      * @param  \Dojah\Model\KycSubmitAddressRequest $kyc_submit_address_request (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['submitAddress'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function submitAddressRequest($app_id = SENTINEL_VALUE, $kyc_submit_address_request = SENTINEL_VALUE, string $contentType = self::contentTypes['submitAddress'][0])
+    public function submitAddressRequest($kyc_submit_address_request = SENTINEL_VALUE, string $contentType = self::contentTypes['submitAddress'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
         if ($kyc_submit_address_request !== SENTINEL_VALUE) {
             if (!($kyc_submit_address_request instanceof \Dojah\Model\KycSubmitAddressRequest)) {
                 if (!is_array($kyc_submit_address_request))
@@ -2173,10 +2106,6 @@ class KYCApi extends \Dojah\CustomApi
         $multipart = false;
 
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -2218,6 +2147,11 @@ class KYCApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {

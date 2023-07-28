@@ -139,7 +139,6 @@ class DocumentAnalysisApi extends \Dojah\CustomApi
      *
      * KYC - Document Analysis
      *
-     * @param  string $app_id app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['analyzeDocument'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
@@ -147,7 +146,6 @@ class DocumentAnalysisApi extends \Dojah\CustomApi
      * @return \Dojah\Model\AnalyzeDocumentResponse
      */
     public function analyzeDocument(
-        $app_id = SENTINEL_VALUE,
 
 
         string $contentType = self::contentTypes['analyzeDocument'][0]
@@ -155,7 +153,7 @@ class DocumentAnalysisApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->analyzeDocumentWithHttpInfo($app_id, $contentType);
+        list($response) = $this->analyzeDocumentWithHttpInfo($contentType);
         return $response;
     }
 
@@ -164,16 +162,15 @@ class DocumentAnalysisApi extends \Dojah\CustomApi
      *
      * KYC - Document Analysis
      *
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['analyzeDocument'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\AnalyzeDocumentResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function analyzeDocumentWithHttpInfo($app_id = null, string $contentType = self::contentTypes['analyzeDocument'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function analyzeDocumentWithHttpInfo(string $contentType = self::contentTypes['analyzeDocument'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->analyzeDocumentRequest($app_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->analyzeDocumentRequest($contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -189,7 +186,6 @@ class DocumentAnalysisApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->analyzeDocumentWithHttpInfo(
-                        $app_id,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
                     );
@@ -279,14 +275,12 @@ class DocumentAnalysisApi extends \Dojah\CustomApi
      *
      * KYC - Document Analysis
      *
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['analyzeDocument'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function analyzeDocumentAsync(
-        $app_id = SENTINEL_VALUE,
 
 
         string $contentType = self::contentTypes['analyzeDocument'][0]
@@ -294,7 +288,7 @@ class DocumentAnalysisApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->analyzeDocumentAsyncWithHttpInfo($app_id, $contentType)
+        return $this->analyzeDocumentAsyncWithHttpInfo($contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -307,16 +301,15 @@ class DocumentAnalysisApi extends \Dojah\CustomApi
      *
      * KYC - Document Analysis
      *
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['analyzeDocument'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function analyzeDocumentAsyncWithHttpInfo($app_id = null, string $contentType = self::contentTypes['analyzeDocument'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function analyzeDocumentAsyncWithHttpInfo(string $contentType = self::contentTypes['analyzeDocument'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\AnalyzeDocumentResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->analyzeDocumentRequest($app_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->analyzeDocumentRequest($contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -360,19 +353,14 @@ class DocumentAnalysisApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'analyzeDocument'
      *
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['analyzeDocument'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function analyzeDocumentRequest($app_id = SENTINEL_VALUE, string $contentType = self::contentTypes['analyzeDocument'][0])
+    public function analyzeDocumentRequest(string $contentType = self::contentTypes['analyzeDocument'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
 
 
         $resourcePath = '/api/v1/document/analysis';
@@ -383,10 +371,6 @@ class DocumentAnalysisApi extends \Dojah\CustomApi
         $multipart = false;
 
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -421,6 +405,11 @@ class DocumentAnalysisApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {

@@ -12,7 +12,7 @@ All URIs are relative to https://api.dojah.io, except if the operation defines a
 ## `caEkyc()`
 
 ```php
-caEkyc($app_id, $country, $first_name, $last_name, $street_name, $date_of_birth, $house_number, $post_code): object
+caEkyc($country, $first_name, $last_name, $street_name, $date_of_birth, $house_number, $post_code): object
 ```
 
 Canada Ekyc
@@ -24,9 +24,9 @@ Canada Ekyc
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $country = "GBR";
 $first_name = "Tobi";
 $last_name = "Ololade";
@@ -37,7 +37,6 @@ $post_code = 1234;
 
 try {
     $result = $dojah->globalKyc->caEkyc(
-        app_id: $app_id, 
         country: $country, 
         first_name: $first_name, 
         last_name: $last_name, 
@@ -49,14 +48,12 @@ try {
 } catch (\Exception $e) {
     echo 'Exception when calling GlobalKycApi->caEkyc: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **country** | **string**|  | [optional] |
 | **first_name** | **string**|  | [optional] |
 | **last_name** | **string**|  | [optional] |
@@ -71,7 +68,7 @@ try {
 
 ### Authorization
 
-No authorization required
+[appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -85,7 +82,7 @@ No authorization required
 ## `getUsSsn()`
 
 ```php
-getUsSsn($app_id, $country, $first_name, $last_name, $street_name, $date_of_birth, $house_number, $post_code): object
+getUsSsn($country, $first_name, $last_name, $street_name, $date_of_birth, $house_number, $post_code): object
 ```
 
 US SSN
@@ -97,9 +94,9 @@ US SSN
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $country = "GBR";
 $first_name = "Tobi";
 $last_name = "Ololade";
@@ -110,7 +107,6 @@ $post_code = 1234;
 
 try {
     $result = $dojah->globalKyc->getUsSsn(
-        app_id: $app_id, 
         country: $country, 
         first_name: $first_name, 
         last_name: $last_name, 
@@ -122,14 +118,12 @@ try {
 } catch (\Exception $e) {
     echo 'Exception when calling GlobalKycApi->getUsSsn: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **country** | **string**|  | [optional] |
 | **first_name** | **string**|  | [optional] |
 | **last_name** | **string**|  | [optional] |
@@ -144,7 +138,7 @@ try {
 
 ### Authorization
 
-No authorization required
+[appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -158,7 +152,7 @@ No authorization required
 ## `ukTwoPlusTwo()`
 
 ```php
-ukTwoPlusTwo($app_id, $country, $first_name, $last_name, $street_name, $date_of_birth, $house_number, $post_code): object
+ukTwoPlusTwo($country, $first_name, $last_name, $street_name, $date_of_birth, $house_number, $post_code): object
 ```
 
 UK 2+2
@@ -170,9 +164,9 @@ UK 2+2
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $country = "GBR";
 $first_name = "Tobi";
 $last_name = "Ololade";
@@ -183,7 +177,6 @@ $post_code = 1234;
 
 try {
     $result = $dojah->globalKyc->ukTwoPlusTwo(
-        app_id: $app_id, 
         country: $country, 
         first_name: $first_name, 
         last_name: $last_name, 
@@ -195,14 +188,12 @@ try {
 } catch (\Exception $e) {
     echo 'Exception when calling GlobalKycApi->ukTwoPlusTwo: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **country** | **string**|  | [optional] |
 | **first_name** | **string**|  | [optional] |
 | **last_name** | **string**|  | [optional] |
@@ -217,7 +208,7 @@ try {
 
 ### Authorization
 
-No authorization required
+[appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 

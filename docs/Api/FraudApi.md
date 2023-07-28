@@ -13,7 +13,7 @@ All URIs are relative to https://api.dojah.io, except if the operation defines a
 ## `getEmailReputation()`
 
 ```php
-getEmailReputation($app_id, $email): \Dojah\Model\FraudGetEmailReputationResponse
+getEmailReputation($email): \Dojah\Model\FraudGetEmailReputationResponse
 ```
 
 Email Reputation
@@ -25,28 +25,25 @@ Email Reputation
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $email = "johndoe@gmail.com";
 
 try {
     $result = $dojah->fraud->getEmailReputation(
-        app_id: $app_id, 
         email: $email
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling FraudApi->getEmailReputation: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **email** | **string**|  | [optional] |
 
 ### Return type
@@ -55,7 +52,7 @@ try {
 
 ### Authorization
 
-[noauthAuth](../../README.md#noauthAuth)
+[appIdAuth](../../README.md#appIdAuth), [noauthAuth](../../README.md#noauthAuth)
 
 ### HTTP request headers
 
@@ -69,7 +66,7 @@ try {
 ## `getIpReputation()`
 
 ```php
-getIpReputation($app_id, $ip_address): \Dojah\Model\FraudGetIpReputationResponse
+getIpReputation($ip_address): \Dojah\Model\FraudGetIpReputationResponse
 ```
 
 IP Reputation
@@ -81,28 +78,25 @@ IP Reputation
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $ip_address = "102.215.56.170";
 
 try {
     $result = $dojah->fraud->getIpReputation(
-        app_id: $app_id, 
         ip_address: $ip_address
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling FraudApi->getIpReputation: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **ip_address** | **string**|  | [optional] |
 
 ### Return type
@@ -111,7 +105,7 @@ try {
 
 ### Authorization
 
-No authorization required
+[appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -125,7 +119,7 @@ No authorization required
 ## `screenPhone()`
 
 ```php
-screenPhone($app_id, $phone_number): \Dojah\Model\FraudScreenPhoneResponse
+screenPhone($phone_number): \Dojah\Model\FraudScreenPhoneResponse
 ```
 
 Phone Screening
@@ -137,28 +131,25 @@ Phone Screening
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $phone_number = 2348068810228;
 
 try {
     $result = $dojah->fraud->screenPhone(
-        app_id: $app_id, 
         phone_number: $phone_number
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling FraudApi->screenPhone: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **phone_number** | **int**|  | [optional] |
 
 ### Return type
@@ -167,7 +158,7 @@ try {
 
 ### Authorization
 
-No authorization required
+[appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -181,7 +172,7 @@ No authorization required
 ## `screenUser()`
 
 ```php
-screenUser($app_id, $first_name, $last_name, $date_of_birth, $email, $phone, $ip_address): \Dojah\Model\FraudScreenUserResponse
+screenUser($first_name, $last_name, $date_of_birth, $email, $phone, $ip_address): \Dojah\Model\FraudScreenUserResponse
 ```
 
 User Screening
@@ -193,9 +184,9 @@ User Screening
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $first_name = "Robert";
 $last_name = "Morris";
 $date_of_birth = "1986-11-12";
@@ -205,7 +196,6 @@ $ip_address = "116.7.209.8";
 
 try {
     $result = $dojah->fraud->screenUser(
-        app_id: $app_id, 
         first_name: $first_name, 
         last_name: $last_name, 
         date_of_birth: $date_of_birth, 
@@ -217,14 +207,12 @@ try {
 } catch (\Exception $e) {
     echo 'Exception when calling FraudApi->screenUser: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **first_name** | **string**|  | [optional] |
 | **last_name** | **string**|  | [optional] |
 | **date_of_birth** | **string**|  | [optional] |
@@ -238,7 +226,7 @@ try {
 
 ### Authorization
 
-No authorization required
+[appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 

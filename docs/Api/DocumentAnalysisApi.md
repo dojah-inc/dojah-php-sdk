@@ -10,7 +10,7 @@ All URIs are relative to https://api.dojah.io, except if the operation defines a
 ## `analyzeDocument()`
 
 ```php
-analyzeDocument($app_id): \Dojah\Model\AnalyzeDocumentResponse
+analyzeDocument(): \Dojah\Model\AnalyzeDocumentResponse
 ```
 
 KYC - Document Analysis
@@ -22,26 +22,21 @@ KYC - Document Analysis
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 
 try {
-    $result = $dojah->documentAnalysis->analyzeDocument(
-        app_id: $app_id
-    );
+    $result = $dojah->documentAnalysis->analyzeDocument();
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling DocumentAnalysisApi->analyzeDocument: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
-| Name | Type | Description  | Notes |
-| ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
+This endpoint does not need any parameter.
 
 ### Return type
 
@@ -49,7 +44,7 @@ try {
 
 ### Authorization
 
-No authorization required
+[appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 

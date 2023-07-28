@@ -151,7 +151,6 @@ class VerificationsApi extends \Dojah\CustomApi
      *
      * KYC - Validate BVN
      *
-     * @param  string $app_id app_id (optional)
      * @param  int $bvn bvn (optional)
      * @param  string $first_name first_name (optional)
      * @param  string $dob dob (optional)
@@ -162,7 +161,6 @@ class VerificationsApi extends \Dojah\CustomApi
      * @return object
      */
     public function validateBvn(
-        $app_id = SENTINEL_VALUE,
         $bvn = SENTINEL_VALUE,
         $first_name = SENTINEL_VALUE,
         $dob = SENTINEL_VALUE,
@@ -173,7 +171,7 @@ class VerificationsApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->validateBvnWithHttpInfo($app_id, $bvn, $first_name, $dob, $contentType);
+        list($response) = $this->validateBvnWithHttpInfo($bvn, $first_name, $dob, $contentType);
         return $response;
     }
 
@@ -182,7 +180,6 @@ class VerificationsApi extends \Dojah\CustomApi
      *
      * KYC - Validate BVN
      *
-     * @param  string $app_id (optional)
      * @param  int $bvn (optional)
      * @param  string $first_name (optional)
      * @param  string $dob (optional)
@@ -192,9 +189,9 @@ class VerificationsApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of object, HTTP status code, HTTP response headers (array of strings)
      */
-    public function validateBvnWithHttpInfo($app_id = null, $bvn = null, $first_name = null, $dob = null, string $contentType = self::contentTypes['validateBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function validateBvnWithHttpInfo($bvn = null, $first_name = null, $dob = null, string $contentType = self::contentTypes['validateBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->validateBvnRequest($app_id, $bvn, $first_name, $dob, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->validateBvnRequest($bvn, $first_name, $dob, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -210,7 +207,6 @@ class VerificationsApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->validateBvnWithHttpInfo(
-                        $app_id,
                         $bvn,
                         $first_name,
                         $dob,
@@ -303,7 +299,6 @@ class VerificationsApi extends \Dojah\CustomApi
      *
      * KYC - Validate BVN
      *
-     * @param  string $app_id (optional)
      * @param  int $bvn (optional)
      * @param  string $first_name (optional)
      * @param  string $dob (optional)
@@ -313,7 +308,6 @@ class VerificationsApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function validateBvnAsync(
-        $app_id = SENTINEL_VALUE,
         $bvn = SENTINEL_VALUE,
         $first_name = SENTINEL_VALUE,
         $dob = SENTINEL_VALUE,
@@ -324,7 +318,7 @@ class VerificationsApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->validateBvnAsyncWithHttpInfo($app_id, $bvn, $first_name, $dob, $contentType)
+        return $this->validateBvnAsyncWithHttpInfo($bvn, $first_name, $dob, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -337,7 +331,6 @@ class VerificationsApi extends \Dojah\CustomApi
      *
      * KYC - Validate BVN
      *
-     * @param  string $app_id (optional)
      * @param  int $bvn (optional)
      * @param  string $first_name (optional)
      * @param  string $dob (optional)
@@ -346,10 +339,10 @@ class VerificationsApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function validateBvnAsyncWithHttpInfo($app_id = null, $bvn = null, $first_name = null, $dob = null, string $contentType = self::contentTypes['validateBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function validateBvnAsyncWithHttpInfo($bvn = null, $first_name = null, $dob = null, string $contentType = self::contentTypes['validateBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = 'object';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->validateBvnRequest($app_id, $bvn, $first_name, $dob, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->validateBvnRequest($bvn, $first_name, $dob, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -393,7 +386,6 @@ class VerificationsApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'validateBvn'
      *
-     * @param  string $app_id (optional)
      * @param  int $bvn (optional)
      * @param  string $first_name (optional)
      * @param  string $dob (optional)
@@ -402,13 +394,9 @@ class VerificationsApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function validateBvnRequest($app_id = SENTINEL_VALUE, $bvn = SENTINEL_VALUE, $first_name = SENTINEL_VALUE, $dob = SENTINEL_VALUE, string $contentType = self::contentTypes['validateBvn'][0])
+    public function validateBvnRequest($bvn = SENTINEL_VALUE, $first_name = SENTINEL_VALUE, $dob = SENTINEL_VALUE, string $contentType = self::contentTypes['validateBvn'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
         // Check if $first_name is a string
         if ($first_name !== SENTINEL_VALUE && !is_string($first_name)) {
             throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($first_name, true), gettype($first_name)));
@@ -460,10 +448,6 @@ class VerificationsApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -498,6 +482,11 @@ class VerificationsApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -531,7 +520,6 @@ class VerificationsApi extends \Dojah\CustomApi
      *
      * KYC - Age Verification
      *
-     * @param  string $app_id app_id (optional)
      * @param  string $mode mode (optional)
      * @param  int $account_number account_number (optional)
      * @param  int $bank_code bank_code (optional)
@@ -545,7 +533,6 @@ class VerificationsApi extends \Dojah\CustomApi
      * @return \Dojah\Model\VerifyAgeResponse
      */
     public function verifyAge(
-        $app_id = SENTINEL_VALUE,
         $mode = SENTINEL_VALUE,
         $account_number = SENTINEL_VALUE,
         $bank_code = SENTINEL_VALUE,
@@ -559,7 +546,7 @@ class VerificationsApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->verifyAgeWithHttpInfo($app_id, $mode, $account_number, $bank_code, $dob, $first_name, $last_name, $contentType);
+        list($response) = $this->verifyAgeWithHttpInfo($mode, $account_number, $bank_code, $dob, $first_name, $last_name, $contentType);
         return $response;
     }
 
@@ -568,7 +555,6 @@ class VerificationsApi extends \Dojah\CustomApi
      *
      * KYC - Age Verification
      *
-     * @param  string $app_id (optional)
      * @param  string $mode (optional)
      * @param  int $account_number (optional)
      * @param  int $bank_code (optional)
@@ -581,9 +567,9 @@ class VerificationsApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\VerifyAgeResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function verifyAgeWithHttpInfo($app_id = null, $mode = null, $account_number = null, $bank_code = null, $dob = null, $first_name = null, $last_name = null, string $contentType = self::contentTypes['verifyAge'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function verifyAgeWithHttpInfo($mode = null, $account_number = null, $bank_code = null, $dob = null, $first_name = null, $last_name = null, string $contentType = self::contentTypes['verifyAge'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifyAgeRequest($app_id, $mode, $account_number, $bank_code, $dob, $first_name, $last_name, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifyAgeRequest($mode, $account_number, $bank_code, $dob, $first_name, $last_name, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -599,7 +585,6 @@ class VerificationsApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->verifyAgeWithHttpInfo(
-                        $app_id,
                         $mode,
                         $account_number,
                         $bank_code,
@@ -695,7 +680,6 @@ class VerificationsApi extends \Dojah\CustomApi
      *
      * KYC - Age Verification
      *
-     * @param  string $app_id (optional)
      * @param  string $mode (optional)
      * @param  int $account_number (optional)
      * @param  int $bank_code (optional)
@@ -708,7 +692,6 @@ class VerificationsApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function verifyAgeAsync(
-        $app_id = SENTINEL_VALUE,
         $mode = SENTINEL_VALUE,
         $account_number = SENTINEL_VALUE,
         $bank_code = SENTINEL_VALUE,
@@ -722,7 +705,7 @@ class VerificationsApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->verifyAgeAsyncWithHttpInfo($app_id, $mode, $account_number, $bank_code, $dob, $first_name, $last_name, $contentType)
+        return $this->verifyAgeAsyncWithHttpInfo($mode, $account_number, $bank_code, $dob, $first_name, $last_name, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -735,7 +718,6 @@ class VerificationsApi extends \Dojah\CustomApi
      *
      * KYC - Age Verification
      *
-     * @param  string $app_id (optional)
      * @param  string $mode (optional)
      * @param  int $account_number (optional)
      * @param  int $bank_code (optional)
@@ -747,10 +729,10 @@ class VerificationsApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function verifyAgeAsyncWithHttpInfo($app_id = null, $mode = null, $account_number = null, $bank_code = null, $dob = null, $first_name = null, $last_name = null, string $contentType = self::contentTypes['verifyAge'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function verifyAgeAsyncWithHttpInfo($mode = null, $account_number = null, $bank_code = null, $dob = null, $first_name = null, $last_name = null, string $contentType = self::contentTypes['verifyAge'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\VerifyAgeResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifyAgeRequest($app_id, $mode, $account_number, $bank_code, $dob, $first_name, $last_name, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifyAgeRequest($mode, $account_number, $bank_code, $dob, $first_name, $last_name, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -794,7 +776,6 @@ class VerificationsApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'verifyAge'
      *
-     * @param  string $app_id (optional)
      * @param  string $mode (optional)
      * @param  int $account_number (optional)
      * @param  int $bank_code (optional)
@@ -806,13 +787,9 @@ class VerificationsApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function verifyAgeRequest($app_id = SENTINEL_VALUE, $mode = SENTINEL_VALUE, $account_number = SENTINEL_VALUE, $bank_code = SENTINEL_VALUE, $dob = SENTINEL_VALUE, $first_name = SENTINEL_VALUE, $last_name = SENTINEL_VALUE, string $contentType = self::contentTypes['verifyAge'][0])
+    public function verifyAgeRequest($mode = SENTINEL_VALUE, $account_number = SENTINEL_VALUE, $bank_code = SENTINEL_VALUE, $dob = SENTINEL_VALUE, $first_name = SENTINEL_VALUE, $last_name = SENTINEL_VALUE, string $contentType = self::contentTypes['verifyAge'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
         // Check if $mode is a string
         if ($mode !== SENTINEL_VALUE && !is_string($mode)) {
             throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($mode, true), gettype($mode)));
@@ -905,10 +882,6 @@ class VerificationsApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -943,6 +916,11 @@ class VerificationsApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -977,7 +955,6 @@ class VerificationsApi extends \Dojah\CustomApi
      * KYV - Selfie BVN Verificatoin
      *
      * @param  \Dojah\Model\VerifySelfieBvnRequest $verify_selfie_bvn_request verify_selfie_bvn_request (required)
-     * @param  string $app_id app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifySelfieBvn'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
@@ -988,7 +965,6 @@ class VerificationsApi extends \Dojah\CustomApi
 
         $bvn = SENTINEL_VALUE,
         $selfie_image = SENTINEL_VALUE,
-        $app_id = SENTINEL_VALUE,
 
         string $contentType = self::contentTypes['verifySelfieBvn'][0]
 
@@ -999,7 +975,7 @@ class VerificationsApi extends \Dojah\CustomApi
         $this->setRequestBodyProperty($_body, "selfie_image", $selfie_image);
         $verify_selfie_bvn_request = $_body;
 
-        list($response) = $this->verifySelfieBvnWithHttpInfo($verify_selfie_bvn_request, $app_id, $contentType);
+        list($response) = $this->verifySelfieBvnWithHttpInfo($verify_selfie_bvn_request, $contentType);
         return $response;
     }
 
@@ -1009,16 +985,15 @@ class VerificationsApi extends \Dojah\CustomApi
      * KYV - Selfie BVN Verificatoin
      *
      * @param  \Dojah\Model\VerifySelfieBvnRequest $verify_selfie_bvn_request (required)
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifySelfieBvn'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\VerifySelfieBvnResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function verifySelfieBvnWithHttpInfo($verify_selfie_bvn_request, $app_id = null, string $contentType = self::contentTypes['verifySelfieBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function verifySelfieBvnWithHttpInfo($verify_selfie_bvn_request, string $contentType = self::contentTypes['verifySelfieBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifySelfieBvnRequest($verify_selfie_bvn_request, $app_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifySelfieBvnRequest($verify_selfie_bvn_request, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
@@ -1035,7 +1010,6 @@ class VerificationsApi extends \Dojah\CustomApi
                 ) {
                     return $this->verifySelfieBvnWithHttpInfo(
                         $verify_selfie_bvn_request,
-                        $app_id,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
                     );
@@ -1126,7 +1100,6 @@ class VerificationsApi extends \Dojah\CustomApi
      * KYV - Selfie BVN Verificatoin
      *
      * @param  \Dojah\Model\VerifySelfieBvnRequest $verify_selfie_bvn_request (required)
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifySelfieBvn'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
@@ -1136,7 +1109,6 @@ class VerificationsApi extends \Dojah\CustomApi
 
         $bvn = SENTINEL_VALUE,
         $selfie_image = SENTINEL_VALUE,
-        $app_id = SENTINEL_VALUE,
 
         string $contentType = self::contentTypes['verifySelfieBvn'][0]
 
@@ -1147,7 +1119,7 @@ class VerificationsApi extends \Dojah\CustomApi
         $this->setRequestBodyProperty($_body, "selfie_image", $selfie_image);
         $verify_selfie_bvn_request = $_body;
 
-        return $this->verifySelfieBvnAsyncWithHttpInfo($verify_selfie_bvn_request, $app_id, $contentType)
+        return $this->verifySelfieBvnAsyncWithHttpInfo($verify_selfie_bvn_request, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -1161,16 +1133,15 @@ class VerificationsApi extends \Dojah\CustomApi
      * KYV - Selfie BVN Verificatoin
      *
      * @param  \Dojah\Model\VerifySelfieBvnRequest $verify_selfie_bvn_request (required)
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifySelfieBvn'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function verifySelfieBvnAsyncWithHttpInfo($verify_selfie_bvn_request, $app_id = null, string $contentType = self::contentTypes['verifySelfieBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function verifySelfieBvnAsyncWithHttpInfo($verify_selfie_bvn_request, string $contentType = self::contentTypes['verifySelfieBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\VerifySelfieBvnResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifySelfieBvnRequest($verify_selfie_bvn_request, $app_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifySelfieBvnRequest($verify_selfie_bvn_request, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
@@ -1215,13 +1186,12 @@ class VerificationsApi extends \Dojah\CustomApi
      * Create request for operation 'verifySelfieBvn'
      *
      * @param  \Dojah\Model\VerifySelfieBvnRequest $verify_selfie_bvn_request (required)
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifySelfieBvn'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function verifySelfieBvnRequest($verify_selfie_bvn_request, $app_id = SENTINEL_VALUE, string $contentType = self::contentTypes['verifySelfieBvn'][0])
+    public function verifySelfieBvnRequest($verify_selfie_bvn_request, string $contentType = self::contentTypes['verifySelfieBvn'][0])
     {
 
         if ($verify_selfie_bvn_request !== SENTINEL_VALUE) {
@@ -1238,10 +1208,6 @@ class VerificationsApi extends \Dojah\CustomApi
                 'Missing the required parameter verify_selfie_bvn_request when calling verifySelfieBvn'
             );
         }
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
 
 
         $resourcePath = '/v1/kyc/bvn/verify';
@@ -1252,10 +1218,6 @@ class VerificationsApi extends \Dojah\CustomApi
         $multipart = false;
 
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -1297,6 +1259,11 @@ class VerificationsApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -1331,7 +1298,6 @@ class VerificationsApi extends \Dojah\CustomApi
      * KYC - Selfie NIN Verification
      *
      * @param  \Dojah\Model\VerificationsVerifySelfieNinRequest $verifications_verify_selfie_nin_request verifications_verify_selfie_nin_request (required)
-     * @param  string $app_id app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifySelfieNin'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
@@ -1342,7 +1308,6 @@ class VerificationsApi extends \Dojah\CustomApi
 
         $nin = SENTINEL_VALUE,
         $selfie_image = SENTINEL_VALUE,
-        $app_id = SENTINEL_VALUE,
 
         string $contentType = self::contentTypes['verifySelfieNin'][0]
 
@@ -1353,7 +1318,7 @@ class VerificationsApi extends \Dojah\CustomApi
         $this->setRequestBodyProperty($_body, "selfie_image", $selfie_image);
         $verifications_verify_selfie_nin_request = $_body;
 
-        list($response) = $this->verifySelfieNinWithHttpInfo($verifications_verify_selfie_nin_request, $app_id, $contentType);
+        list($response) = $this->verifySelfieNinWithHttpInfo($verifications_verify_selfie_nin_request, $contentType);
         return $response;
     }
 
@@ -1363,16 +1328,15 @@ class VerificationsApi extends \Dojah\CustomApi
      * KYC - Selfie NIN Verification
      *
      * @param  \Dojah\Model\VerificationsVerifySelfieNinRequest $verifications_verify_selfie_nin_request (required)
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifySelfieNin'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return array of object, HTTP status code, HTTP response headers (array of strings)
      */
-    public function verifySelfieNinWithHttpInfo($verifications_verify_selfie_nin_request, $app_id = null, string $contentType = self::contentTypes['verifySelfieNin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function verifySelfieNinWithHttpInfo($verifications_verify_selfie_nin_request, string $contentType = self::contentTypes['verifySelfieNin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifySelfieNinRequest($verifications_verify_selfie_nin_request, $app_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifySelfieNinRequest($verifications_verify_selfie_nin_request, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
@@ -1389,7 +1353,6 @@ class VerificationsApi extends \Dojah\CustomApi
                 ) {
                     return $this->verifySelfieNinWithHttpInfo(
                         $verifications_verify_selfie_nin_request,
-                        $app_id,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
                     );
@@ -1480,7 +1443,6 @@ class VerificationsApi extends \Dojah\CustomApi
      * KYC - Selfie NIN Verification
      *
      * @param  \Dojah\Model\VerificationsVerifySelfieNinRequest $verifications_verify_selfie_nin_request (required)
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifySelfieNin'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
@@ -1490,7 +1452,6 @@ class VerificationsApi extends \Dojah\CustomApi
 
         $nin = SENTINEL_VALUE,
         $selfie_image = SENTINEL_VALUE,
-        $app_id = SENTINEL_VALUE,
 
         string $contentType = self::contentTypes['verifySelfieNin'][0]
 
@@ -1501,7 +1462,7 @@ class VerificationsApi extends \Dojah\CustomApi
         $this->setRequestBodyProperty($_body, "selfie_image", $selfie_image);
         $verifications_verify_selfie_nin_request = $_body;
 
-        return $this->verifySelfieNinAsyncWithHttpInfo($verifications_verify_selfie_nin_request, $app_id, $contentType)
+        return $this->verifySelfieNinAsyncWithHttpInfo($verifications_verify_selfie_nin_request, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -1515,16 +1476,15 @@ class VerificationsApi extends \Dojah\CustomApi
      * KYC - Selfie NIN Verification
      *
      * @param  \Dojah\Model\VerificationsVerifySelfieNinRequest $verifications_verify_selfie_nin_request (required)
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifySelfieNin'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function verifySelfieNinAsyncWithHttpInfo($verifications_verify_selfie_nin_request, $app_id = null, string $contentType = self::contentTypes['verifySelfieNin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function verifySelfieNinAsyncWithHttpInfo($verifications_verify_selfie_nin_request, string $contentType = self::contentTypes['verifySelfieNin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = 'object';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifySelfieNinRequest($verifications_verify_selfie_nin_request, $app_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifySelfieNinRequest($verifications_verify_selfie_nin_request, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
@@ -1569,13 +1529,12 @@ class VerificationsApi extends \Dojah\CustomApi
      * Create request for operation 'verifySelfieNin'
      *
      * @param  \Dojah\Model\VerificationsVerifySelfieNinRequest $verifications_verify_selfie_nin_request (required)
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifySelfieNin'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function verifySelfieNinRequest($verifications_verify_selfie_nin_request, $app_id = SENTINEL_VALUE, string $contentType = self::contentTypes['verifySelfieNin'][0])
+    public function verifySelfieNinRequest($verifications_verify_selfie_nin_request, string $contentType = self::contentTypes['verifySelfieNin'][0])
     {
 
         if ($verifications_verify_selfie_nin_request !== SENTINEL_VALUE) {
@@ -1592,10 +1551,6 @@ class VerificationsApi extends \Dojah\CustomApi
                 'Missing the required parameter verifications_verify_selfie_nin_request when calling verifySelfieNin'
             );
         }
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
 
 
         $resourcePath = '/api/v1/kyc/nin/verify';
@@ -1606,10 +1561,6 @@ class VerificationsApi extends \Dojah\CustomApi
         $multipart = false;
 
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -1651,6 +1602,11 @@ class VerificationsApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -1685,7 +1641,6 @@ class VerificationsApi extends \Dojah\CustomApi
      * KYC - Selfie vNIN verification
      *
      * @param  \Dojah\Model\VerificationsVerifySelfieVninRequest $verifications_verify_selfie_vnin_request verifications_verify_selfie_vnin_request (required)
-     * @param  string $app_id app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifySelfieVnin'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
@@ -1696,7 +1651,6 @@ class VerificationsApi extends \Dojah\CustomApi
 
         $vnin = SENTINEL_VALUE,
         $selfie_image = SENTINEL_VALUE,
-        $app_id = SENTINEL_VALUE,
 
         string $contentType = self::contentTypes['verifySelfieVnin'][0]
 
@@ -1707,7 +1661,7 @@ class VerificationsApi extends \Dojah\CustomApi
         $this->setRequestBodyProperty($_body, "selfie_image", $selfie_image);
         $verifications_verify_selfie_vnin_request = $_body;
 
-        list($response) = $this->verifySelfieVninWithHttpInfo($verifications_verify_selfie_vnin_request, $app_id, $contentType);
+        list($response) = $this->verifySelfieVninWithHttpInfo($verifications_verify_selfie_vnin_request, $contentType);
         return $response;
     }
 
@@ -1717,16 +1671,15 @@ class VerificationsApi extends \Dojah\CustomApi
      * KYC - Selfie vNIN verification
      *
      * @param  \Dojah\Model\VerificationsVerifySelfieVninRequest $verifications_verify_selfie_vnin_request (required)
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifySelfieVnin'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return array of object, HTTP status code, HTTP response headers (array of strings)
      */
-    public function verifySelfieVninWithHttpInfo($verifications_verify_selfie_vnin_request, $app_id = null, string $contentType = self::contentTypes['verifySelfieVnin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function verifySelfieVninWithHttpInfo($verifications_verify_selfie_vnin_request, string $contentType = self::contentTypes['verifySelfieVnin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifySelfieVninRequest($verifications_verify_selfie_vnin_request, $app_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifySelfieVninRequest($verifications_verify_selfie_vnin_request, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
@@ -1743,7 +1696,6 @@ class VerificationsApi extends \Dojah\CustomApi
                 ) {
                     return $this->verifySelfieVninWithHttpInfo(
                         $verifications_verify_selfie_vnin_request,
-                        $app_id,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
                     );
@@ -1834,7 +1786,6 @@ class VerificationsApi extends \Dojah\CustomApi
      * KYC - Selfie vNIN verification
      *
      * @param  \Dojah\Model\VerificationsVerifySelfieVninRequest $verifications_verify_selfie_vnin_request (required)
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifySelfieVnin'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
@@ -1844,7 +1795,6 @@ class VerificationsApi extends \Dojah\CustomApi
 
         $vnin = SENTINEL_VALUE,
         $selfie_image = SENTINEL_VALUE,
-        $app_id = SENTINEL_VALUE,
 
         string $contentType = self::contentTypes['verifySelfieVnin'][0]
 
@@ -1855,7 +1805,7 @@ class VerificationsApi extends \Dojah\CustomApi
         $this->setRequestBodyProperty($_body, "selfie_image", $selfie_image);
         $verifications_verify_selfie_vnin_request = $_body;
 
-        return $this->verifySelfieVninAsyncWithHttpInfo($verifications_verify_selfie_vnin_request, $app_id, $contentType)
+        return $this->verifySelfieVninAsyncWithHttpInfo($verifications_verify_selfie_vnin_request, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -1869,16 +1819,15 @@ class VerificationsApi extends \Dojah\CustomApi
      * KYC - Selfie vNIN verification
      *
      * @param  \Dojah\Model\VerificationsVerifySelfieVninRequest $verifications_verify_selfie_vnin_request (required)
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifySelfieVnin'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function verifySelfieVninAsyncWithHttpInfo($verifications_verify_selfie_vnin_request, $app_id = null, string $contentType = self::contentTypes['verifySelfieVnin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function verifySelfieVninAsyncWithHttpInfo($verifications_verify_selfie_vnin_request, string $contentType = self::contentTypes['verifySelfieVnin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = 'object';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifySelfieVninRequest($verifications_verify_selfie_vnin_request, $app_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifySelfieVninRequest($verifications_verify_selfie_vnin_request, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
@@ -1923,13 +1872,12 @@ class VerificationsApi extends \Dojah\CustomApi
      * Create request for operation 'verifySelfieVnin'
      *
      * @param  \Dojah\Model\VerificationsVerifySelfieVninRequest $verifications_verify_selfie_vnin_request (required)
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifySelfieVnin'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function verifySelfieVninRequest($verifications_verify_selfie_vnin_request, $app_id = SENTINEL_VALUE, string $contentType = self::contentTypes['verifySelfieVnin'][0])
+    public function verifySelfieVninRequest($verifications_verify_selfie_vnin_request, string $contentType = self::contentTypes['verifySelfieVnin'][0])
     {
 
         if ($verifications_verify_selfie_vnin_request !== SENTINEL_VALUE) {
@@ -1946,10 +1894,6 @@ class VerificationsApi extends \Dojah\CustomApi
                 'Missing the required parameter verifications_verify_selfie_vnin_request when calling verifySelfieVnin'
             );
         }
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
 
 
         $resourcePath = '/api/v1/kyc/vnin/verify';
@@ -1960,10 +1904,6 @@ class VerificationsApi extends \Dojah\CustomApi
         $multipart = false;
 
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -2005,6 +1945,11 @@ class VerificationsApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {

@@ -11,7 +11,7 @@ All URIs are relative to https://api.dojah.io, except if the operation defines a
 ## `checkCredit()`
 
 ```php
-checkCredit($app_id, $id_number, $name, $surname, $gender, $dob, $marital_status, $mobile_number): \Dojah\Model\ZwKycCheckCreditResponse
+checkCredit($id_number, $name, $surname, $gender, $dob, $marital_status, $mobile_number): \Dojah\Model\ZwKycCheckCreditResponse
 ```
 
 Credit Check
@@ -23,9 +23,9 @@ Credit Check
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $id_number = "45190221E45";
 $name = "CHIMUNDEGE";
 $surname = "CHIMUNDEGE";
@@ -36,7 +36,6 @@ $mobile_number = 26424257383;
 
 try {
     $result = $dojah->zwKyc->checkCredit(
-        app_id: $app_id, 
         id_number: $id_number, 
         name: $name, 
         surname: $surname, 
@@ -49,14 +48,12 @@ try {
 } catch (\Exception $e) {
     echo 'Exception when calling ZwKycApi->checkCredit: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **id_number** | **string**|  | [optional] |
 | **name** | **string**|  | [optional] |
 | **surname** | **string**|  | [optional] |
@@ -71,7 +68,7 @@ try {
 
 ### Authorization
 
-No authorization required
+[appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -85,7 +82,7 @@ No authorization required
 ## `verifyId()`
 
 ```php
-verifyId($app_id, $id): \Dojah\Model\ZwKycVerifyIdResponse
+verifyId($id): \Dojah\Model\ZwKycVerifyIdResponse
 ```
 
 National ID Verification
@@ -97,28 +94,25 @@ National ID Verification
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $id = "45190221E45";
 
 try {
     $result = $dojah->zwKyc->verifyId(
-        app_id: $app_id, 
         id: $id
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling ZwKycApi->verifyId: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **id** | **string**|  | [optional] |
 
 ### Return type
@@ -127,7 +121,7 @@ try {
 
 ### Authorization
 
-No authorization required
+[appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 

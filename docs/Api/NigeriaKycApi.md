@@ -20,7 +20,7 @@ All URIs are relative to https://api.dojah.io, except if the operation defines a
 ## `getBasicBvn()`
 
 ```php
-getBasicBvn($app_id, $bvn): \Dojah\Model\ValidateBvnResponse
+getBasicBvn($bvn): \Dojah\Model\ValidateBvnResponse
 ```
 
 KYC - Get Basic BVN Info
@@ -32,28 +32,25 @@ KYC - Get Basic BVN Info
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $bvn = 22468537919;
 
 try {
     $result = $dojah->nigeriaKyc->getBasicBvn(
-        app_id: $app_id, 
         bvn: $bvn
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling NigeriaKycApi->getBasicBvn: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **bvn** | **int**|  | [optional] |
 
 ### Return type
@@ -62,7 +59,7 @@ try {
 
 ### Authorization
 
-[apikeyAuth](../../README.md#apikeyAuth)
+[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -76,7 +73,7 @@ try {
 ## `getBasicBvn1()`
 
 ```php
-getBasicBvn1($app_id, $bvn): \Dojah\Model\GetBasicBvnResponse
+getBasicBvn1($bvn): \Dojah\Model\GetBasicBvnResponse
 ```
 
 KYC - Lookup BVN Basic 1
@@ -88,28 +85,25 @@ KYC - Lookup BVN Basic 1
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $bvn = 22621998885;
 
 try {
     $result = $dojah->nigeriaKyc->getBasicBvn1(
-        app_id: $app_id, 
         bvn: $bvn
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling NigeriaKycApi->getBasicBvn1: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **bvn** | **int**|  | [optional] |
 
 ### Return type
@@ -118,7 +112,7 @@ try {
 
 ### Authorization
 
-No authorization required
+[appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -132,7 +126,7 @@ No authorization required
 ## `getBasicPhoneNumber()`
 
 ```php
-getBasicPhoneNumber($app_id, $phone_number): object
+getBasicPhoneNumber($phone_number): object
 ```
 
 KYC Lookup Phone Number Basic
@@ -144,27 +138,24 @@ KYC Lookup Phone Number Basic
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $phone_number = 9131377829;
 
 try {
     $result = $dojah->nigeriaKyc->getBasicPhoneNumber(
-        app_id: $app_id, 
         phone_number: $phone_number
     );
 } catch (\Exception $e) {
     echo 'Exception when calling NigeriaKycApi->getBasicPhoneNumber: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **phone_number** | **int**|  | [optional] |
 
 ### Return type
@@ -173,7 +164,7 @@ try {
 
 ### Authorization
 
-[apikeyAuth](../../README.md#apikeyAuth)
+[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -187,7 +178,7 @@ try {
 ## `getDriversLicense()`
 
 ```php
-getDriversLicense($app_id, $license_number): \Dojah\Model\GetKycDriversLicenseResponse
+getDriversLicense($license_number): \Dojah\Model\GetKycDriversLicenseResponse
 ```
 
 KYC - Get Drivers License Info
@@ -199,28 +190,25 @@ KYC - Get Drivers License Info
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $license_number = "FKJ49409AB13";
 
 try {
     $result = $dojah->nigeriaKyc->getDriversLicense(
-        app_id: $app_id, 
         license_number: $license_number
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling NigeriaKycApi->getDriversLicense: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **license_number** | **string**|  | [optional] |
 
 ### Return type
@@ -229,7 +217,7 @@ try {
 
 ### Authorization
 
-[apikeyAuth](../../README.md#apikeyAuth)
+[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -243,7 +231,7 @@ try {
 ## `getNin()`
 
 ```php
-getNin($app_id, $nin): \Dojah\Model\NigeriaKycGetNinResponse
+getNin($nin): \Dojah\Model\NigeriaKycGetNinResponse
 ```
 
 KYC - Get NIN Info
@@ -255,28 +243,25 @@ KYC - Get NIN Info
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $nin = 55648152772;
 
 try {
     $result = $dojah->nigeriaKyc->getNin(
-        app_id: $app_id, 
         nin: $nin
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling NigeriaKycApi->getNin: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **nin** | **int**|  | [optional] |
 
 ### Return type
@@ -285,7 +270,7 @@ try {
 
 ### Authorization
 
-[apikeyAuth](../../README.md#apikeyAuth)
+[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -299,7 +284,7 @@ try {
 ## `getNormalBvn()`
 
 ```php
-getNormalBvn($app_id, $bvn): \Dojah\Model\GetFullBvnResponse
+getNormalBvn($bvn): \Dojah\Model\GetFullBvnResponse
 ```
 
 KYC - Lookup BVN Normal
@@ -311,28 +296,25 @@ KYC - Lookup BVN Normal
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $bvn = 22342291445;
 
 try {
     $result = $dojah->nigeriaKyc->getNormalBvn(
-        app_id: $app_id, 
         bvn: $bvn
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling NigeriaKycApi->getNormalBvn: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **bvn** | **int**|  | [optional] |
 
 ### Return type
@@ -341,7 +323,7 @@ try {
 
 ### Authorization
 
-[apikeyAuth](../../README.md#apikeyAuth)
+[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -355,7 +337,7 @@ try {
 ## `getNuban()`
 
 ```php
-getNuban($app_id, $bank_code, $account_number): \Dojah\Model\GetNubanResponse
+getNuban($bank_code, $account_number): \Dojah\Model\GetNubanResponse
 ```
 
 KYC - Get NUBAN Information
@@ -367,15 +349,14 @@ KYC - Get NUBAN Information
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $bank_code = 58;
 $account_number = 11223344;
 
 try {
     $result = $dojah->nigeriaKyc->getNuban(
-        app_id: $app_id, 
         bank_code: $bank_code, 
         account_number: $account_number
     );
@@ -383,14 +364,12 @@ try {
 } catch (\Exception $e) {
     echo 'Exception when calling NigeriaKycApi->getNuban: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **bank_code** | **int**|  | [optional] |
 | **account_number** | **int**|  | [optional] |
 
@@ -400,7 +379,7 @@ try {
 
 ### Authorization
 
-[apikeyAuth](../../README.md#apikeyAuth)
+[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -426,7 +405,7 @@ KYC - Passport
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    Appid: YOUR_APPID,
+    apiKey: "APPID",
 );
 
 $passport_number = "B00671500";
@@ -441,7 +420,6 @@ try {
 } catch (\Exception $e) {
     echo 'Exception when calling NigeriaKycApi->getPassport: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
@@ -471,7 +449,7 @@ try {
 ## `getPhoneNumber()`
 
 ```php
-getPhoneNumber($app_id, $phone_number): \Dojah\Model\GetPhoneNumberResponse
+getPhoneNumber($phone_number): \Dojah\Model\GetPhoneNumberResponse
 ```
 
 KYC - Lookup Phone Number
@@ -483,28 +461,25 @@ KYC - Lookup Phone Number
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $phone_number = 8034628633;
 
 try {
     $result = $dojah->nigeriaKyc->getPhoneNumber(
-        app_id: $app_id, 
         phone_number: $phone_number
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling NigeriaKycApi->getPhoneNumber: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **phone_number** | **int**|  | [optional] |
 
 ### Return type
@@ -513,7 +488,7 @@ try {
 
 ### Authorization
 
-[noauthAuth](../../README.md#noauthAuth)
+[appIdAuth](../../README.md#appIdAuth), [noauthAuth](../../README.md#noauthAuth)
 
 ### HTTP request headers
 
@@ -527,7 +502,7 @@ try {
 ## `getPremiumBvn()`
 
 ```php
-getPremiumBvn($app_id, $bvn): \Dojah\Model\GetPremiumBvnResponse
+getPremiumBvn($bvn): \Dojah\Model\GetPremiumBvnResponse
 ```
 
 KYC - Lookup BVN Premium
@@ -539,28 +514,25 @@ KYC - Lookup BVN Premium
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $bvn = 22200508254;
 
 try {
     $result = $dojah->nigeriaKyc->getPremiumBvn(
-        app_id: $app_id, 
         bvn: $bvn
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling NigeriaKycApi->getPremiumBvn: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **bvn** | **int**|  | [optional] |
 
 ### Return type
@@ -569,7 +541,7 @@ try {
 
 ### Authorization
 
-[apikeyAuth](../../README.md#apikeyAuth)
+[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -583,7 +555,7 @@ try {
 ## `getVnin()`
 
 ```php
-getVnin($app_id, $vnin): \Dojah\Model\GetVninResponse
+getVnin($vnin): \Dojah\Model\GetVninResponse
 ```
 
 Lookup VNIN
@@ -595,28 +567,25 @@ Lookup VNIN
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $vnin = "LC829995256998RD";
 
 try {
     $result = $dojah->nigeriaKyc->getVnin(
-        app_id: $app_id, 
         vnin: $vnin
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling NigeriaKycApi->getVnin: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **vnin** | **string**|  | [optional] |
 
 ### Return type
@@ -625,7 +594,7 @@ try {
 
 ### Authorization
 
-No authorization required
+[appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 

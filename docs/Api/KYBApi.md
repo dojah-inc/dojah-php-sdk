@@ -13,7 +13,7 @@ All URIs are relative to https://api.dojah.io, except if the operation defines a
 ## `businessDetail()`
 
 ```php
-businessDetail($app_id, $international_number, $country_code, $full): object
+businessDetail($international_number, $country_code, $full): object
 ```
 
 Business Detail
@@ -25,16 +25,15 @@ Business Detail
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $international_number = "RC-1885308";
 $country_code = "NG";
 $full = True;
 
 try {
     $result = $dojah->kYB->businessDetail(
-        app_id: $app_id, 
         international_number: $international_number, 
         country_code: $country_code, 
         full: $full
@@ -42,14 +41,12 @@ try {
 } catch (\Exception $e) {
     echo 'Exception when calling KYBApi->businessDetail: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **international_number** | **string**|  | [optional] |
 | **country_code** | **string**|  | [optional] |
 | **full** | **bool**|  | [optional] |
@@ -60,7 +57,7 @@ try {
 
 ### Authorization
 
-No authorization required
+[appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -74,7 +71,7 @@ No authorization required
 ## `businessSearch()`
 
 ```php
-businessSearch($app_id, $country_code, $company): object
+businessSearch($country_code, $company): object
 ```
 
 Business Search
@@ -86,29 +83,26 @@ Business Search
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $country_code = "NG";
 $company = 1885308;
 
 try {
     $result = $dojah->kYB->businessSearch(
-        app_id: $app_id, 
         country_code: $country_code, 
         company: $company
     );
 } catch (\Exception $e) {
     echo 'Exception when calling KYBApi->businessSearch: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **country_code** | **string**|  | [optional] |
 | **company** | **int**|  | [optional] |
 
@@ -118,7 +112,7 @@ try {
 
 ### Authorization
 
-No authorization required
+[appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -132,7 +126,7 @@ No authorization required
 ## `getCac()`
 
 ```php
-getCac($app_id, $rc_number, $company_name): \Dojah\Model\KybGetCacResponse
+getCac($rc_number, $company_name): \Dojah\Model\KybGetCacResponse
 ```
 
 KYC - Get CAC
@@ -144,15 +138,14 @@ KYC - Get CAC
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $rc_number = 1432074;
 $company_name = "ELTA SOLUTIONS LIMITED";
 
 try {
     $result = $dojah->kYB->getCac(
-        app_id: $app_id, 
         rc_number: $rc_number, 
         company_name: $company_name
     );
@@ -160,14 +153,12 @@ try {
 } catch (\Exception $e) {
     echo 'Exception when calling KYBApi->getCac: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **rc_number** | **int**|  | [optional] |
 | **company_name** | **string**|  | [optional] |
 
@@ -177,7 +168,7 @@ try {
 
 ### Authorization
 
-[apikeyAuth](../../README.md#apikeyAuth)
+[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -191,7 +182,7 @@ try {
 ## `getTin()`
 
 ```php
-getTin($app_id, $tin): \Dojah\Model\KybGetTinResponse
+getTin($tin): \Dojah\Model\KybGetTinResponse
 ```
 
 KYC - Fetch Tin
@@ -203,28 +194,25 @@ KYC - Fetch Tin
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $tin = "24111697-0001";
 
 try {
     $result = $dojah->kYB->getTin(
-        app_id: $app_id, 
         tin: $tin
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling KYBApi->getTin: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **tin** | **string**|  | [optional] |
 
 ### Return type
@@ -233,7 +221,7 @@ try {
 
 ### Authorization
 
-[apikeyAuth](../../README.md#apikeyAuth)
+[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 

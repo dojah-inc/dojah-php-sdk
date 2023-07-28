@@ -12,7 +12,7 @@ All URIs are relative to https://api.dojah.io, except if the operation defines a
 ## `getBanks()`
 
 ```php
-getBanks($app_id): \Dojah\Model\GetBanksResponse
+getBanks(): \Dojah\Model\GetBanksResponse
 ```
 
 General - Get Banks
@@ -24,26 +24,21 @@ General - Get Banks
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 
 try {
-    $result = $dojah->general->getBanks(
-        app_id: $app_id
-    );
+    $result = $dojah->general->getBanks();
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling GeneralApi->getBanks: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
-| Name | Type | Description  | Notes |
-| ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
+This endpoint does not need any parameter.
 
 ### Return type
 
@@ -51,7 +46,7 @@ try {
 
 ### Authorization
 
-[apikeyAuth](../../README.md#apikeyAuth)
+[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -65,7 +60,7 @@ try {
 ## `getBin()`
 
 ```php
-getBin($app_id, $card_bin): \Dojah\Model\GetBinResponse
+getBin($card_bin): \Dojah\Model\GetBinResponse
 ```
 
 General Resolve BIN
@@ -77,28 +72,25 @@ General Resolve BIN
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $card_bin = 506118;
 
 try {
     $result = $dojah->general->getBin(
-        app_id: $app_id, 
         card_bin: $card_bin
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling GeneralApi->getBin: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **card_bin** | **int**|  | [optional] |
 
 ### Return type
@@ -107,7 +99,7 @@ try {
 
 ### Authorization
 
-[apikeyAuth](../../README.md#apikeyAuth)
+[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -121,7 +113,7 @@ try {
 ## `getNuban()`
 
 ```php
-getNuban($app_id, $bank_code, $account_number): \Dojah\Model\GeneralGetNubanResponse
+getNuban($bank_code, $account_number): \Dojah\Model\GeneralGetNubanResponse
 ```
 
 General Resolve NUBAN
@@ -133,15 +125,14 @@ General Resolve NUBAN
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $bank_code = 58;
 $account_number = 37466959;
 
 try {
     $result = $dojah->general->getNuban(
-        app_id: $app_id, 
         bank_code: $bank_code, 
         account_number: $account_number
     );
@@ -149,14 +140,12 @@ try {
 } catch (\Exception $e) {
     echo 'Exception when calling GeneralApi->getNuban: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **bank_code** | **int**|  | [optional] |
 | **account_number** | **int**|  | [optional] |
 
@@ -166,7 +155,7 @@ try {
 
 ### Authorization
 
-[apikeyAuth](../../README.md#apikeyAuth)
+[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 

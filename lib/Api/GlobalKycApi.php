@@ -145,7 +145,6 @@ class GlobalKycApi extends \Dojah\CustomApi
      *
      * Canada Ekyc
      *
-     * @param  string $app_id app_id (optional)
      * @param  string $country country (optional)
      * @param  string $first_name first_name (optional)
      * @param  string $last_name last_name (optional)
@@ -160,7 +159,6 @@ class GlobalKycApi extends \Dojah\CustomApi
      * @return object
      */
     public function caEkyc(
-        $app_id = SENTINEL_VALUE,
         $country = SENTINEL_VALUE,
         $first_name = SENTINEL_VALUE,
         $last_name = SENTINEL_VALUE,
@@ -175,7 +173,7 @@ class GlobalKycApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->caEkycWithHttpInfo($app_id, $country, $first_name, $last_name, $street_name, $date_of_birth, $house_number, $post_code, $contentType);
+        list($response) = $this->caEkycWithHttpInfo($country, $first_name, $last_name, $street_name, $date_of_birth, $house_number, $post_code, $contentType);
         return $response;
     }
 
@@ -184,7 +182,6 @@ class GlobalKycApi extends \Dojah\CustomApi
      *
      * Canada Ekyc
      *
-     * @param  string $app_id (optional)
      * @param  string $country (optional)
      * @param  string $first_name (optional)
      * @param  string $last_name (optional)
@@ -198,9 +195,9 @@ class GlobalKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of object, HTTP status code, HTTP response headers (array of strings)
      */
-    public function caEkycWithHttpInfo($app_id = null, $country = null, $first_name = null, $last_name = null, $street_name = null, $date_of_birth = null, $house_number = null, $post_code = null, string $contentType = self::contentTypes['caEkyc'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function caEkycWithHttpInfo($country = null, $first_name = null, $last_name = null, $street_name = null, $date_of_birth = null, $house_number = null, $post_code = null, string $contentType = self::contentTypes['caEkyc'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->caEkycRequest($app_id, $country, $first_name, $last_name, $street_name, $date_of_birth, $house_number, $post_code, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->caEkycRequest($country, $first_name, $last_name, $street_name, $date_of_birth, $house_number, $post_code, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -216,7 +213,6 @@ class GlobalKycApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->caEkycWithHttpInfo(
-                        $app_id,
                         $country,
                         $first_name,
                         $last_name,
@@ -313,7 +309,6 @@ class GlobalKycApi extends \Dojah\CustomApi
      *
      * Canada Ekyc
      *
-     * @param  string $app_id (optional)
      * @param  string $country (optional)
      * @param  string $first_name (optional)
      * @param  string $last_name (optional)
@@ -327,7 +322,6 @@ class GlobalKycApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function caEkycAsync(
-        $app_id = SENTINEL_VALUE,
         $country = SENTINEL_VALUE,
         $first_name = SENTINEL_VALUE,
         $last_name = SENTINEL_VALUE,
@@ -342,7 +336,7 @@ class GlobalKycApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->caEkycAsyncWithHttpInfo($app_id, $country, $first_name, $last_name, $street_name, $date_of_birth, $house_number, $post_code, $contentType)
+        return $this->caEkycAsyncWithHttpInfo($country, $first_name, $last_name, $street_name, $date_of_birth, $house_number, $post_code, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -355,7 +349,6 @@ class GlobalKycApi extends \Dojah\CustomApi
      *
      * Canada Ekyc
      *
-     * @param  string $app_id (optional)
      * @param  string $country (optional)
      * @param  string $first_name (optional)
      * @param  string $last_name (optional)
@@ -368,10 +361,10 @@ class GlobalKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function caEkycAsyncWithHttpInfo($app_id = null, $country = null, $first_name = null, $last_name = null, $street_name = null, $date_of_birth = null, $house_number = null, $post_code = null, string $contentType = self::contentTypes['caEkyc'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function caEkycAsyncWithHttpInfo($country = null, $first_name = null, $last_name = null, $street_name = null, $date_of_birth = null, $house_number = null, $post_code = null, string $contentType = self::contentTypes['caEkyc'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = 'object';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->caEkycRequest($app_id, $country, $first_name, $last_name, $street_name, $date_of_birth, $house_number, $post_code, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->caEkycRequest($country, $first_name, $last_name, $street_name, $date_of_birth, $house_number, $post_code, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -415,7 +408,6 @@ class GlobalKycApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'caEkyc'
      *
-     * @param  string $app_id (optional)
      * @param  string $country (optional)
      * @param  string $first_name (optional)
      * @param  string $last_name (optional)
@@ -428,13 +420,9 @@ class GlobalKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function caEkycRequest($app_id = SENTINEL_VALUE, $country = SENTINEL_VALUE, $first_name = SENTINEL_VALUE, $last_name = SENTINEL_VALUE, $street_name = SENTINEL_VALUE, $date_of_birth = SENTINEL_VALUE, $house_number = SENTINEL_VALUE, $post_code = SENTINEL_VALUE, string $contentType = self::contentTypes['caEkyc'][0])
+    public function caEkycRequest($country = SENTINEL_VALUE, $first_name = SENTINEL_VALUE, $last_name = SENTINEL_VALUE, $street_name = SENTINEL_VALUE, $date_of_birth = SENTINEL_VALUE, $house_number = SENTINEL_VALUE, $post_code = SENTINEL_VALUE, string $contentType = self::contentTypes['caEkyc'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
         // Check if $country is a string
         if ($country !== SENTINEL_VALUE && !is_string($country)) {
             throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($country, true), gettype($country)));
@@ -542,10 +530,6 @@ class GlobalKycApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -580,6 +564,11 @@ class GlobalKycApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -613,7 +602,6 @@ class GlobalKycApi extends \Dojah\CustomApi
      *
      * US SSN
      *
-     * @param  string $app_id app_id (optional)
      * @param  string $country country (optional)
      * @param  string $first_name first_name (optional)
      * @param  string $last_name last_name (optional)
@@ -628,7 +616,6 @@ class GlobalKycApi extends \Dojah\CustomApi
      * @return object
      */
     public function getUsSsn(
-        $app_id = SENTINEL_VALUE,
         $country = SENTINEL_VALUE,
         $first_name = SENTINEL_VALUE,
         $last_name = SENTINEL_VALUE,
@@ -643,7 +630,7 @@ class GlobalKycApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getUsSsnWithHttpInfo($app_id, $country, $first_name, $last_name, $street_name, $date_of_birth, $house_number, $post_code, $contentType);
+        list($response) = $this->getUsSsnWithHttpInfo($country, $first_name, $last_name, $street_name, $date_of_birth, $house_number, $post_code, $contentType);
         return $response;
     }
 
@@ -652,7 +639,6 @@ class GlobalKycApi extends \Dojah\CustomApi
      *
      * US SSN
      *
-     * @param  string $app_id (optional)
      * @param  string $country (optional)
      * @param  string $first_name (optional)
      * @param  string $last_name (optional)
@@ -666,9 +652,9 @@ class GlobalKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of object, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getUsSsnWithHttpInfo($app_id = null, $country = null, $first_name = null, $last_name = null, $street_name = null, $date_of_birth = null, $house_number = null, $post_code = null, string $contentType = self::contentTypes['getUsSsn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getUsSsnWithHttpInfo($country = null, $first_name = null, $last_name = null, $street_name = null, $date_of_birth = null, $house_number = null, $post_code = null, string $contentType = self::contentTypes['getUsSsn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getUsSsnRequest($app_id, $country, $first_name, $last_name, $street_name, $date_of_birth, $house_number, $post_code, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getUsSsnRequest($country, $first_name, $last_name, $street_name, $date_of_birth, $house_number, $post_code, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -684,7 +670,6 @@ class GlobalKycApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getUsSsnWithHttpInfo(
-                        $app_id,
                         $country,
                         $first_name,
                         $last_name,
@@ -781,7 +766,6 @@ class GlobalKycApi extends \Dojah\CustomApi
      *
      * US SSN
      *
-     * @param  string $app_id (optional)
      * @param  string $country (optional)
      * @param  string $first_name (optional)
      * @param  string $last_name (optional)
@@ -795,7 +779,6 @@ class GlobalKycApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getUsSsnAsync(
-        $app_id = SENTINEL_VALUE,
         $country = SENTINEL_VALUE,
         $first_name = SENTINEL_VALUE,
         $last_name = SENTINEL_VALUE,
@@ -810,7 +793,7 @@ class GlobalKycApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getUsSsnAsyncWithHttpInfo($app_id, $country, $first_name, $last_name, $street_name, $date_of_birth, $house_number, $post_code, $contentType)
+        return $this->getUsSsnAsyncWithHttpInfo($country, $first_name, $last_name, $street_name, $date_of_birth, $house_number, $post_code, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -823,7 +806,6 @@ class GlobalKycApi extends \Dojah\CustomApi
      *
      * US SSN
      *
-     * @param  string $app_id (optional)
      * @param  string $country (optional)
      * @param  string $first_name (optional)
      * @param  string $last_name (optional)
@@ -836,10 +818,10 @@ class GlobalKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getUsSsnAsyncWithHttpInfo($app_id = null, $country = null, $first_name = null, $last_name = null, $street_name = null, $date_of_birth = null, $house_number = null, $post_code = null, string $contentType = self::contentTypes['getUsSsn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getUsSsnAsyncWithHttpInfo($country = null, $first_name = null, $last_name = null, $street_name = null, $date_of_birth = null, $house_number = null, $post_code = null, string $contentType = self::contentTypes['getUsSsn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = 'object';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getUsSsnRequest($app_id, $country, $first_name, $last_name, $street_name, $date_of_birth, $house_number, $post_code, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getUsSsnRequest($country, $first_name, $last_name, $street_name, $date_of_birth, $house_number, $post_code, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -883,7 +865,6 @@ class GlobalKycApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getUsSsn'
      *
-     * @param  string $app_id (optional)
      * @param  string $country (optional)
      * @param  string $first_name (optional)
      * @param  string $last_name (optional)
@@ -896,13 +877,9 @@ class GlobalKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getUsSsnRequest($app_id = SENTINEL_VALUE, $country = SENTINEL_VALUE, $first_name = SENTINEL_VALUE, $last_name = SENTINEL_VALUE, $street_name = SENTINEL_VALUE, $date_of_birth = SENTINEL_VALUE, $house_number = SENTINEL_VALUE, $post_code = SENTINEL_VALUE, string $contentType = self::contentTypes['getUsSsn'][0])
+    public function getUsSsnRequest($country = SENTINEL_VALUE, $first_name = SENTINEL_VALUE, $last_name = SENTINEL_VALUE, $street_name = SENTINEL_VALUE, $date_of_birth = SENTINEL_VALUE, $house_number = SENTINEL_VALUE, $post_code = SENTINEL_VALUE, string $contentType = self::contentTypes['getUsSsn'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
         // Check if $country is a string
         if ($country !== SENTINEL_VALUE && !is_string($country)) {
             throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($country, true), gettype($country)));
@@ -1010,10 +987,6 @@ class GlobalKycApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -1048,6 +1021,11 @@ class GlobalKycApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -1081,7 +1059,6 @@ class GlobalKycApi extends \Dojah\CustomApi
      *
      * UK 2+2
      *
-     * @param  string $app_id app_id (optional)
      * @param  string $country country (optional)
      * @param  string $first_name first_name (optional)
      * @param  string $last_name last_name (optional)
@@ -1096,7 +1073,6 @@ class GlobalKycApi extends \Dojah\CustomApi
      * @return object
      */
     public function ukTwoPlusTwo(
-        $app_id = SENTINEL_VALUE,
         $country = SENTINEL_VALUE,
         $first_name = SENTINEL_VALUE,
         $last_name = SENTINEL_VALUE,
@@ -1111,7 +1087,7 @@ class GlobalKycApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->ukTwoPlusTwoWithHttpInfo($app_id, $country, $first_name, $last_name, $street_name, $date_of_birth, $house_number, $post_code, $contentType);
+        list($response) = $this->ukTwoPlusTwoWithHttpInfo($country, $first_name, $last_name, $street_name, $date_of_birth, $house_number, $post_code, $contentType);
         return $response;
     }
 
@@ -1120,7 +1096,6 @@ class GlobalKycApi extends \Dojah\CustomApi
      *
      * UK 2+2
      *
-     * @param  string $app_id (optional)
      * @param  string $country (optional)
      * @param  string $first_name (optional)
      * @param  string $last_name (optional)
@@ -1134,9 +1109,9 @@ class GlobalKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of object, HTTP status code, HTTP response headers (array of strings)
      */
-    public function ukTwoPlusTwoWithHttpInfo($app_id = null, $country = null, $first_name = null, $last_name = null, $street_name = null, $date_of_birth = null, $house_number = null, $post_code = null, string $contentType = self::contentTypes['ukTwoPlusTwo'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function ukTwoPlusTwoWithHttpInfo($country = null, $first_name = null, $last_name = null, $street_name = null, $date_of_birth = null, $house_number = null, $post_code = null, string $contentType = self::contentTypes['ukTwoPlusTwo'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->ukTwoPlusTwoRequest($app_id, $country, $first_name, $last_name, $street_name, $date_of_birth, $house_number, $post_code, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->ukTwoPlusTwoRequest($country, $first_name, $last_name, $street_name, $date_of_birth, $house_number, $post_code, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -1152,7 +1127,6 @@ class GlobalKycApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->ukTwoPlusTwoWithHttpInfo(
-                        $app_id,
                         $country,
                         $first_name,
                         $last_name,
@@ -1249,7 +1223,6 @@ class GlobalKycApi extends \Dojah\CustomApi
      *
      * UK 2+2
      *
-     * @param  string $app_id (optional)
      * @param  string $country (optional)
      * @param  string $first_name (optional)
      * @param  string $last_name (optional)
@@ -1263,7 +1236,6 @@ class GlobalKycApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function ukTwoPlusTwoAsync(
-        $app_id = SENTINEL_VALUE,
         $country = SENTINEL_VALUE,
         $first_name = SENTINEL_VALUE,
         $last_name = SENTINEL_VALUE,
@@ -1278,7 +1250,7 @@ class GlobalKycApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->ukTwoPlusTwoAsyncWithHttpInfo($app_id, $country, $first_name, $last_name, $street_name, $date_of_birth, $house_number, $post_code, $contentType)
+        return $this->ukTwoPlusTwoAsyncWithHttpInfo($country, $first_name, $last_name, $street_name, $date_of_birth, $house_number, $post_code, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -1291,7 +1263,6 @@ class GlobalKycApi extends \Dojah\CustomApi
      *
      * UK 2+2
      *
-     * @param  string $app_id (optional)
      * @param  string $country (optional)
      * @param  string $first_name (optional)
      * @param  string $last_name (optional)
@@ -1304,10 +1275,10 @@ class GlobalKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function ukTwoPlusTwoAsyncWithHttpInfo($app_id = null, $country = null, $first_name = null, $last_name = null, $street_name = null, $date_of_birth = null, $house_number = null, $post_code = null, string $contentType = self::contentTypes['ukTwoPlusTwo'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function ukTwoPlusTwoAsyncWithHttpInfo($country = null, $first_name = null, $last_name = null, $street_name = null, $date_of_birth = null, $house_number = null, $post_code = null, string $contentType = self::contentTypes['ukTwoPlusTwo'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = 'object';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->ukTwoPlusTwoRequest($app_id, $country, $first_name, $last_name, $street_name, $date_of_birth, $house_number, $post_code, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->ukTwoPlusTwoRequest($country, $first_name, $last_name, $street_name, $date_of_birth, $house_number, $post_code, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -1351,7 +1322,6 @@ class GlobalKycApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'ukTwoPlusTwo'
      *
-     * @param  string $app_id (optional)
      * @param  string $country (optional)
      * @param  string $first_name (optional)
      * @param  string $last_name (optional)
@@ -1364,13 +1334,9 @@ class GlobalKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function ukTwoPlusTwoRequest($app_id = SENTINEL_VALUE, $country = SENTINEL_VALUE, $first_name = SENTINEL_VALUE, $last_name = SENTINEL_VALUE, $street_name = SENTINEL_VALUE, $date_of_birth = SENTINEL_VALUE, $house_number = SENTINEL_VALUE, $post_code = SENTINEL_VALUE, string $contentType = self::contentTypes['ukTwoPlusTwo'][0])
+    public function ukTwoPlusTwoRequest($country = SENTINEL_VALUE, $first_name = SENTINEL_VALUE, $last_name = SENTINEL_VALUE, $street_name = SENTINEL_VALUE, $date_of_birth = SENTINEL_VALUE, $house_number = SENTINEL_VALUE, $post_code = SENTINEL_VALUE, string $contentType = self::contentTypes['ukTwoPlusTwo'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
         // Check if $country is a string
         if ($country !== SENTINEL_VALUE && !is_string($country)) {
             throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($country, true), gettype($country)));
@@ -1478,10 +1444,6 @@ class GlobalKycApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -1516,6 +1478,11 @@ class GlobalKycApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {

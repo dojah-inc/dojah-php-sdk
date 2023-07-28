@@ -142,7 +142,6 @@ class ZwKycApi extends \Dojah\CustomApi
      *
      * Credit Check
      *
-     * @param  string $app_id app_id (optional)
      * @param  string $id_number id_number (optional)
      * @param  string $name name (optional)
      * @param  string $surname surname (optional)
@@ -157,7 +156,6 @@ class ZwKycApi extends \Dojah\CustomApi
      * @return \Dojah\Model\ZwKycCheckCreditResponse
      */
     public function checkCredit(
-        $app_id = SENTINEL_VALUE,
         $id_number = SENTINEL_VALUE,
         $name = SENTINEL_VALUE,
         $surname = SENTINEL_VALUE,
@@ -172,7 +170,7 @@ class ZwKycApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->checkCreditWithHttpInfo($app_id, $id_number, $name, $surname, $gender, $dob, $marital_status, $mobile_number, $contentType);
+        list($response) = $this->checkCreditWithHttpInfo($id_number, $name, $surname, $gender, $dob, $marital_status, $mobile_number, $contentType);
         return $response;
     }
 
@@ -181,7 +179,6 @@ class ZwKycApi extends \Dojah\CustomApi
      *
      * Credit Check
      *
-     * @param  string $app_id (optional)
      * @param  string $id_number (optional)
      * @param  string $name (optional)
      * @param  string $surname (optional)
@@ -195,9 +192,9 @@ class ZwKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\ZwKycCheckCreditResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function checkCreditWithHttpInfo($app_id = null, $id_number = null, $name = null, $surname = null, $gender = null, $dob = null, $marital_status = null, $mobile_number = null, string $contentType = self::contentTypes['checkCredit'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function checkCreditWithHttpInfo($id_number = null, $name = null, $surname = null, $gender = null, $dob = null, $marital_status = null, $mobile_number = null, string $contentType = self::contentTypes['checkCredit'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->checkCreditRequest($app_id, $id_number, $name, $surname, $gender, $dob, $marital_status, $mobile_number, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->checkCreditRequest($id_number, $name, $surname, $gender, $dob, $marital_status, $mobile_number, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -213,7 +210,6 @@ class ZwKycApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->checkCreditWithHttpInfo(
-                        $app_id,
                         $id_number,
                         $name,
                         $surname,
@@ -310,7 +306,6 @@ class ZwKycApi extends \Dojah\CustomApi
      *
      * Credit Check
      *
-     * @param  string $app_id (optional)
      * @param  string $id_number (optional)
      * @param  string $name (optional)
      * @param  string $surname (optional)
@@ -324,7 +319,6 @@ class ZwKycApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function checkCreditAsync(
-        $app_id = SENTINEL_VALUE,
         $id_number = SENTINEL_VALUE,
         $name = SENTINEL_VALUE,
         $surname = SENTINEL_VALUE,
@@ -339,7 +333,7 @@ class ZwKycApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->checkCreditAsyncWithHttpInfo($app_id, $id_number, $name, $surname, $gender, $dob, $marital_status, $mobile_number, $contentType)
+        return $this->checkCreditAsyncWithHttpInfo($id_number, $name, $surname, $gender, $dob, $marital_status, $mobile_number, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -352,7 +346,6 @@ class ZwKycApi extends \Dojah\CustomApi
      *
      * Credit Check
      *
-     * @param  string $app_id (optional)
      * @param  string $id_number (optional)
      * @param  string $name (optional)
      * @param  string $surname (optional)
@@ -365,10 +358,10 @@ class ZwKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function checkCreditAsyncWithHttpInfo($app_id = null, $id_number = null, $name = null, $surname = null, $gender = null, $dob = null, $marital_status = null, $mobile_number = null, string $contentType = self::contentTypes['checkCredit'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function checkCreditAsyncWithHttpInfo($id_number = null, $name = null, $surname = null, $gender = null, $dob = null, $marital_status = null, $mobile_number = null, string $contentType = self::contentTypes['checkCredit'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\ZwKycCheckCreditResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->checkCreditRequest($app_id, $id_number, $name, $surname, $gender, $dob, $marital_status, $mobile_number, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->checkCreditRequest($id_number, $name, $surname, $gender, $dob, $marital_status, $mobile_number, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -412,7 +405,6 @@ class ZwKycApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'checkCredit'
      *
-     * @param  string $app_id (optional)
      * @param  string $id_number (optional)
      * @param  string $name (optional)
      * @param  string $surname (optional)
@@ -425,13 +417,9 @@ class ZwKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function checkCreditRequest($app_id = SENTINEL_VALUE, $id_number = SENTINEL_VALUE, $name = SENTINEL_VALUE, $surname = SENTINEL_VALUE, $gender = SENTINEL_VALUE, $dob = SENTINEL_VALUE, $marital_status = SENTINEL_VALUE, $mobile_number = SENTINEL_VALUE, string $contentType = self::contentTypes['checkCredit'][0])
+    public function checkCreditRequest($id_number = SENTINEL_VALUE, $name = SENTINEL_VALUE, $surname = SENTINEL_VALUE, $gender = SENTINEL_VALUE, $dob = SENTINEL_VALUE, $marital_status = SENTINEL_VALUE, $mobile_number = SENTINEL_VALUE, string $contentType = self::contentTypes['checkCredit'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
         // Check if $id_number is a string
         if ($id_number !== SENTINEL_VALUE && !is_string($id_number)) {
             throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($id_number, true), gettype($id_number)));
@@ -543,10 +531,6 @@ class ZwKycApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -581,6 +565,11 @@ class ZwKycApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -614,7 +603,6 @@ class ZwKycApi extends \Dojah\CustomApi
      *
      * National ID Verification
      *
-     * @param  string $app_id app_id (optional)
      * @param  string $id id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyId'] to see the possible values for this operation
      *
@@ -623,7 +611,6 @@ class ZwKycApi extends \Dojah\CustomApi
      * @return \Dojah\Model\ZwKycVerifyIdResponse
      */
     public function verifyId(
-        $app_id = SENTINEL_VALUE,
         $id = SENTINEL_VALUE,
 
 
@@ -632,7 +619,7 @@ class ZwKycApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->verifyIdWithHttpInfo($app_id, $id, $contentType);
+        list($response) = $this->verifyIdWithHttpInfo($id, $contentType);
         return $response;
     }
 
@@ -641,7 +628,6 @@ class ZwKycApi extends \Dojah\CustomApi
      *
      * National ID Verification
      *
-     * @param  string $app_id (optional)
      * @param  string $id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyId'] to see the possible values for this operation
      *
@@ -649,9 +635,9 @@ class ZwKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\ZwKycVerifyIdResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function verifyIdWithHttpInfo($app_id = null, $id = null, string $contentType = self::contentTypes['verifyId'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function verifyIdWithHttpInfo($id = null, string $contentType = self::contentTypes['verifyId'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifyIdRequest($app_id, $id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifyIdRequest($id, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -667,7 +653,6 @@ class ZwKycApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->verifyIdWithHttpInfo(
-                        $app_id,
                         $id,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
@@ -758,7 +743,6 @@ class ZwKycApi extends \Dojah\CustomApi
      *
      * National ID Verification
      *
-     * @param  string $app_id (optional)
      * @param  string $id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyId'] to see the possible values for this operation
      *
@@ -766,7 +750,6 @@ class ZwKycApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function verifyIdAsync(
-        $app_id = SENTINEL_VALUE,
         $id = SENTINEL_VALUE,
 
 
@@ -775,7 +758,7 @@ class ZwKycApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->verifyIdAsyncWithHttpInfo($app_id, $id, $contentType)
+        return $this->verifyIdAsyncWithHttpInfo($id, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -788,17 +771,16 @@ class ZwKycApi extends \Dojah\CustomApi
      *
      * National ID Verification
      *
-     * @param  string $app_id (optional)
      * @param  string $id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyId'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function verifyIdAsyncWithHttpInfo($app_id = null, $id = null, string $contentType = self::contentTypes['verifyId'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function verifyIdAsyncWithHttpInfo($id = null, string $contentType = self::contentTypes['verifyId'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\ZwKycVerifyIdResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifyIdRequest($app_id, $id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifyIdRequest($id, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -842,20 +824,15 @@ class ZwKycApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'verifyId'
      *
-     * @param  string $app_id (optional)
      * @param  string $id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyId'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function verifyIdRequest($app_id = SENTINEL_VALUE, $id = SENTINEL_VALUE, string $contentType = self::contentTypes['verifyId'][0])
+    public function verifyIdRequest($id = SENTINEL_VALUE, string $contentType = self::contentTypes['verifyId'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
         // Check if $id is a string
         if ($id !== SENTINEL_VALUE && !is_string($id)) {
             throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($id, true), gettype($id)));
@@ -881,10 +858,6 @@ class ZwKycApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -919,6 +892,11 @@ class ZwKycApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {

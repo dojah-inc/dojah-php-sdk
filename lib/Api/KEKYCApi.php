@@ -142,7 +142,6 @@ class KeKycApi extends \Dojah\CustomApi
      *
      * KYC - National ID
      *
-     * @param  string $app_id app_id (optional)
      * @param  int $id id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getNationalId'] to see the possible values for this operation
      *
@@ -151,7 +150,6 @@ class KeKycApi extends \Dojah\CustomApi
      * @return \Dojah\Model\GetNationalIdResponse
      */
     public function getNationalId(
-        $app_id = SENTINEL_VALUE,
         $id = SENTINEL_VALUE,
 
 
@@ -160,7 +158,7 @@ class KeKycApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getNationalIdWithHttpInfo($app_id, $id, $contentType);
+        list($response) = $this->getNationalIdWithHttpInfo($id, $contentType);
         return $response;
     }
 
@@ -169,7 +167,6 @@ class KeKycApi extends \Dojah\CustomApi
      *
      * KYC - National ID
      *
-     * @param  string $app_id (optional)
      * @param  int $id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getNationalId'] to see the possible values for this operation
      *
@@ -177,9 +174,9 @@ class KeKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetNationalIdResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getNationalIdWithHttpInfo($app_id = null, $id = null, string $contentType = self::contentTypes['getNationalId'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getNationalIdWithHttpInfo($id = null, string $contentType = self::contentTypes['getNationalId'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getNationalIdRequest($app_id, $id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getNationalIdRequest($id, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -195,7 +192,6 @@ class KeKycApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getNationalIdWithHttpInfo(
-                        $app_id,
                         $id,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
@@ -286,7 +282,6 @@ class KeKycApi extends \Dojah\CustomApi
      *
      * KYC - National ID
      *
-     * @param  string $app_id (optional)
      * @param  int $id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getNationalId'] to see the possible values for this operation
      *
@@ -294,7 +289,6 @@ class KeKycApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getNationalIdAsync(
-        $app_id = SENTINEL_VALUE,
         $id = SENTINEL_VALUE,
 
 
@@ -303,7 +297,7 @@ class KeKycApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getNationalIdAsyncWithHttpInfo($app_id, $id, $contentType)
+        return $this->getNationalIdAsyncWithHttpInfo($id, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -316,17 +310,16 @@ class KeKycApi extends \Dojah\CustomApi
      *
      * KYC - National ID
      *
-     * @param  string $app_id (optional)
      * @param  int $id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getNationalId'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getNationalIdAsyncWithHttpInfo($app_id = null, $id = null, string $contentType = self::contentTypes['getNationalId'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getNationalIdAsyncWithHttpInfo($id = null, string $contentType = self::contentTypes['getNationalId'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetNationalIdResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getNationalIdRequest($app_id, $id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getNationalIdRequest($id, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -370,20 +363,15 @@ class KeKycApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getNationalId'
      *
-     * @param  string $app_id (optional)
      * @param  int $id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getNationalId'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getNationalIdRequest($app_id = SENTINEL_VALUE, $id = SENTINEL_VALUE, string $contentType = self::contentTypes['getNationalId'][0])
+    public function getNationalIdRequest($id = SENTINEL_VALUE, string $contentType = self::contentTypes['getNationalId'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
 
 
         $resourcePath = '/api/v1/ke/kyc/id';
@@ -405,10 +393,6 @@ class KeKycApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -443,6 +427,11 @@ class KeKycApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -476,7 +465,6 @@ class KeKycApi extends \Dojah\CustomApi
      *
      * KYC - Passport
      *
-     * @param  string $app_id app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPassport'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
@@ -484,7 +472,6 @@ class KeKycApi extends \Dojah\CustomApi
      * @return object
      */
     public function getPassport(
-        $app_id = SENTINEL_VALUE,
 
 
         string $contentType = self::contentTypes['getPassport'][0]
@@ -492,7 +479,7 @@ class KeKycApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getPassportWithHttpInfo($app_id, $contentType);
+        list($response) = $this->getPassportWithHttpInfo($contentType);
         return $response;
     }
 
@@ -501,16 +488,15 @@ class KeKycApi extends \Dojah\CustomApi
      *
      * KYC - Passport
      *
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPassport'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return array of object, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getPassportWithHttpInfo($app_id = null, string $contentType = self::contentTypes['getPassport'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getPassportWithHttpInfo(string $contentType = self::contentTypes['getPassport'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getPassportRequest($app_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getPassportRequest($contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -526,7 +512,6 @@ class KeKycApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getPassportWithHttpInfo(
-                        $app_id,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
                     );
@@ -616,14 +601,12 @@ class KeKycApi extends \Dojah\CustomApi
      *
      * KYC - Passport
      *
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPassport'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getPassportAsync(
-        $app_id = SENTINEL_VALUE,
 
 
         string $contentType = self::contentTypes['getPassport'][0]
@@ -631,7 +614,7 @@ class KeKycApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getPassportAsyncWithHttpInfo($app_id, $contentType)
+        return $this->getPassportAsyncWithHttpInfo($contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -644,16 +627,15 @@ class KeKycApi extends \Dojah\CustomApi
      *
      * KYC - Passport
      *
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPassport'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getPassportAsyncWithHttpInfo($app_id = null, string $contentType = self::contentTypes['getPassport'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getPassportAsyncWithHttpInfo(string $contentType = self::contentTypes['getPassport'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = 'object';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getPassportRequest($app_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getPassportRequest($contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -697,19 +679,14 @@ class KeKycApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getPassport'
      *
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPassport'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getPassportRequest($app_id = SENTINEL_VALUE, string $contentType = self::contentTypes['getPassport'][0])
+    public function getPassportRequest(string $contentType = self::contentTypes['getPassport'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
 
 
         $resourcePath = '/api/v1/ke/kyc/passport';
@@ -720,10 +697,6 @@ class KeKycApi extends \Dojah\CustomApi
         $multipart = false;
 
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -758,6 +731,11 @@ class KeKycApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {

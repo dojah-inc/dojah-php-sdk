@@ -148,7 +148,6 @@ class FraudApi extends \Dojah\CustomApi
      *
      * Email Reputation
      *
-     * @param  string $app_id app_id (optional)
      * @param  string $email email (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getEmailReputation'] to see the possible values for this operation
      *
@@ -157,7 +156,6 @@ class FraudApi extends \Dojah\CustomApi
      * @return \Dojah\Model\FraudGetEmailReputationResponse
      */
     public function getEmailReputation(
-        $app_id = SENTINEL_VALUE,
         $email = SENTINEL_VALUE,
 
 
@@ -166,7 +164,7 @@ class FraudApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getEmailReputationWithHttpInfo($app_id, $email, $contentType);
+        list($response) = $this->getEmailReputationWithHttpInfo($email, $contentType);
         return $response;
     }
 
@@ -175,7 +173,6 @@ class FraudApi extends \Dojah\CustomApi
      *
      * Email Reputation
      *
-     * @param  string $app_id (optional)
      * @param  string $email (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getEmailReputation'] to see the possible values for this operation
      *
@@ -183,9 +180,9 @@ class FraudApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\FraudGetEmailReputationResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getEmailReputationWithHttpInfo($app_id = null, $email = null, string $contentType = self::contentTypes['getEmailReputation'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getEmailReputationWithHttpInfo($email = null, string $contentType = self::contentTypes['getEmailReputation'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getEmailReputationRequest($app_id, $email, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getEmailReputationRequest($email, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -201,7 +198,6 @@ class FraudApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getEmailReputationWithHttpInfo(
-                        $app_id,
                         $email,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
@@ -292,7 +288,6 @@ class FraudApi extends \Dojah\CustomApi
      *
      * Email Reputation
      *
-     * @param  string $app_id (optional)
      * @param  string $email (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getEmailReputation'] to see the possible values for this operation
      *
@@ -300,7 +295,6 @@ class FraudApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getEmailReputationAsync(
-        $app_id = SENTINEL_VALUE,
         $email = SENTINEL_VALUE,
 
 
@@ -309,7 +303,7 @@ class FraudApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getEmailReputationAsyncWithHttpInfo($app_id, $email, $contentType)
+        return $this->getEmailReputationAsyncWithHttpInfo($email, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -322,17 +316,16 @@ class FraudApi extends \Dojah\CustomApi
      *
      * Email Reputation
      *
-     * @param  string $app_id (optional)
      * @param  string $email (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getEmailReputation'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getEmailReputationAsyncWithHttpInfo($app_id = null, $email = null, string $contentType = self::contentTypes['getEmailReputation'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getEmailReputationAsyncWithHttpInfo($email = null, string $contentType = self::contentTypes['getEmailReputation'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\FraudGetEmailReputationResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getEmailReputationRequest($app_id, $email, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getEmailReputationRequest($email, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -376,20 +369,15 @@ class FraudApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getEmailReputation'
      *
-     * @param  string $app_id (optional)
      * @param  string $email (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getEmailReputation'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getEmailReputationRequest($app_id = SENTINEL_VALUE, $email = SENTINEL_VALUE, string $contentType = self::contentTypes['getEmailReputation'][0])
+    public function getEmailReputationRequest($email = SENTINEL_VALUE, string $contentType = self::contentTypes['getEmailReputation'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
         // Check if $email is a string
         if ($email !== SENTINEL_VALUE && !is_string($email)) {
             throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($email, true), gettype($email)));
@@ -415,10 +403,6 @@ class FraudApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -453,6 +437,11 @@ class FraudApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -486,7 +475,6 @@ class FraudApi extends \Dojah\CustomApi
      *
      * IP Reputation
      *
-     * @param  string $app_id app_id (optional)
      * @param  string $ip_address ip_address (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getIpReputation'] to see the possible values for this operation
      *
@@ -495,7 +483,6 @@ class FraudApi extends \Dojah\CustomApi
      * @return \Dojah\Model\FraudGetIpReputationResponse
      */
     public function getIpReputation(
-        $app_id = SENTINEL_VALUE,
         $ip_address = SENTINEL_VALUE,
 
 
@@ -504,7 +491,7 @@ class FraudApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getIpReputationWithHttpInfo($app_id, $ip_address, $contentType);
+        list($response) = $this->getIpReputationWithHttpInfo($ip_address, $contentType);
         return $response;
     }
 
@@ -513,7 +500,6 @@ class FraudApi extends \Dojah\CustomApi
      *
      * IP Reputation
      *
-     * @param  string $app_id (optional)
      * @param  string $ip_address (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getIpReputation'] to see the possible values for this operation
      *
@@ -521,9 +507,9 @@ class FraudApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\FraudGetIpReputationResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getIpReputationWithHttpInfo($app_id = null, $ip_address = null, string $contentType = self::contentTypes['getIpReputation'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getIpReputationWithHttpInfo($ip_address = null, string $contentType = self::contentTypes['getIpReputation'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getIpReputationRequest($app_id, $ip_address, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getIpReputationRequest($ip_address, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -539,7 +525,6 @@ class FraudApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getIpReputationWithHttpInfo(
-                        $app_id,
                         $ip_address,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
@@ -630,7 +615,6 @@ class FraudApi extends \Dojah\CustomApi
      *
      * IP Reputation
      *
-     * @param  string $app_id (optional)
      * @param  string $ip_address (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getIpReputation'] to see the possible values for this operation
      *
@@ -638,7 +622,6 @@ class FraudApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getIpReputationAsync(
-        $app_id = SENTINEL_VALUE,
         $ip_address = SENTINEL_VALUE,
 
 
@@ -647,7 +630,7 @@ class FraudApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getIpReputationAsyncWithHttpInfo($app_id, $ip_address, $contentType)
+        return $this->getIpReputationAsyncWithHttpInfo($ip_address, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -660,17 +643,16 @@ class FraudApi extends \Dojah\CustomApi
      *
      * IP Reputation
      *
-     * @param  string $app_id (optional)
      * @param  string $ip_address (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getIpReputation'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getIpReputationAsyncWithHttpInfo($app_id = null, $ip_address = null, string $contentType = self::contentTypes['getIpReputation'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getIpReputationAsyncWithHttpInfo($ip_address = null, string $contentType = self::contentTypes['getIpReputation'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\FraudGetIpReputationResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getIpReputationRequest($app_id, $ip_address, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getIpReputationRequest($ip_address, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -714,20 +696,15 @@ class FraudApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getIpReputation'
      *
-     * @param  string $app_id (optional)
      * @param  string $ip_address (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getIpReputation'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getIpReputationRequest($app_id = SENTINEL_VALUE, $ip_address = SENTINEL_VALUE, string $contentType = self::contentTypes['getIpReputation'][0])
+    public function getIpReputationRequest($ip_address = SENTINEL_VALUE, string $contentType = self::contentTypes['getIpReputation'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
         // Check if $ip_address is a string
         if ($ip_address !== SENTINEL_VALUE && !is_string($ip_address)) {
             throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($ip_address, true), gettype($ip_address)));
@@ -753,10 +730,6 @@ class FraudApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -791,6 +764,11 @@ class FraudApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -824,7 +802,6 @@ class FraudApi extends \Dojah\CustomApi
      *
      * Phone Screening
      *
-     * @param  string $app_id app_id (optional)
      * @param  int $phone_number phone_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['screenPhone'] to see the possible values for this operation
      *
@@ -833,7 +810,6 @@ class FraudApi extends \Dojah\CustomApi
      * @return \Dojah\Model\FraudScreenPhoneResponse
      */
     public function screenPhone(
-        $app_id = SENTINEL_VALUE,
         $phone_number = SENTINEL_VALUE,
 
 
@@ -842,7 +818,7 @@ class FraudApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->screenPhoneWithHttpInfo($app_id, $phone_number, $contentType);
+        list($response) = $this->screenPhoneWithHttpInfo($phone_number, $contentType);
         return $response;
     }
 
@@ -851,7 +827,6 @@ class FraudApi extends \Dojah\CustomApi
      *
      * Phone Screening
      *
-     * @param  string $app_id (optional)
      * @param  int $phone_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['screenPhone'] to see the possible values for this operation
      *
@@ -859,9 +834,9 @@ class FraudApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\FraudScreenPhoneResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function screenPhoneWithHttpInfo($app_id = null, $phone_number = null, string $contentType = self::contentTypes['screenPhone'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function screenPhoneWithHttpInfo($phone_number = null, string $contentType = self::contentTypes['screenPhone'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->screenPhoneRequest($app_id, $phone_number, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->screenPhoneRequest($phone_number, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -877,7 +852,6 @@ class FraudApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->screenPhoneWithHttpInfo(
-                        $app_id,
                         $phone_number,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
@@ -968,7 +942,6 @@ class FraudApi extends \Dojah\CustomApi
      *
      * Phone Screening
      *
-     * @param  string $app_id (optional)
      * @param  int $phone_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['screenPhone'] to see the possible values for this operation
      *
@@ -976,7 +949,6 @@ class FraudApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function screenPhoneAsync(
-        $app_id = SENTINEL_VALUE,
         $phone_number = SENTINEL_VALUE,
 
 
@@ -985,7 +957,7 @@ class FraudApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->screenPhoneAsyncWithHttpInfo($app_id, $phone_number, $contentType)
+        return $this->screenPhoneAsyncWithHttpInfo($phone_number, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -998,17 +970,16 @@ class FraudApi extends \Dojah\CustomApi
      *
      * Phone Screening
      *
-     * @param  string $app_id (optional)
      * @param  int $phone_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['screenPhone'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function screenPhoneAsyncWithHttpInfo($app_id = null, $phone_number = null, string $contentType = self::contentTypes['screenPhone'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function screenPhoneAsyncWithHttpInfo($phone_number = null, string $contentType = self::contentTypes['screenPhone'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\FraudScreenPhoneResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->screenPhoneRequest($app_id, $phone_number, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->screenPhoneRequest($phone_number, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -1052,20 +1023,15 @@ class FraudApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'screenPhone'
      *
-     * @param  string $app_id (optional)
      * @param  int $phone_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['screenPhone'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function screenPhoneRequest($app_id = SENTINEL_VALUE, $phone_number = SENTINEL_VALUE, string $contentType = self::contentTypes['screenPhone'][0])
+    public function screenPhoneRequest($phone_number = SENTINEL_VALUE, string $contentType = self::contentTypes['screenPhone'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
 
 
         $resourcePath = '/api/v1/fraud/phone';
@@ -1087,10 +1053,6 @@ class FraudApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -1125,6 +1087,11 @@ class FraudApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -1158,7 +1125,6 @@ class FraudApi extends \Dojah\CustomApi
      *
      * User Screening
      *
-     * @param  string $app_id app_id (optional)
      * @param  string $first_name first_name (optional)
      * @param  string $last_name last_name (optional)
      * @param  string $date_of_birth date_of_birth (optional)
@@ -1172,7 +1138,6 @@ class FraudApi extends \Dojah\CustomApi
      * @return \Dojah\Model\FraudScreenUserResponse
      */
     public function screenUser(
-        $app_id = SENTINEL_VALUE,
         $first_name = SENTINEL_VALUE,
         $last_name = SENTINEL_VALUE,
         $date_of_birth = SENTINEL_VALUE,
@@ -1186,7 +1151,7 @@ class FraudApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->screenUserWithHttpInfo($app_id, $first_name, $last_name, $date_of_birth, $email, $phone, $ip_address, $contentType);
+        list($response) = $this->screenUserWithHttpInfo($first_name, $last_name, $date_of_birth, $email, $phone, $ip_address, $contentType);
         return $response;
     }
 
@@ -1195,7 +1160,6 @@ class FraudApi extends \Dojah\CustomApi
      *
      * User Screening
      *
-     * @param  string $app_id (optional)
      * @param  string $first_name (optional)
      * @param  string $last_name (optional)
      * @param  string $date_of_birth (optional)
@@ -1208,9 +1172,9 @@ class FraudApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\FraudScreenUserResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function screenUserWithHttpInfo($app_id = null, $first_name = null, $last_name = null, $date_of_birth = null, $email = null, $phone = null, $ip_address = null, string $contentType = self::contentTypes['screenUser'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function screenUserWithHttpInfo($first_name = null, $last_name = null, $date_of_birth = null, $email = null, $phone = null, $ip_address = null, string $contentType = self::contentTypes['screenUser'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->screenUserRequest($app_id, $first_name, $last_name, $date_of_birth, $email, $phone, $ip_address, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->screenUserRequest($first_name, $last_name, $date_of_birth, $email, $phone, $ip_address, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -1226,7 +1190,6 @@ class FraudApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->screenUserWithHttpInfo(
-                        $app_id,
                         $first_name,
                         $last_name,
                         $date_of_birth,
@@ -1322,7 +1285,6 @@ class FraudApi extends \Dojah\CustomApi
      *
      * User Screening
      *
-     * @param  string $app_id (optional)
      * @param  string $first_name (optional)
      * @param  string $last_name (optional)
      * @param  string $date_of_birth (optional)
@@ -1335,7 +1297,6 @@ class FraudApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function screenUserAsync(
-        $app_id = SENTINEL_VALUE,
         $first_name = SENTINEL_VALUE,
         $last_name = SENTINEL_VALUE,
         $date_of_birth = SENTINEL_VALUE,
@@ -1349,7 +1310,7 @@ class FraudApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->screenUserAsyncWithHttpInfo($app_id, $first_name, $last_name, $date_of_birth, $email, $phone, $ip_address, $contentType)
+        return $this->screenUserAsyncWithHttpInfo($first_name, $last_name, $date_of_birth, $email, $phone, $ip_address, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -1362,7 +1323,6 @@ class FraudApi extends \Dojah\CustomApi
      *
      * User Screening
      *
-     * @param  string $app_id (optional)
      * @param  string $first_name (optional)
      * @param  string $last_name (optional)
      * @param  string $date_of_birth (optional)
@@ -1374,10 +1334,10 @@ class FraudApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function screenUserAsyncWithHttpInfo($app_id = null, $first_name = null, $last_name = null, $date_of_birth = null, $email = null, $phone = null, $ip_address = null, string $contentType = self::contentTypes['screenUser'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function screenUserAsyncWithHttpInfo($first_name = null, $last_name = null, $date_of_birth = null, $email = null, $phone = null, $ip_address = null, string $contentType = self::contentTypes['screenUser'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\FraudScreenUserResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->screenUserRequest($app_id, $first_name, $last_name, $date_of_birth, $email, $phone, $ip_address, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->screenUserRequest($first_name, $last_name, $date_of_birth, $email, $phone, $ip_address, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -1421,7 +1381,6 @@ class FraudApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'screenUser'
      *
-     * @param  string $app_id (optional)
      * @param  string $first_name (optional)
      * @param  string $last_name (optional)
      * @param  string $date_of_birth (optional)
@@ -1433,13 +1392,9 @@ class FraudApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function screenUserRequest($app_id = SENTINEL_VALUE, $first_name = SENTINEL_VALUE, $last_name = SENTINEL_VALUE, $date_of_birth = SENTINEL_VALUE, $email = SENTINEL_VALUE, $phone = SENTINEL_VALUE, $ip_address = SENTINEL_VALUE, string $contentType = self::contentTypes['screenUser'][0])
+    public function screenUserRequest($first_name = SENTINEL_VALUE, $last_name = SENTINEL_VALUE, $date_of_birth = SENTINEL_VALUE, $email = SENTINEL_VALUE, $phone = SENTINEL_VALUE, $ip_address = SENTINEL_VALUE, string $contentType = self::contentTypes['screenUser'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
         // Check if $first_name is a string
         if ($first_name !== SENTINEL_VALUE && !is_string($first_name)) {
             throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($first_name, true), gettype($first_name)));
@@ -1540,10 +1495,6 @@ class FraudApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -1578,6 +1529,11 @@ class FraudApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {

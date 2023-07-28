@@ -10,7 +10,7 @@ All URIs are relative to https://api.dojah.io, except if the operation defines a
 ## `sendAirtime()`
 
 ```php
-sendAirtime($purchase_airtime_request, $app_id): \Dojah\Model\PurchaseAirtimeResponse
+sendAirtime($purchase_airtime_request): \Dojah\Model\PurchaseAirtimeResponse
 ```
 
 Purchase - Send Airtime
@@ -22,23 +22,21 @@ Purchase - Send Airtime
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
 $destination = "08068810228";
 $amount = "100";
-$app_id = "{{app_id}}";
 
 try {
     $result = $dojah->purchase->sendAirtime(
         destination: $destination, 
-        amount: $amount, 
-        app_id: $app_id
+        amount: $amount
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling PurchaseApi->sendAirtime: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
@@ -46,7 +44,6 @@ try {
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
 | **purchase_airtime_request** | [**\Dojah\Model\PurchaseAirtimeRequest**](../Model/PurchaseAirtimeRequest.md)|  | |
-| **app_id** | **string**|  | [optional] |
 
 ### Return type
 
@@ -54,7 +51,7 @@ try {
 
 ### Authorization
 
-[noauthAuth](../../README.md#noauthAuth)
+[appIdAuth](../../README.md#appIdAuth), [noauthAuth](../../README.md#noauthAuth)
 
 ### HTTP request headers
 

@@ -123,11 +123,11 @@ class Configuration
      * Constructor
      */
     public function __construct(
-        string $Appid = null,
+        string $apiKey = null,
     )
     {
         $this->tempFolderPath = sys_get_temp_dir();
-        $this->setApiKey("Appid", $Appid);
+        $this->setApiKey("Appid", $apiKey);
     }
 
     /**

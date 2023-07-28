@@ -13,7 +13,7 @@ All URIs are relative to https://api.dojah.io, except if the operation defines a
 ## `getDriversLicense()`
 
 ```php
-getDriversLicense($app_id, $id, $full_name, $date_of_birth): \Dojah\Model\GetDriversLicenseResponse
+getDriversLicense($id, $full_name, $date_of_birth): \Dojah\Model\GetDriversLicenseResponse
 ```
 
 Driver's License
@@ -25,16 +25,15 @@ Driver's License
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $id = "V0000000";
 $full_name = "John Doe";
 $date_of_birth = "1988-09-01";
 
 try {
     $result = $dojah->ghKyc->getDriversLicense(
-        app_id: $app_id, 
         id: $id, 
         full_name: $full_name, 
         date_of_birth: $date_of_birth
@@ -43,14 +42,12 @@ try {
 } catch (\Exception $e) {
     echo 'Exception when calling GhKycApi->getDriversLicense: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **id** | **string**|  | [optional] |
 | **full_name** | **string**|  | [optional] |
 | **date_of_birth** | **string**|  | [optional] |
@@ -61,7 +58,7 @@ try {
 
 ### Authorization
 
-No authorization required
+[appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -75,7 +72,7 @@ No authorization required
 ## `getPassport()`
 
 ```php
-getPassport($app_id, $id, $first_name, $last_name, $middle_name, $date_of_birth): \Dojah\Model\GetPassportResponse
+getPassport($id, $first_name, $last_name, $middle_name, $date_of_birth): \Dojah\Model\GetPassportResponse
 ```
 
 Passport
@@ -87,9 +84,9 @@ Passport
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $id = "G111235468";
 $first_name = "John";
 $last_name = "Doe";
@@ -98,7 +95,6 @@ $date_of_birth = "1990-04-05";
 
 try {
     $result = $dojah->ghKyc->getPassport(
-        app_id: $app_id, 
         id: $id, 
         first_name: $first_name, 
         last_name: $last_name, 
@@ -109,14 +105,12 @@ try {
 } catch (\Exception $e) {
     echo 'Exception when calling GhKycApi->getPassport: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **id** | **string**|  | [optional] |
 | **first_name** | **string**|  | [optional] |
 | **last_name** | **string**|  | [optional] |
@@ -129,7 +123,7 @@ try {
 
 ### Authorization
 
-No authorization required
+[appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -143,7 +137,7 @@ No authorization required
 ## `getSsnit()`
 
 ```php
-getSsnit($app_id, $id, $full_name, $date_of_birth): \Dojah\Model\GetSsnitResponse
+getSsnit($id, $full_name, $date_of_birth): \Dojah\Model\GetSsnitResponse
 ```
 
 SSNIT
@@ -155,16 +149,15 @@ SSNIT
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $id = "G0000000";
 $full_name = "John Doe";
 $date_of_birth = "1990-04-05";
 
 try {
     $result = $dojah->ghKyc->getSsnit(
-        app_id: $app_id, 
         id: $id, 
         full_name: $full_name, 
         date_of_birth: $date_of_birth
@@ -173,14 +166,12 @@ try {
 } catch (\Exception $e) {
     echo 'Exception when calling GhKycApi->getSsnit: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **id** | **string**|  | [optional] |
 | **full_name** | **string**|  | [optional] |
 | **date_of_birth** | **string**|  | [optional] |
@@ -191,7 +182,7 @@ try {
 
 ### Authorization
 
-No authorization required
+[appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -205,7 +196,7 @@ No authorization required
 ## `getVoter()`
 
 ```php
-getVoter($app_id, $id, $full_name, $is_new_id): object
+getVoter($id, $full_name, $is_new_id): object
 ```
 
 Voter ID Lookup
@@ -217,16 +208,15 @@ Voter ID Lookup
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $id = 6423007613;
 $full_name = "John Doe";
 $is_new_id = True;
 
 try {
     $result = $dojah->ghKyc->getVoter(
-        app_id: $app_id, 
         id: $id, 
         full_name: $full_name, 
         is_new_id: $is_new_id
@@ -234,14 +224,12 @@ try {
 } catch (\Exception $e) {
     echo 'Exception when calling GhKycApi->getVoter: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **id** | **int**|  | [optional] |
 | **full_name** | **string**|  | [optional] |
 | **is_new_id** | **bool**|  | [optional] |
@@ -252,7 +240,7 @@ try {
 
 ### Authorization
 
-No authorization required
+[appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 

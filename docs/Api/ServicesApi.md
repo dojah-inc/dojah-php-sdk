@@ -10,7 +10,7 @@ All URIs are relative to https://api.dojah.io, except if the operation defines a
 ## `getWalletBalance()`
 
 ```php
-getWalletBalance($app_id): \Dojah\Model\GetWalletBalanceResponse
+getWalletBalance(): \Dojah\Model\GetWalletBalanceResponse
 ```
 
 Get Dojah Wallet Balance
@@ -22,26 +22,21 @@ Get Dojah Wallet Balance
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 
 try {
-    $result = $dojah->services->getWalletBalance(
-        app_id: $app_id
-    );
+    $result = $dojah->services->getWalletBalance();
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling ServicesApi->getWalletBalance: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
-| Name | Type | Description  | Notes |
-| ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
+This endpoint does not need any parameter.
 
 ### Return type
 
@@ -49,7 +44,7 @@ try {
 
 ### Authorization
 
-[noauthAuth](../../README.md#noauthAuth)
+[appIdAuth](../../README.md#appIdAuth), [noauthAuth](../../README.md#noauthAuth)
 
 ### HTTP request headers
 

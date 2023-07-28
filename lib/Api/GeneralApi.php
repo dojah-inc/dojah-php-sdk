@@ -145,7 +145,6 @@ class GeneralApi extends \Dojah\CustomApi
      *
      * General - Get Banks
      *
-     * @param  string $app_id app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBanks'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
@@ -153,7 +152,6 @@ class GeneralApi extends \Dojah\CustomApi
      * @return \Dojah\Model\GetBanksResponse
      */
     public function getBanks(
-        $app_id = SENTINEL_VALUE,
 
 
         string $contentType = self::contentTypes['getBanks'][0]
@@ -161,7 +159,7 @@ class GeneralApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getBanksWithHttpInfo($app_id, $contentType);
+        list($response) = $this->getBanksWithHttpInfo($contentType);
         return $response;
     }
 
@@ -170,16 +168,15 @@ class GeneralApi extends \Dojah\CustomApi
      *
      * General - Get Banks
      *
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBanks'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetBanksResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getBanksWithHttpInfo($app_id = null, string $contentType = self::contentTypes['getBanks'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getBanksWithHttpInfo(string $contentType = self::contentTypes['getBanks'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBanksRequest($app_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBanksRequest($contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -195,7 +192,6 @@ class GeneralApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getBanksWithHttpInfo(
-                        $app_id,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
                     );
@@ -285,14 +281,12 @@ class GeneralApi extends \Dojah\CustomApi
      *
      * General - Get Banks
      *
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBanks'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getBanksAsync(
-        $app_id = SENTINEL_VALUE,
 
 
         string $contentType = self::contentTypes['getBanks'][0]
@@ -300,7 +294,7 @@ class GeneralApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getBanksAsyncWithHttpInfo($app_id, $contentType)
+        return $this->getBanksAsyncWithHttpInfo($contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -313,16 +307,15 @@ class GeneralApi extends \Dojah\CustomApi
      *
      * General - Get Banks
      *
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBanks'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getBanksAsyncWithHttpInfo($app_id = null, string $contentType = self::contentTypes['getBanks'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getBanksAsyncWithHttpInfo(string $contentType = self::contentTypes['getBanks'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetBanksResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBanksRequest($app_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBanksRequest($contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -366,19 +359,14 @@ class GeneralApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getBanks'
      *
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBanks'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getBanksRequest($app_id = SENTINEL_VALUE, string $contentType = self::contentTypes['getBanks'][0])
+    public function getBanksRequest(string $contentType = self::contentTypes['getBanks'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
 
 
         $resourcePath = '/v1/general/banks';
@@ -389,10 +377,6 @@ class GeneralApi extends \Dojah\CustomApi
         $multipart = false;
 
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -427,6 +411,11 @@ class GeneralApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -460,7 +449,6 @@ class GeneralApi extends \Dojah\CustomApi
      *
      * General Resolve BIN
      *
-     * @param  string $app_id app_id (optional)
      * @param  int $card_bin card_bin (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBin'] to see the possible values for this operation
      *
@@ -469,7 +457,6 @@ class GeneralApi extends \Dojah\CustomApi
      * @return \Dojah\Model\GetBinResponse
      */
     public function getBin(
-        $app_id = SENTINEL_VALUE,
         $card_bin = SENTINEL_VALUE,
 
 
@@ -478,7 +465,7 @@ class GeneralApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getBinWithHttpInfo($app_id, $card_bin, $contentType);
+        list($response) = $this->getBinWithHttpInfo($card_bin, $contentType);
         return $response;
     }
 
@@ -487,7 +474,6 @@ class GeneralApi extends \Dojah\CustomApi
      *
      * General Resolve BIN
      *
-     * @param  string $app_id (optional)
      * @param  int $card_bin (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBin'] to see the possible values for this operation
      *
@@ -495,9 +481,9 @@ class GeneralApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetBinResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getBinWithHttpInfo($app_id = null, $card_bin = null, string $contentType = self::contentTypes['getBin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getBinWithHttpInfo($card_bin = null, string $contentType = self::contentTypes['getBin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBinRequest($app_id, $card_bin, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBinRequest($card_bin, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -513,7 +499,6 @@ class GeneralApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getBinWithHttpInfo(
-                        $app_id,
                         $card_bin,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
@@ -604,7 +589,6 @@ class GeneralApi extends \Dojah\CustomApi
      *
      * General Resolve BIN
      *
-     * @param  string $app_id (optional)
      * @param  int $card_bin (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBin'] to see the possible values for this operation
      *
@@ -612,7 +596,6 @@ class GeneralApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getBinAsync(
-        $app_id = SENTINEL_VALUE,
         $card_bin = SENTINEL_VALUE,
 
 
@@ -621,7 +604,7 @@ class GeneralApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getBinAsyncWithHttpInfo($app_id, $card_bin, $contentType)
+        return $this->getBinAsyncWithHttpInfo($card_bin, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -634,17 +617,16 @@ class GeneralApi extends \Dojah\CustomApi
      *
      * General Resolve BIN
      *
-     * @param  string $app_id (optional)
      * @param  int $card_bin (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBin'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getBinAsyncWithHttpInfo($app_id = null, $card_bin = null, string $contentType = self::contentTypes['getBin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getBinAsyncWithHttpInfo($card_bin = null, string $contentType = self::contentTypes['getBin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetBinResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBinRequest($app_id, $card_bin, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBinRequest($card_bin, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -688,20 +670,15 @@ class GeneralApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getBin'
      *
-     * @param  string $app_id (optional)
      * @param  int $card_bin (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBin'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getBinRequest($app_id = SENTINEL_VALUE, $card_bin = SENTINEL_VALUE, string $contentType = self::contentTypes['getBin'][0])
+    public function getBinRequest($card_bin = SENTINEL_VALUE, string $contentType = self::contentTypes['getBin'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
 
 
         $resourcePath = '/v1/general/bin';
@@ -723,10 +700,6 @@ class GeneralApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -761,6 +734,11 @@ class GeneralApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -794,7 +772,6 @@ class GeneralApi extends \Dojah\CustomApi
      *
      * General Resolve NUBAN
      *
-     * @param  string $app_id app_id (optional)
      * @param  int $bank_code bank_code (optional)
      * @param  int $account_number account_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getNuban'] to see the possible values for this operation
@@ -804,7 +781,6 @@ class GeneralApi extends \Dojah\CustomApi
      * @return \Dojah\Model\GeneralGetNubanResponse
      */
     public function getNuban(
-        $app_id = SENTINEL_VALUE,
         $bank_code = SENTINEL_VALUE,
         $account_number = SENTINEL_VALUE,
 
@@ -814,7 +790,7 @@ class GeneralApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getNubanWithHttpInfo($app_id, $bank_code, $account_number, $contentType);
+        list($response) = $this->getNubanWithHttpInfo($bank_code, $account_number, $contentType);
         return $response;
     }
 
@@ -823,7 +799,6 @@ class GeneralApi extends \Dojah\CustomApi
      *
      * General Resolve NUBAN
      *
-     * @param  string $app_id (optional)
      * @param  int $bank_code (optional)
      * @param  int $account_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getNuban'] to see the possible values for this operation
@@ -832,9 +807,9 @@ class GeneralApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GeneralGetNubanResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getNubanWithHttpInfo($app_id = null, $bank_code = null, $account_number = null, string $contentType = self::contentTypes['getNuban'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getNubanWithHttpInfo($bank_code = null, $account_number = null, string $contentType = self::contentTypes['getNuban'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getNubanRequest($app_id, $bank_code, $account_number, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getNubanRequest($bank_code, $account_number, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -850,7 +825,6 @@ class GeneralApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getNubanWithHttpInfo(
-                        $app_id,
                         $bank_code,
                         $account_number,
                         $contentType,
@@ -942,7 +916,6 @@ class GeneralApi extends \Dojah\CustomApi
      *
      * General Resolve NUBAN
      *
-     * @param  string $app_id (optional)
      * @param  int $bank_code (optional)
      * @param  int $account_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getNuban'] to see the possible values for this operation
@@ -951,7 +924,6 @@ class GeneralApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getNubanAsync(
-        $app_id = SENTINEL_VALUE,
         $bank_code = SENTINEL_VALUE,
         $account_number = SENTINEL_VALUE,
 
@@ -961,7 +933,7 @@ class GeneralApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getNubanAsyncWithHttpInfo($app_id, $bank_code, $account_number, $contentType)
+        return $this->getNubanAsyncWithHttpInfo($bank_code, $account_number, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -974,7 +946,6 @@ class GeneralApi extends \Dojah\CustomApi
      *
      * General Resolve NUBAN
      *
-     * @param  string $app_id (optional)
      * @param  int $bank_code (optional)
      * @param  int $account_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getNuban'] to see the possible values for this operation
@@ -982,10 +953,10 @@ class GeneralApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getNubanAsyncWithHttpInfo($app_id = null, $bank_code = null, $account_number = null, string $contentType = self::contentTypes['getNuban'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getNubanAsyncWithHttpInfo($bank_code = null, $account_number = null, string $contentType = self::contentTypes['getNuban'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GeneralGetNubanResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getNubanRequest($app_id, $bank_code, $account_number, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getNubanRequest($bank_code, $account_number, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -1029,7 +1000,6 @@ class GeneralApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getNuban'
      *
-     * @param  string $app_id (optional)
      * @param  int $bank_code (optional)
      * @param  int $account_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getNuban'] to see the possible values for this operation
@@ -1037,13 +1007,9 @@ class GeneralApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getNubanRequest($app_id = SENTINEL_VALUE, $bank_code = SENTINEL_VALUE, $account_number = SENTINEL_VALUE, string $contentType = self::contentTypes['getNuban'][0])
+    public function getNubanRequest($bank_code = SENTINEL_VALUE, $account_number = SENTINEL_VALUE, string $contentType = self::contentTypes['getNuban'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
 
 
         $resourcePath = '/api/v1/general/account';
@@ -1076,10 +1042,6 @@ class GeneralApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -1114,6 +1076,11 @@ class GeneralApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {

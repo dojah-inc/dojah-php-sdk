@@ -139,7 +139,6 @@ class TzKycApi extends \Dojah\CustomApi
      *
      * Lookup TZ NIN
      *
-     * @param  string $app_id app_id (optional)
      * @param  string $first_name first_name (optional)
      * @param  string $last_name last_name (optional)
      * @param  string $date_of_birth date_of_birth (optional)
@@ -152,7 +151,6 @@ class TzKycApi extends \Dojah\CustomApi
      * @return object
      */
     public function getNin(
-        $app_id = SENTINEL_VALUE,
         $first_name = SENTINEL_VALUE,
         $last_name = SENTINEL_VALUE,
         $date_of_birth = SENTINEL_VALUE,
@@ -165,7 +163,7 @@ class TzKycApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getNinWithHttpInfo($app_id, $first_name, $last_name, $date_of_birth, $mothers_last_name, $mothers_first_name, $contentType);
+        list($response) = $this->getNinWithHttpInfo($first_name, $last_name, $date_of_birth, $mothers_last_name, $mothers_first_name, $contentType);
         return $response;
     }
 
@@ -174,7 +172,6 @@ class TzKycApi extends \Dojah\CustomApi
      *
      * Lookup TZ NIN
      *
-     * @param  string $app_id (optional)
      * @param  string $first_name (optional)
      * @param  string $last_name (optional)
      * @param  string $date_of_birth (optional)
@@ -186,9 +183,9 @@ class TzKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of object, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getNinWithHttpInfo($app_id = null, $first_name = null, $last_name = null, $date_of_birth = null, $mothers_last_name = null, $mothers_first_name = null, string $contentType = self::contentTypes['getNin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getNinWithHttpInfo($first_name = null, $last_name = null, $date_of_birth = null, $mothers_last_name = null, $mothers_first_name = null, string $contentType = self::contentTypes['getNin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getNinRequest($app_id, $first_name, $last_name, $date_of_birth, $mothers_last_name, $mothers_first_name, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getNinRequest($first_name, $last_name, $date_of_birth, $mothers_last_name, $mothers_first_name, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -204,7 +201,6 @@ class TzKycApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getNinWithHttpInfo(
-                        $app_id,
                         $first_name,
                         $last_name,
                         $date_of_birth,
@@ -299,7 +295,6 @@ class TzKycApi extends \Dojah\CustomApi
      *
      * Lookup TZ NIN
      *
-     * @param  string $app_id (optional)
      * @param  string $first_name (optional)
      * @param  string $last_name (optional)
      * @param  string $date_of_birth (optional)
@@ -311,7 +306,6 @@ class TzKycApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getNinAsync(
-        $app_id = SENTINEL_VALUE,
         $first_name = SENTINEL_VALUE,
         $last_name = SENTINEL_VALUE,
         $date_of_birth = SENTINEL_VALUE,
@@ -324,7 +318,7 @@ class TzKycApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getNinAsyncWithHttpInfo($app_id, $first_name, $last_name, $date_of_birth, $mothers_last_name, $mothers_first_name, $contentType)
+        return $this->getNinAsyncWithHttpInfo($first_name, $last_name, $date_of_birth, $mothers_last_name, $mothers_first_name, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -337,7 +331,6 @@ class TzKycApi extends \Dojah\CustomApi
      *
      * Lookup TZ NIN
      *
-     * @param  string $app_id (optional)
      * @param  string $first_name (optional)
      * @param  string $last_name (optional)
      * @param  string $date_of_birth (optional)
@@ -348,10 +341,10 @@ class TzKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getNinAsyncWithHttpInfo($app_id = null, $first_name = null, $last_name = null, $date_of_birth = null, $mothers_last_name = null, $mothers_first_name = null, string $contentType = self::contentTypes['getNin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getNinAsyncWithHttpInfo($first_name = null, $last_name = null, $date_of_birth = null, $mothers_last_name = null, $mothers_first_name = null, string $contentType = self::contentTypes['getNin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = 'object';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getNinRequest($app_id, $first_name, $last_name, $date_of_birth, $mothers_last_name, $mothers_first_name, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getNinRequest($first_name, $last_name, $date_of_birth, $mothers_last_name, $mothers_first_name, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -395,7 +388,6 @@ class TzKycApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getNin'
      *
-     * @param  string $app_id (optional)
      * @param  string $first_name (optional)
      * @param  string $last_name (optional)
      * @param  string $date_of_birth (optional)
@@ -406,13 +398,9 @@ class TzKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getNinRequest($app_id = SENTINEL_VALUE, $first_name = SENTINEL_VALUE, $last_name = SENTINEL_VALUE, $date_of_birth = SENTINEL_VALUE, $mothers_last_name = SENTINEL_VALUE, $mothers_first_name = SENTINEL_VALUE, string $contentType = self::contentTypes['getNin'][0])
+    public function getNinRequest($first_name = SENTINEL_VALUE, $last_name = SENTINEL_VALUE, $date_of_birth = SENTINEL_VALUE, $mothers_last_name = SENTINEL_VALUE, $mothers_first_name = SENTINEL_VALUE, string $contentType = self::contentTypes['getNin'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
         // Check if $first_name is a string
         if ($first_name !== SENTINEL_VALUE && !is_string($first_name)) {
             throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($first_name, true), gettype($first_name)));
@@ -498,10 +486,6 @@ class TzKycApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -536,6 +520,11 @@ class TzKycApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {

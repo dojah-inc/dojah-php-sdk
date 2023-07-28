@@ -140,7 +140,6 @@ class PurchaseApi extends \Dojah\CustomApi
      * Purchase - Send Airtime
      *
      * @param  \Dojah\Model\PurchaseAirtimeRequest $purchase_airtime_request purchase_airtime_request (required)
-     * @param  string $app_id app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sendAirtime'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
@@ -151,7 +150,6 @@ class PurchaseApi extends \Dojah\CustomApi
 
         $destination = SENTINEL_VALUE,
         $amount = SENTINEL_VALUE,
-        $app_id = SENTINEL_VALUE,
 
         string $contentType = self::contentTypes['sendAirtime'][0]
 
@@ -162,7 +160,7 @@ class PurchaseApi extends \Dojah\CustomApi
         $this->setRequestBodyProperty($_body, "amount", $amount);
         $purchase_airtime_request = $_body;
 
-        list($response) = $this->sendAirtimeWithHttpInfo($purchase_airtime_request, $app_id, $contentType);
+        list($response) = $this->sendAirtimeWithHttpInfo($purchase_airtime_request, $contentType);
         return $response;
     }
 
@@ -172,16 +170,15 @@ class PurchaseApi extends \Dojah\CustomApi
      * Purchase - Send Airtime
      *
      * @param  \Dojah\Model\PurchaseAirtimeRequest $purchase_airtime_request (required)
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sendAirtime'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\PurchaseAirtimeResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function sendAirtimeWithHttpInfo($purchase_airtime_request, $app_id = null, string $contentType = self::contentTypes['sendAirtime'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function sendAirtimeWithHttpInfo($purchase_airtime_request, string $contentType = self::contentTypes['sendAirtime'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->sendAirtimeRequest($purchase_airtime_request, $app_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->sendAirtimeRequest($purchase_airtime_request, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
@@ -198,7 +195,6 @@ class PurchaseApi extends \Dojah\CustomApi
                 ) {
                     return $this->sendAirtimeWithHttpInfo(
                         $purchase_airtime_request,
-                        $app_id,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
                     );
@@ -289,7 +285,6 @@ class PurchaseApi extends \Dojah\CustomApi
      * Purchase - Send Airtime
      *
      * @param  \Dojah\Model\PurchaseAirtimeRequest $purchase_airtime_request (required)
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sendAirtime'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
@@ -299,7 +294,6 @@ class PurchaseApi extends \Dojah\CustomApi
 
         $destination = SENTINEL_VALUE,
         $amount = SENTINEL_VALUE,
-        $app_id = SENTINEL_VALUE,
 
         string $contentType = self::contentTypes['sendAirtime'][0]
 
@@ -310,7 +304,7 @@ class PurchaseApi extends \Dojah\CustomApi
         $this->setRequestBodyProperty($_body, "amount", $amount);
         $purchase_airtime_request = $_body;
 
-        return $this->sendAirtimeAsyncWithHttpInfo($purchase_airtime_request, $app_id, $contentType)
+        return $this->sendAirtimeAsyncWithHttpInfo($purchase_airtime_request, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -324,16 +318,15 @@ class PurchaseApi extends \Dojah\CustomApi
      * Purchase - Send Airtime
      *
      * @param  \Dojah\Model\PurchaseAirtimeRequest $purchase_airtime_request (required)
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sendAirtime'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function sendAirtimeAsyncWithHttpInfo($purchase_airtime_request, $app_id = null, string $contentType = self::contentTypes['sendAirtime'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function sendAirtimeAsyncWithHttpInfo($purchase_airtime_request, string $contentType = self::contentTypes['sendAirtime'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\PurchaseAirtimeResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->sendAirtimeRequest($purchase_airtime_request, $app_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->sendAirtimeRequest($purchase_airtime_request, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
@@ -378,13 +371,12 @@ class PurchaseApi extends \Dojah\CustomApi
      * Create request for operation 'sendAirtime'
      *
      * @param  \Dojah\Model\PurchaseAirtimeRequest $purchase_airtime_request (required)
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sendAirtime'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function sendAirtimeRequest($purchase_airtime_request, $app_id = SENTINEL_VALUE, string $contentType = self::contentTypes['sendAirtime'][0])
+    public function sendAirtimeRequest($purchase_airtime_request, string $contentType = self::contentTypes['sendAirtime'][0])
     {
 
         if ($purchase_airtime_request !== SENTINEL_VALUE) {
@@ -401,10 +393,6 @@ class PurchaseApi extends \Dojah\CustomApi
                 'Missing the required parameter purchase_airtime_request when calling sendAirtime'
             );
         }
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
 
 
         $resourcePath = '/v1/purchase/airtime';
@@ -415,10 +403,6 @@ class PurchaseApi extends \Dojah\CustomApi
         $multipart = false;
 
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -460,6 +444,11 @@ class PurchaseApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {

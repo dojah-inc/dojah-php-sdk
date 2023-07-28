@@ -148,7 +148,6 @@ class GhKycApi extends \Dojah\CustomApi
      *
      * Driver&#39;s License
      *
-     * @param  string $app_id app_id (optional)
      * @param  string $id id (optional)
      * @param  string $full_name full_name (optional)
      * @param  string $date_of_birth date_of_birth (optional)
@@ -159,7 +158,6 @@ class GhKycApi extends \Dojah\CustomApi
      * @return \Dojah\Model\GetDriversLicenseResponse
      */
     public function getDriversLicense(
-        $app_id = SENTINEL_VALUE,
         $id = SENTINEL_VALUE,
         $full_name = SENTINEL_VALUE,
         $date_of_birth = SENTINEL_VALUE,
@@ -170,7 +168,7 @@ class GhKycApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getDriversLicenseWithHttpInfo($app_id, $id, $full_name, $date_of_birth, $contentType);
+        list($response) = $this->getDriversLicenseWithHttpInfo($id, $full_name, $date_of_birth, $contentType);
         return $response;
     }
 
@@ -179,7 +177,6 @@ class GhKycApi extends \Dojah\CustomApi
      *
      * Driver&#39;s License
      *
-     * @param  string $app_id (optional)
      * @param  string $id (optional)
      * @param  string $full_name (optional)
      * @param  string $date_of_birth (optional)
@@ -189,9 +186,9 @@ class GhKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetDriversLicenseResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getDriversLicenseWithHttpInfo($app_id = null, $id = null, $full_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getDriversLicense'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getDriversLicenseWithHttpInfo($id = null, $full_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getDriversLicense'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getDriversLicenseRequest($app_id, $id, $full_name, $date_of_birth, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getDriversLicenseRequest($id, $full_name, $date_of_birth, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -207,7 +204,6 @@ class GhKycApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getDriversLicenseWithHttpInfo(
-                        $app_id,
                         $id,
                         $full_name,
                         $date_of_birth,
@@ -300,7 +296,6 @@ class GhKycApi extends \Dojah\CustomApi
      *
      * Driver&#39;s License
      *
-     * @param  string $app_id (optional)
      * @param  string $id (optional)
      * @param  string $full_name (optional)
      * @param  string $date_of_birth (optional)
@@ -310,7 +305,6 @@ class GhKycApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getDriversLicenseAsync(
-        $app_id = SENTINEL_VALUE,
         $id = SENTINEL_VALUE,
         $full_name = SENTINEL_VALUE,
         $date_of_birth = SENTINEL_VALUE,
@@ -321,7 +315,7 @@ class GhKycApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getDriversLicenseAsyncWithHttpInfo($app_id, $id, $full_name, $date_of_birth, $contentType)
+        return $this->getDriversLicenseAsyncWithHttpInfo($id, $full_name, $date_of_birth, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -334,7 +328,6 @@ class GhKycApi extends \Dojah\CustomApi
      *
      * Driver&#39;s License
      *
-     * @param  string $app_id (optional)
      * @param  string $id (optional)
      * @param  string $full_name (optional)
      * @param  string $date_of_birth (optional)
@@ -343,10 +336,10 @@ class GhKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getDriversLicenseAsyncWithHttpInfo($app_id = null, $id = null, $full_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getDriversLicense'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getDriversLicenseAsyncWithHttpInfo($id = null, $full_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getDriversLicense'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetDriversLicenseResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getDriversLicenseRequest($app_id, $id, $full_name, $date_of_birth, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getDriversLicenseRequest($id, $full_name, $date_of_birth, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -390,7 +383,6 @@ class GhKycApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getDriversLicense'
      *
-     * @param  string $app_id (optional)
      * @param  string $id (optional)
      * @param  string $full_name (optional)
      * @param  string $date_of_birth (optional)
@@ -399,13 +391,9 @@ class GhKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getDriversLicenseRequest($app_id = SENTINEL_VALUE, $id = SENTINEL_VALUE, $full_name = SENTINEL_VALUE, $date_of_birth = SENTINEL_VALUE, string $contentType = self::contentTypes['getDriversLicense'][0])
+    public function getDriversLicenseRequest($id = SENTINEL_VALUE, $full_name = SENTINEL_VALUE, $date_of_birth = SENTINEL_VALUE, string $contentType = self::contentTypes['getDriversLicense'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
         // Check if $id is a string
         if ($id !== SENTINEL_VALUE && !is_string($id)) {
             throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($id, true), gettype($id)));
@@ -461,10 +449,6 @@ class GhKycApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -499,6 +483,11 @@ class GhKycApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -532,7 +521,6 @@ class GhKycApi extends \Dojah\CustomApi
      *
      * Passport
      *
-     * @param  string $app_id app_id (optional)
      * @param  string $id id (optional)
      * @param  string $first_name first_name (optional)
      * @param  string $last_name last_name (optional)
@@ -545,7 +533,6 @@ class GhKycApi extends \Dojah\CustomApi
      * @return \Dojah\Model\GetPassportResponse
      */
     public function getPassport(
-        $app_id = SENTINEL_VALUE,
         $id = SENTINEL_VALUE,
         $first_name = SENTINEL_VALUE,
         $last_name = SENTINEL_VALUE,
@@ -558,7 +545,7 @@ class GhKycApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getPassportWithHttpInfo($app_id, $id, $first_name, $last_name, $middle_name, $date_of_birth, $contentType);
+        list($response) = $this->getPassportWithHttpInfo($id, $first_name, $last_name, $middle_name, $date_of_birth, $contentType);
         return $response;
     }
 
@@ -567,7 +554,6 @@ class GhKycApi extends \Dojah\CustomApi
      *
      * Passport
      *
-     * @param  string $app_id (optional)
      * @param  string $id (optional)
      * @param  string $first_name (optional)
      * @param  string $last_name (optional)
@@ -579,9 +565,9 @@ class GhKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetPassportResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getPassportWithHttpInfo($app_id = null, $id = null, $first_name = null, $last_name = null, $middle_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getPassport'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getPassportWithHttpInfo($id = null, $first_name = null, $last_name = null, $middle_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getPassport'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getPassportRequest($app_id, $id, $first_name, $last_name, $middle_name, $date_of_birth, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getPassportRequest($id, $first_name, $last_name, $middle_name, $date_of_birth, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -597,7 +583,6 @@ class GhKycApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getPassportWithHttpInfo(
-                        $app_id,
                         $id,
                         $first_name,
                         $last_name,
@@ -692,7 +677,6 @@ class GhKycApi extends \Dojah\CustomApi
      *
      * Passport
      *
-     * @param  string $app_id (optional)
      * @param  string $id (optional)
      * @param  string $first_name (optional)
      * @param  string $last_name (optional)
@@ -704,7 +688,6 @@ class GhKycApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getPassportAsync(
-        $app_id = SENTINEL_VALUE,
         $id = SENTINEL_VALUE,
         $first_name = SENTINEL_VALUE,
         $last_name = SENTINEL_VALUE,
@@ -717,7 +700,7 @@ class GhKycApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getPassportAsyncWithHttpInfo($app_id, $id, $first_name, $last_name, $middle_name, $date_of_birth, $contentType)
+        return $this->getPassportAsyncWithHttpInfo($id, $first_name, $last_name, $middle_name, $date_of_birth, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -730,7 +713,6 @@ class GhKycApi extends \Dojah\CustomApi
      *
      * Passport
      *
-     * @param  string $app_id (optional)
      * @param  string $id (optional)
      * @param  string $first_name (optional)
      * @param  string $last_name (optional)
@@ -741,10 +723,10 @@ class GhKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getPassportAsyncWithHttpInfo($app_id = null, $id = null, $first_name = null, $last_name = null, $middle_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getPassport'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getPassportAsyncWithHttpInfo($id = null, $first_name = null, $last_name = null, $middle_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getPassport'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetPassportResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getPassportRequest($app_id, $id, $first_name, $last_name, $middle_name, $date_of_birth, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getPassportRequest($id, $first_name, $last_name, $middle_name, $date_of_birth, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -788,7 +770,6 @@ class GhKycApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getPassport'
      *
-     * @param  string $app_id (optional)
      * @param  string $id (optional)
      * @param  string $first_name (optional)
      * @param  string $last_name (optional)
@@ -799,13 +780,9 @@ class GhKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getPassportRequest($app_id = SENTINEL_VALUE, $id = SENTINEL_VALUE, $first_name = SENTINEL_VALUE, $last_name = SENTINEL_VALUE, $middle_name = SENTINEL_VALUE, $date_of_birth = SENTINEL_VALUE, string $contentType = self::contentTypes['getPassport'][0])
+    public function getPassportRequest($id = SENTINEL_VALUE, $first_name = SENTINEL_VALUE, $last_name = SENTINEL_VALUE, $middle_name = SENTINEL_VALUE, $date_of_birth = SENTINEL_VALUE, string $contentType = self::contentTypes['getPassport'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
         // Check if $id is a string
         if ($id !== SENTINEL_VALUE && !is_string($id)) {
             throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($id, true), gettype($id)));
@@ -891,10 +868,6 @@ class GhKycApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -929,6 +902,11 @@ class GhKycApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -962,7 +940,6 @@ class GhKycApi extends \Dojah\CustomApi
      *
      * SSNIT
      *
-     * @param  string $app_id app_id (optional)
      * @param  string $id id (optional)
      * @param  string $full_name full_name (optional)
      * @param  string $date_of_birth date_of_birth (optional)
@@ -973,7 +950,6 @@ class GhKycApi extends \Dojah\CustomApi
      * @return \Dojah\Model\GetSsnitResponse
      */
     public function getSsnit(
-        $app_id = SENTINEL_VALUE,
         $id = SENTINEL_VALUE,
         $full_name = SENTINEL_VALUE,
         $date_of_birth = SENTINEL_VALUE,
@@ -984,7 +960,7 @@ class GhKycApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getSsnitWithHttpInfo($app_id, $id, $full_name, $date_of_birth, $contentType);
+        list($response) = $this->getSsnitWithHttpInfo($id, $full_name, $date_of_birth, $contentType);
         return $response;
     }
 
@@ -993,7 +969,6 @@ class GhKycApi extends \Dojah\CustomApi
      *
      * SSNIT
      *
-     * @param  string $app_id (optional)
      * @param  string $id (optional)
      * @param  string $full_name (optional)
      * @param  string $date_of_birth (optional)
@@ -1003,9 +978,9 @@ class GhKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetSsnitResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getSsnitWithHttpInfo($app_id = null, $id = null, $full_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getSsnit'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getSsnitWithHttpInfo($id = null, $full_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getSsnit'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getSsnitRequest($app_id, $id, $full_name, $date_of_birth, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getSsnitRequest($id, $full_name, $date_of_birth, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -1021,7 +996,6 @@ class GhKycApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getSsnitWithHttpInfo(
-                        $app_id,
                         $id,
                         $full_name,
                         $date_of_birth,
@@ -1114,7 +1088,6 @@ class GhKycApi extends \Dojah\CustomApi
      *
      * SSNIT
      *
-     * @param  string $app_id (optional)
      * @param  string $id (optional)
      * @param  string $full_name (optional)
      * @param  string $date_of_birth (optional)
@@ -1124,7 +1097,6 @@ class GhKycApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getSsnitAsync(
-        $app_id = SENTINEL_VALUE,
         $id = SENTINEL_VALUE,
         $full_name = SENTINEL_VALUE,
         $date_of_birth = SENTINEL_VALUE,
@@ -1135,7 +1107,7 @@ class GhKycApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getSsnitAsyncWithHttpInfo($app_id, $id, $full_name, $date_of_birth, $contentType)
+        return $this->getSsnitAsyncWithHttpInfo($id, $full_name, $date_of_birth, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -1148,7 +1120,6 @@ class GhKycApi extends \Dojah\CustomApi
      *
      * SSNIT
      *
-     * @param  string $app_id (optional)
      * @param  string $id (optional)
      * @param  string $full_name (optional)
      * @param  string $date_of_birth (optional)
@@ -1157,10 +1128,10 @@ class GhKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getSsnitAsyncWithHttpInfo($app_id = null, $id = null, $full_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getSsnit'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getSsnitAsyncWithHttpInfo($id = null, $full_name = null, $date_of_birth = null, string $contentType = self::contentTypes['getSsnit'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetSsnitResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getSsnitRequest($app_id, $id, $full_name, $date_of_birth, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getSsnitRequest($id, $full_name, $date_of_birth, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -1204,7 +1175,6 @@ class GhKycApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getSsnit'
      *
-     * @param  string $app_id (optional)
      * @param  string $id (optional)
      * @param  string $full_name (optional)
      * @param  string $date_of_birth (optional)
@@ -1213,13 +1183,9 @@ class GhKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getSsnitRequest($app_id = SENTINEL_VALUE, $id = SENTINEL_VALUE, $full_name = SENTINEL_VALUE, $date_of_birth = SENTINEL_VALUE, string $contentType = self::contentTypes['getSsnit'][0])
+    public function getSsnitRequest($id = SENTINEL_VALUE, $full_name = SENTINEL_VALUE, $date_of_birth = SENTINEL_VALUE, string $contentType = self::contentTypes['getSsnit'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
         // Check if $id is a string
         if ($id !== SENTINEL_VALUE && !is_string($id)) {
             throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($id, true), gettype($id)));
@@ -1275,10 +1241,6 @@ class GhKycApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -1313,6 +1275,11 @@ class GhKycApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -1346,7 +1313,6 @@ class GhKycApi extends \Dojah\CustomApi
      *
      * Voter ID Lookup
      *
-     * @param  string $app_id app_id (optional)
      * @param  int $id id (optional)
      * @param  string $full_name full_name (optional)
      * @param  bool $is_new_id is_new_id (optional)
@@ -1357,7 +1323,6 @@ class GhKycApi extends \Dojah\CustomApi
      * @return object
      */
     public function getVoter(
-        $app_id = SENTINEL_VALUE,
         $id = SENTINEL_VALUE,
         $full_name = SENTINEL_VALUE,
         $is_new_id = SENTINEL_VALUE,
@@ -1368,7 +1333,7 @@ class GhKycApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getVoterWithHttpInfo($app_id, $id, $full_name, $is_new_id, $contentType);
+        list($response) = $this->getVoterWithHttpInfo($id, $full_name, $is_new_id, $contentType);
         return $response;
     }
 
@@ -1377,7 +1342,6 @@ class GhKycApi extends \Dojah\CustomApi
      *
      * Voter ID Lookup
      *
-     * @param  string $app_id (optional)
      * @param  int $id (optional)
      * @param  string $full_name (optional)
      * @param  bool $is_new_id (optional)
@@ -1387,9 +1351,9 @@ class GhKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of object, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getVoterWithHttpInfo($app_id = null, $id = null, $full_name = null, $is_new_id = null, string $contentType = self::contentTypes['getVoter'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getVoterWithHttpInfo($id = null, $full_name = null, $is_new_id = null, string $contentType = self::contentTypes['getVoter'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getVoterRequest($app_id, $id, $full_name, $is_new_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getVoterRequest($id, $full_name, $is_new_id, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -1405,7 +1369,6 @@ class GhKycApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getVoterWithHttpInfo(
-                        $app_id,
                         $id,
                         $full_name,
                         $is_new_id,
@@ -1498,7 +1461,6 @@ class GhKycApi extends \Dojah\CustomApi
      *
      * Voter ID Lookup
      *
-     * @param  string $app_id (optional)
      * @param  int $id (optional)
      * @param  string $full_name (optional)
      * @param  bool $is_new_id (optional)
@@ -1508,7 +1470,6 @@ class GhKycApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getVoterAsync(
-        $app_id = SENTINEL_VALUE,
         $id = SENTINEL_VALUE,
         $full_name = SENTINEL_VALUE,
         $is_new_id = SENTINEL_VALUE,
@@ -1519,7 +1480,7 @@ class GhKycApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getVoterAsyncWithHttpInfo($app_id, $id, $full_name, $is_new_id, $contentType)
+        return $this->getVoterAsyncWithHttpInfo($id, $full_name, $is_new_id, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -1532,7 +1493,6 @@ class GhKycApi extends \Dojah\CustomApi
      *
      * Voter ID Lookup
      *
-     * @param  string $app_id (optional)
      * @param  int $id (optional)
      * @param  string $full_name (optional)
      * @param  bool $is_new_id (optional)
@@ -1541,10 +1501,10 @@ class GhKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getVoterAsyncWithHttpInfo($app_id = null, $id = null, $full_name = null, $is_new_id = null, string $contentType = self::contentTypes['getVoter'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getVoterAsyncWithHttpInfo($id = null, $full_name = null, $is_new_id = null, string $contentType = self::contentTypes['getVoter'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = 'object';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getVoterRequest($app_id, $id, $full_name, $is_new_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getVoterRequest($id, $full_name, $is_new_id, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -1588,7 +1548,6 @@ class GhKycApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getVoter'
      *
-     * @param  string $app_id (optional)
      * @param  int $id (optional)
      * @param  string $full_name (optional)
      * @param  bool $is_new_id (optional)
@@ -1597,13 +1556,9 @@ class GhKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getVoterRequest($app_id = SENTINEL_VALUE, $id = SENTINEL_VALUE, $full_name = SENTINEL_VALUE, $is_new_id = SENTINEL_VALUE, string $contentType = self::contentTypes['getVoter'][0])
+    public function getVoterRequest($id = SENTINEL_VALUE, $full_name = SENTINEL_VALUE, $is_new_id = SENTINEL_VALUE, string $contentType = self::contentTypes['getVoter'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
         // Check if $full_name is a string
         if ($full_name !== SENTINEL_VALUE && !is_string($full_name)) {
             throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($full_name, true), gettype($full_name)));
@@ -1651,10 +1606,6 @@ class GhKycApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -1689,6 +1640,11 @@ class GhKycApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {

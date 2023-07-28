@@ -23,7 +23,7 @@ Get AML Info
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    Appid: YOUR_APPID,
+    apiKey: "APPID",
 );
 
 $profile_id = "WC7117469";
@@ -35,7 +35,6 @@ try {
 } catch (\Exception $e) {
     echo 'Exception when calling AMLApi->getScreeningInfo: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
@@ -76,7 +75,7 @@ AML Screening
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    Appid: YOUR_APPID,
+    apiKey: "APPID",
 );
 
 $first_name = "Tinubu ";
@@ -95,7 +94,6 @@ try {
 } catch (\Exception $e) {
     echo 'Exception when calling AMLApi->screenAml: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters

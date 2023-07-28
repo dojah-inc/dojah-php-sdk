@@ -47,7 +47,7 @@ Please follow the [installation procedure](#installation--usage) and then run th
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    Appid: YOUR_APPID,
+    apiKey: "APPID",
 );
 
 $profile_id = "WC7117469";
@@ -59,7 +59,6 @@ try {
 } catch (\Exception $e) {
     echo 'Exception when calling AMLApi->getScreeningInfo: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ## API Endpoints

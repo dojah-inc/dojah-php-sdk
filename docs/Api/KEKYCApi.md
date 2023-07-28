@@ -11,7 +11,7 @@ All URIs are relative to https://api.dojah.io, except if the operation defines a
 ## `getNationalId()`
 
 ```php
-getNationalId($app_id, $id): \Dojah\Model\GetNationalIdResponse
+getNationalId($id): \Dojah\Model\GetNationalIdResponse
 ```
 
 KYC - National ID
@@ -23,28 +23,25 @@ KYC - National ID
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $id = 24798402;
 
 try {
     $result = $dojah->keKyc->getNationalId(
-        app_id: $app_id, 
         id: $id
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling KeKycApi->getNationalId: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **id** | **int**|  | [optional] |
 
 ### Return type
@@ -53,7 +50,7 @@ try {
 
 ### Authorization
 
-No authorization required
+[appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -67,7 +64,7 @@ No authorization required
 ## `getPassport()`
 
 ```php
-getPassport($app_id): object
+getPassport(): object
 ```
 
 KYC - Passport
@@ -79,25 +76,20 @@ KYC - Passport
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 
 try {
-    $result = $dojah->keKyc->getPassport(
-        app_id: $app_id
-    );
+    $result = $dojah->keKyc->getPassport();
 } catch (\Exception $e) {
     echo 'Exception when calling KeKycApi->getPassport: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
-| Name | Type | Description  | Notes |
-| ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
+This endpoint does not need any parameter.
 
 ### Return type
 
@@ -105,7 +97,7 @@ try {
 
 ### Authorization
 
-No authorization required
+[appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 

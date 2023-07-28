@@ -22,7 +22,7 @@ KYC - Lookup ID
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
-    Appid: YOUR_APPID,
+    apiKey: "APPID",
 );
 
 $id_number = 9910180077084;
@@ -35,7 +35,6 @@ try {
 } catch (\Exception $e) {
     echo 'Exception when calling ZafKycApi->getId: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters

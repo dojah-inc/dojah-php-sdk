@@ -10,7 +10,7 @@ All URIs are relative to https://api.dojah.io, except if the operation defines a
 ## `getNin()`
 
 ```php
-getNin($app_id, $first_name, $last_name, $date_of_birth, $mothers_last_name, $mothers_first_name): object
+getNin($first_name, $last_name, $date_of_birth, $mothers_last_name, $mothers_first_name): object
 ```
 
 Lookup TZ NIN
@@ -22,9 +22,9 @@ Lookup TZ NIN
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $first_name = "khafsa";
 $last_name = "mohammed";
 $date_of_birth = "1994-01-11";
@@ -33,7 +33,6 @@ $mothers_first_name = "kassim";
 
 try {
     $result = $dojah->tzKyc->getNin(
-        app_id: $app_id, 
         first_name: $first_name, 
         last_name: $last_name, 
         date_of_birth: $date_of_birth, 
@@ -43,14 +42,12 @@ try {
 } catch (\Exception $e) {
     echo 'Exception when calling TzKycApi->getNin: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **first_name** | **string**|  | [optional] |
 | **last_name** | **string**|  | [optional] |
 | **date_of_birth** | **string**|  | [optional] |
@@ -63,7 +60,7 @@ try {
 
 ### Authorization
 
-No authorization required
+[appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 

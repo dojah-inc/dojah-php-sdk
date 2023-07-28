@@ -169,7 +169,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Get Basic BVN Info
      *
-     * @param  string $app_id app_id (optional)
      * @param  int $bvn bvn (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBasicBvn'] to see the possible values for this operation
      *
@@ -178,7 +177,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @return \Dojah\Model\ValidateBvnResponse
      */
     public function getBasicBvn(
-        $app_id = SENTINEL_VALUE,
         $bvn = SENTINEL_VALUE,
 
 
@@ -187,7 +185,7 @@ class NigeriaKycApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getBasicBvnWithHttpInfo($app_id, $bvn, $contentType);
+        list($response) = $this->getBasicBvnWithHttpInfo($bvn, $contentType);
         return $response;
     }
 
@@ -196,7 +194,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Get Basic BVN Info
      *
-     * @param  string $app_id (optional)
      * @param  int $bvn (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBasicBvn'] to see the possible values for this operation
      *
@@ -204,9 +201,9 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\ValidateBvnResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getBasicBvnWithHttpInfo($app_id = null, $bvn = null, string $contentType = self::contentTypes['getBasicBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getBasicBvnWithHttpInfo($bvn = null, string $contentType = self::contentTypes['getBasicBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBasicBvnRequest($app_id, $bvn, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBasicBvnRequest($bvn, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -222,7 +219,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getBasicBvnWithHttpInfo(
-                        $app_id,
                         $bvn,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
@@ -313,7 +309,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Get Basic BVN Info
      *
-     * @param  string $app_id (optional)
      * @param  int $bvn (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBasicBvn'] to see the possible values for this operation
      *
@@ -321,7 +316,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getBasicBvnAsync(
-        $app_id = SENTINEL_VALUE,
         $bvn = SENTINEL_VALUE,
 
 
@@ -330,7 +324,7 @@ class NigeriaKycApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getBasicBvnAsyncWithHttpInfo($app_id, $bvn, $contentType)
+        return $this->getBasicBvnAsyncWithHttpInfo($bvn, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -343,17 +337,16 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Get Basic BVN Info
      *
-     * @param  string $app_id (optional)
      * @param  int $bvn (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBasicBvn'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getBasicBvnAsyncWithHttpInfo($app_id = null, $bvn = null, string $contentType = self::contentTypes['getBasicBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getBasicBvnAsyncWithHttpInfo($bvn = null, string $contentType = self::contentTypes['getBasicBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\ValidateBvnResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBasicBvnRequest($app_id, $bvn, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBasicBvnRequest($bvn, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -397,20 +390,15 @@ class NigeriaKycApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getBasicBvn'
      *
-     * @param  string $app_id (optional)
      * @param  int $bvn (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBasicBvn'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getBasicBvnRequest($app_id = SENTINEL_VALUE, $bvn = SENTINEL_VALUE, string $contentType = self::contentTypes['getBasicBvn'][0])
+    public function getBasicBvnRequest($bvn = SENTINEL_VALUE, string $contentType = self::contentTypes['getBasicBvn'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
 
 
         $resourcePath = '/api/v1/kyc/bvn';
@@ -432,10 +420,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -470,6 +454,11 @@ class NigeriaKycApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -503,7 +492,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Lookup BVN Basic 1
      *
-     * @param  string $app_id app_id (optional)
      * @param  int $bvn bvn (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBasicBvn1'] to see the possible values for this operation
      *
@@ -512,7 +500,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @return \Dojah\Model\GetBasicBvnResponse
      */
     public function getBasicBvn1(
-        $app_id = SENTINEL_VALUE,
         $bvn = SENTINEL_VALUE,
 
 
@@ -521,7 +508,7 @@ class NigeriaKycApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getBasicBvn1WithHttpInfo($app_id, $bvn, $contentType);
+        list($response) = $this->getBasicBvn1WithHttpInfo($bvn, $contentType);
         return $response;
     }
 
@@ -530,7 +517,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Lookup BVN Basic 1
      *
-     * @param  string $app_id (optional)
      * @param  int $bvn (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBasicBvn1'] to see the possible values for this operation
      *
@@ -538,9 +524,9 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetBasicBvnResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getBasicBvn1WithHttpInfo($app_id = null, $bvn = null, string $contentType = self::contentTypes['getBasicBvn1'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getBasicBvn1WithHttpInfo($bvn = null, string $contentType = self::contentTypes['getBasicBvn1'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBasicBvn1Request($app_id, $bvn, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBasicBvn1Request($bvn, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -556,7 +542,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getBasicBvn1WithHttpInfo(
-                        $app_id,
                         $bvn,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
@@ -647,7 +632,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Lookup BVN Basic 1
      *
-     * @param  string $app_id (optional)
      * @param  int $bvn (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBasicBvn1'] to see the possible values for this operation
      *
@@ -655,7 +639,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getBasicBvn1Async(
-        $app_id = SENTINEL_VALUE,
         $bvn = SENTINEL_VALUE,
 
 
@@ -664,7 +647,7 @@ class NigeriaKycApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getBasicBvn1AsyncWithHttpInfo($app_id, $bvn, $contentType)
+        return $this->getBasicBvn1AsyncWithHttpInfo($bvn, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -677,17 +660,16 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Lookup BVN Basic 1
      *
-     * @param  string $app_id (optional)
      * @param  int $bvn (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBasicBvn1'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getBasicBvn1AsyncWithHttpInfo($app_id = null, $bvn = null, string $contentType = self::contentTypes['getBasicBvn1'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getBasicBvn1AsyncWithHttpInfo($bvn = null, string $contentType = self::contentTypes['getBasicBvn1'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetBasicBvnResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBasicBvn1Request($app_id, $bvn, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBasicBvn1Request($bvn, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -731,20 +713,15 @@ class NigeriaKycApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getBasicBvn1'
      *
-     * @param  string $app_id (optional)
      * @param  int $bvn (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBasicBvn1'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getBasicBvn1Request($app_id = SENTINEL_VALUE, $bvn = SENTINEL_VALUE, string $contentType = self::contentTypes['getBasicBvn1'][0])
+    public function getBasicBvn1Request($bvn = SENTINEL_VALUE, string $contentType = self::contentTypes['getBasicBvn1'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
 
 
         $resourcePath = '/api/v1/kyc/bvn/basic';
@@ -766,10 +743,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -804,6 +777,11 @@ class NigeriaKycApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -837,7 +815,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC Lookup Phone Number Basic
      *
-     * @param  string $app_id app_id (optional)
      * @param  int $phone_number phone_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBasicPhoneNumber'] to see the possible values for this operation
      *
@@ -846,7 +823,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @return object
      */
     public function getBasicPhoneNumber(
-        $app_id = SENTINEL_VALUE,
         $phone_number = SENTINEL_VALUE,
 
 
@@ -855,7 +831,7 @@ class NigeriaKycApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getBasicPhoneNumberWithHttpInfo($app_id, $phone_number, $contentType);
+        list($response) = $this->getBasicPhoneNumberWithHttpInfo($phone_number, $contentType);
         return $response;
     }
 
@@ -864,7 +840,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC Lookup Phone Number Basic
      *
-     * @param  string $app_id (optional)
      * @param  int $phone_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBasicPhoneNumber'] to see the possible values for this operation
      *
@@ -872,9 +847,9 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of object, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getBasicPhoneNumberWithHttpInfo($app_id = null, $phone_number = null, string $contentType = self::contentTypes['getBasicPhoneNumber'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getBasicPhoneNumberWithHttpInfo($phone_number = null, string $contentType = self::contentTypes['getBasicPhoneNumber'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBasicPhoneNumberRequest($app_id, $phone_number, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBasicPhoneNumberRequest($phone_number, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -890,7 +865,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getBasicPhoneNumberWithHttpInfo(
-                        $app_id,
                         $phone_number,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
@@ -981,7 +955,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC Lookup Phone Number Basic
      *
-     * @param  string $app_id (optional)
      * @param  int $phone_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBasicPhoneNumber'] to see the possible values for this operation
      *
@@ -989,7 +962,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getBasicPhoneNumberAsync(
-        $app_id = SENTINEL_VALUE,
         $phone_number = SENTINEL_VALUE,
 
 
@@ -998,7 +970,7 @@ class NigeriaKycApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getBasicPhoneNumberAsyncWithHttpInfo($app_id, $phone_number, $contentType)
+        return $this->getBasicPhoneNumberAsyncWithHttpInfo($phone_number, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -1011,17 +983,16 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC Lookup Phone Number Basic
      *
-     * @param  string $app_id (optional)
      * @param  int $phone_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBasicPhoneNumber'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getBasicPhoneNumberAsyncWithHttpInfo($app_id = null, $phone_number = null, string $contentType = self::contentTypes['getBasicPhoneNumber'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getBasicPhoneNumberAsyncWithHttpInfo($phone_number = null, string $contentType = self::contentTypes['getBasicPhoneNumber'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = 'object';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBasicPhoneNumberRequest($app_id, $phone_number, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getBasicPhoneNumberRequest($phone_number, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -1065,20 +1036,15 @@ class NigeriaKycApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getBasicPhoneNumber'
      *
-     * @param  string $app_id (optional)
      * @param  int $phone_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getBasicPhoneNumber'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getBasicPhoneNumberRequest($app_id = SENTINEL_VALUE, $phone_number = SENTINEL_VALUE, string $contentType = self::contentTypes['getBasicPhoneNumber'][0])
+    public function getBasicPhoneNumberRequest($phone_number = SENTINEL_VALUE, string $contentType = self::contentTypes['getBasicPhoneNumber'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
 
 
         $resourcePath = '/api/v1/kyc/phone_number/basic';
@@ -1100,10 +1066,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -1138,6 +1100,11 @@ class NigeriaKycApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -1171,7 +1138,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Get Drivers License Info
      *
-     * @param  string $app_id app_id (optional)
      * @param  string $license_number license_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getDriversLicense'] to see the possible values for this operation
      *
@@ -1180,7 +1146,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @return \Dojah\Model\GetKycDriversLicenseResponse
      */
     public function getDriversLicense(
-        $app_id = SENTINEL_VALUE,
         $license_number = SENTINEL_VALUE,
 
 
@@ -1189,7 +1154,7 @@ class NigeriaKycApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getDriversLicenseWithHttpInfo($app_id, $license_number, $contentType);
+        list($response) = $this->getDriversLicenseWithHttpInfo($license_number, $contentType);
         return $response;
     }
 
@@ -1198,7 +1163,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Get Drivers License Info
      *
-     * @param  string $app_id (optional)
      * @param  string $license_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getDriversLicense'] to see the possible values for this operation
      *
@@ -1206,9 +1170,9 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetKycDriversLicenseResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getDriversLicenseWithHttpInfo($app_id = null, $license_number = null, string $contentType = self::contentTypes['getDriversLicense'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getDriversLicenseWithHttpInfo($license_number = null, string $contentType = self::contentTypes['getDriversLicense'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getDriversLicenseRequest($app_id, $license_number, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getDriversLicenseRequest($license_number, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -1224,7 +1188,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getDriversLicenseWithHttpInfo(
-                        $app_id,
                         $license_number,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
@@ -1315,7 +1278,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Get Drivers License Info
      *
-     * @param  string $app_id (optional)
      * @param  string $license_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getDriversLicense'] to see the possible values for this operation
      *
@@ -1323,7 +1285,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getDriversLicenseAsync(
-        $app_id = SENTINEL_VALUE,
         $license_number = SENTINEL_VALUE,
 
 
@@ -1332,7 +1293,7 @@ class NigeriaKycApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getDriversLicenseAsyncWithHttpInfo($app_id, $license_number, $contentType)
+        return $this->getDriversLicenseAsyncWithHttpInfo($license_number, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -1345,17 +1306,16 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Get Drivers License Info
      *
-     * @param  string $app_id (optional)
      * @param  string $license_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getDriversLicense'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getDriversLicenseAsyncWithHttpInfo($app_id = null, $license_number = null, string $contentType = self::contentTypes['getDriversLicense'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getDriversLicenseAsyncWithHttpInfo($license_number = null, string $contentType = self::contentTypes['getDriversLicense'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetKycDriversLicenseResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getDriversLicenseRequest($app_id, $license_number, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getDriversLicenseRequest($license_number, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -1399,20 +1359,15 @@ class NigeriaKycApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getDriversLicense'
      *
-     * @param  string $app_id (optional)
      * @param  string $license_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getDriversLicense'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getDriversLicenseRequest($app_id = SENTINEL_VALUE, $license_number = SENTINEL_VALUE, string $contentType = self::contentTypes['getDriversLicense'][0])
+    public function getDriversLicenseRequest($license_number = SENTINEL_VALUE, string $contentType = self::contentTypes['getDriversLicense'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
         // Check if $license_number is a string
         if ($license_number !== SENTINEL_VALUE && !is_string($license_number)) {
             throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($license_number, true), gettype($license_number)));
@@ -1438,10 +1393,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -1476,6 +1427,11 @@ class NigeriaKycApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -1509,7 +1465,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Get NIN Info
      *
-     * @param  string $app_id app_id (optional)
      * @param  int $nin nin (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getNin'] to see the possible values for this operation
      *
@@ -1518,7 +1473,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @return \Dojah\Model\NigeriaKycGetNinResponse
      */
     public function getNin(
-        $app_id = SENTINEL_VALUE,
         $nin = SENTINEL_VALUE,
 
 
@@ -1527,7 +1481,7 @@ class NigeriaKycApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getNinWithHttpInfo($app_id, $nin, $contentType);
+        list($response) = $this->getNinWithHttpInfo($nin, $contentType);
         return $response;
     }
 
@@ -1536,7 +1490,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Get NIN Info
      *
-     * @param  string $app_id (optional)
      * @param  int $nin (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getNin'] to see the possible values for this operation
      *
@@ -1544,9 +1497,9 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\NigeriaKycGetNinResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getNinWithHttpInfo($app_id = null, $nin = null, string $contentType = self::contentTypes['getNin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getNinWithHttpInfo($nin = null, string $contentType = self::contentTypes['getNin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getNinRequest($app_id, $nin, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getNinRequest($nin, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -1562,7 +1515,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getNinWithHttpInfo(
-                        $app_id,
                         $nin,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
@@ -1653,7 +1605,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Get NIN Info
      *
-     * @param  string $app_id (optional)
      * @param  int $nin (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getNin'] to see the possible values for this operation
      *
@@ -1661,7 +1612,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getNinAsync(
-        $app_id = SENTINEL_VALUE,
         $nin = SENTINEL_VALUE,
 
 
@@ -1670,7 +1620,7 @@ class NigeriaKycApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getNinAsyncWithHttpInfo($app_id, $nin, $contentType)
+        return $this->getNinAsyncWithHttpInfo($nin, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -1683,17 +1633,16 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Get NIN Info
      *
-     * @param  string $app_id (optional)
      * @param  int $nin (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getNin'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getNinAsyncWithHttpInfo($app_id = null, $nin = null, string $contentType = self::contentTypes['getNin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getNinAsyncWithHttpInfo($nin = null, string $contentType = self::contentTypes['getNin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\NigeriaKycGetNinResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getNinRequest($app_id, $nin, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getNinRequest($nin, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -1737,20 +1686,15 @@ class NigeriaKycApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getNin'
      *
-     * @param  string $app_id (optional)
      * @param  int $nin (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getNin'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getNinRequest($app_id = SENTINEL_VALUE, $nin = SENTINEL_VALUE, string $contentType = self::contentTypes['getNin'][0])
+    public function getNinRequest($nin = SENTINEL_VALUE, string $contentType = self::contentTypes['getNin'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
 
 
         $resourcePath = '/api/v1/kyc/nin';
@@ -1772,10 +1716,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -1810,6 +1750,11 @@ class NigeriaKycApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -1843,7 +1788,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Lookup BVN Normal
      *
-     * @param  string $app_id app_id (optional)
      * @param  int $bvn bvn (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getNormalBvn'] to see the possible values for this operation
      *
@@ -1852,7 +1796,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @return \Dojah\Model\GetFullBvnResponse
      */
     public function getNormalBvn(
-        $app_id = SENTINEL_VALUE,
         $bvn = SENTINEL_VALUE,
 
 
@@ -1861,7 +1804,7 @@ class NigeriaKycApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getNormalBvnWithHttpInfo($app_id, $bvn, $contentType);
+        list($response) = $this->getNormalBvnWithHttpInfo($bvn, $contentType);
         return $response;
     }
 
@@ -1870,7 +1813,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Lookup BVN Normal
      *
-     * @param  string $app_id (optional)
      * @param  int $bvn (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getNormalBvn'] to see the possible values for this operation
      *
@@ -1878,9 +1820,9 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetFullBvnResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getNormalBvnWithHttpInfo($app_id = null, $bvn = null, string $contentType = self::contentTypes['getNormalBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getNormalBvnWithHttpInfo($bvn = null, string $contentType = self::contentTypes['getNormalBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getNormalBvnRequest($app_id, $bvn, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getNormalBvnRequest($bvn, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -1896,7 +1838,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getNormalBvnWithHttpInfo(
-                        $app_id,
                         $bvn,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
@@ -1987,7 +1928,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Lookup BVN Normal
      *
-     * @param  string $app_id (optional)
      * @param  int $bvn (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getNormalBvn'] to see the possible values for this operation
      *
@@ -1995,7 +1935,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getNormalBvnAsync(
-        $app_id = SENTINEL_VALUE,
         $bvn = SENTINEL_VALUE,
 
 
@@ -2004,7 +1943,7 @@ class NigeriaKycApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getNormalBvnAsyncWithHttpInfo($app_id, $bvn, $contentType)
+        return $this->getNormalBvnAsyncWithHttpInfo($bvn, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -2017,17 +1956,16 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Lookup BVN Normal
      *
-     * @param  string $app_id (optional)
      * @param  int $bvn (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getNormalBvn'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getNormalBvnAsyncWithHttpInfo($app_id = null, $bvn = null, string $contentType = self::contentTypes['getNormalBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getNormalBvnAsyncWithHttpInfo($bvn = null, string $contentType = self::contentTypes['getNormalBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetFullBvnResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getNormalBvnRequest($app_id, $bvn, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getNormalBvnRequest($bvn, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -2071,20 +2009,15 @@ class NigeriaKycApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getNormalBvn'
      *
-     * @param  string $app_id (optional)
      * @param  int $bvn (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getNormalBvn'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getNormalBvnRequest($app_id = SENTINEL_VALUE, $bvn = SENTINEL_VALUE, string $contentType = self::contentTypes['getNormalBvn'][0])
+    public function getNormalBvnRequest($bvn = SENTINEL_VALUE, string $contentType = self::contentTypes['getNormalBvn'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
 
 
         $resourcePath = '/api/v1/kyc/bvn/full';
@@ -2106,10 +2039,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -2144,6 +2073,11 @@ class NigeriaKycApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -2177,7 +2111,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Get NUBAN Information
      *
-     * @param  string $app_id app_id (optional)
      * @param  int $bank_code bank_code (optional)
      * @param  int $account_number account_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getNuban'] to see the possible values for this operation
@@ -2187,7 +2120,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @return \Dojah\Model\GetNubanResponse
      */
     public function getNuban(
-        $app_id = SENTINEL_VALUE,
         $bank_code = SENTINEL_VALUE,
         $account_number = SENTINEL_VALUE,
 
@@ -2197,7 +2129,7 @@ class NigeriaKycApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getNubanWithHttpInfo($app_id, $bank_code, $account_number, $contentType);
+        list($response) = $this->getNubanWithHttpInfo($bank_code, $account_number, $contentType);
         return $response;
     }
 
@@ -2206,7 +2138,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Get NUBAN Information
      *
-     * @param  string $app_id (optional)
      * @param  int $bank_code (optional)
      * @param  int $account_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getNuban'] to see the possible values for this operation
@@ -2215,9 +2146,9 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetNubanResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getNubanWithHttpInfo($app_id = null, $bank_code = null, $account_number = null, string $contentType = self::contentTypes['getNuban'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getNubanWithHttpInfo($bank_code = null, $account_number = null, string $contentType = self::contentTypes['getNuban'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getNubanRequest($app_id, $bank_code, $account_number, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getNubanRequest($bank_code, $account_number, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -2233,7 +2164,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getNubanWithHttpInfo(
-                        $app_id,
                         $bank_code,
                         $account_number,
                         $contentType,
@@ -2325,7 +2255,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Get NUBAN Information
      *
-     * @param  string $app_id (optional)
      * @param  int $bank_code (optional)
      * @param  int $account_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getNuban'] to see the possible values for this operation
@@ -2334,7 +2263,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getNubanAsync(
-        $app_id = SENTINEL_VALUE,
         $bank_code = SENTINEL_VALUE,
         $account_number = SENTINEL_VALUE,
 
@@ -2344,7 +2272,7 @@ class NigeriaKycApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getNubanAsyncWithHttpInfo($app_id, $bank_code, $account_number, $contentType)
+        return $this->getNubanAsyncWithHttpInfo($bank_code, $account_number, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -2357,7 +2285,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Get NUBAN Information
      *
-     * @param  string $app_id (optional)
      * @param  int $bank_code (optional)
      * @param  int $account_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getNuban'] to see the possible values for this operation
@@ -2365,10 +2292,10 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getNubanAsyncWithHttpInfo($app_id = null, $bank_code = null, $account_number = null, string $contentType = self::contentTypes['getNuban'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getNubanAsyncWithHttpInfo($bank_code = null, $account_number = null, string $contentType = self::contentTypes['getNuban'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetNubanResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getNubanRequest($app_id, $bank_code, $account_number, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getNubanRequest($bank_code, $account_number, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -2412,7 +2339,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getNuban'
      *
-     * @param  string $app_id (optional)
      * @param  int $bank_code (optional)
      * @param  int $account_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getNuban'] to see the possible values for this operation
@@ -2420,13 +2346,9 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getNubanRequest($app_id = SENTINEL_VALUE, $bank_code = SENTINEL_VALUE, $account_number = SENTINEL_VALUE, string $contentType = self::contentTypes['getNuban'][0])
+    public function getNubanRequest($bank_code = SENTINEL_VALUE, $account_number = SENTINEL_VALUE, string $contentType = self::contentTypes['getNuban'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
 
 
         $resourcePath = '/api/v1/kyc/nuban';
@@ -2459,10 +2381,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -2497,6 +2415,11 @@ class NigeriaKycApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -2880,7 +2803,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Lookup Phone Number
      *
-     * @param  string $app_id app_id (optional)
      * @param  int $phone_number phone_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPhoneNumber'] to see the possible values for this operation
      *
@@ -2889,7 +2811,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @return \Dojah\Model\GetPhoneNumberResponse|\Dojah\Model\GetPhoneNumber404Response
      */
     public function getPhoneNumber(
-        $app_id = SENTINEL_VALUE,
         $phone_number = SENTINEL_VALUE,
 
 
@@ -2898,7 +2819,7 @@ class NigeriaKycApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getPhoneNumberWithHttpInfo($app_id, $phone_number, $contentType);
+        list($response) = $this->getPhoneNumberWithHttpInfo($phone_number, $contentType);
         return $response;
     }
 
@@ -2907,7 +2828,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Lookup Phone Number
      *
-     * @param  string $app_id (optional)
      * @param  int $phone_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPhoneNumber'] to see the possible values for this operation
      *
@@ -2915,9 +2835,9 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetPhoneNumberResponse|\Dojah\Model\GetPhoneNumber404Response, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getPhoneNumberWithHttpInfo($app_id = null, $phone_number = null, string $contentType = self::contentTypes['getPhoneNumber'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getPhoneNumberWithHttpInfo($phone_number = null, string $contentType = self::contentTypes['getPhoneNumber'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getPhoneNumberRequest($app_id, $phone_number, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getPhoneNumberRequest($phone_number, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -2933,7 +2853,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getPhoneNumberWithHttpInfo(
-                        $app_id,
                         $phone_number,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
@@ -3047,7 +2966,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Lookup Phone Number
      *
-     * @param  string $app_id (optional)
      * @param  int $phone_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPhoneNumber'] to see the possible values for this operation
      *
@@ -3055,7 +2973,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getPhoneNumberAsync(
-        $app_id = SENTINEL_VALUE,
         $phone_number = SENTINEL_VALUE,
 
 
@@ -3064,7 +2981,7 @@ class NigeriaKycApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getPhoneNumberAsyncWithHttpInfo($app_id, $phone_number, $contentType)
+        return $this->getPhoneNumberAsyncWithHttpInfo($phone_number, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -3077,17 +2994,16 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Lookup Phone Number
      *
-     * @param  string $app_id (optional)
      * @param  int $phone_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPhoneNumber'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getPhoneNumberAsyncWithHttpInfo($app_id = null, $phone_number = null, string $contentType = self::contentTypes['getPhoneNumber'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getPhoneNumberAsyncWithHttpInfo($phone_number = null, string $contentType = self::contentTypes['getPhoneNumber'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetPhoneNumberResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getPhoneNumberRequest($app_id, $phone_number, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getPhoneNumberRequest($phone_number, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -3131,20 +3047,15 @@ class NigeriaKycApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getPhoneNumber'
      *
-     * @param  string $app_id (optional)
      * @param  int $phone_number (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPhoneNumber'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getPhoneNumberRequest($app_id = SENTINEL_VALUE, $phone_number = SENTINEL_VALUE, string $contentType = self::contentTypes['getPhoneNumber'][0])
+    public function getPhoneNumberRequest($phone_number = SENTINEL_VALUE, string $contentType = self::contentTypes['getPhoneNumber'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
 
 
         $resourcePath = '/api/v1/kyc/phone_number';
@@ -3166,10 +3077,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -3204,6 +3111,11 @@ class NigeriaKycApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -3237,7 +3149,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Lookup BVN Premium
      *
-     * @param  string $app_id app_id (optional)
      * @param  int $bvn bvn (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPremiumBvn'] to see the possible values for this operation
      *
@@ -3246,7 +3157,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @return \Dojah\Model\GetPremiumBvnResponse
      */
     public function getPremiumBvn(
-        $app_id = SENTINEL_VALUE,
         $bvn = SENTINEL_VALUE,
 
 
@@ -3255,7 +3165,7 @@ class NigeriaKycApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getPremiumBvnWithHttpInfo($app_id, $bvn, $contentType);
+        list($response) = $this->getPremiumBvnWithHttpInfo($bvn, $contentType);
         return $response;
     }
 
@@ -3264,7 +3174,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Lookup BVN Premium
      *
-     * @param  string $app_id (optional)
      * @param  int $bvn (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPremiumBvn'] to see the possible values for this operation
      *
@@ -3272,9 +3181,9 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetPremiumBvnResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getPremiumBvnWithHttpInfo($app_id = null, $bvn = null, string $contentType = self::contentTypes['getPremiumBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getPremiumBvnWithHttpInfo($bvn = null, string $contentType = self::contentTypes['getPremiumBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getPremiumBvnRequest($app_id, $bvn, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getPremiumBvnRequest($bvn, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -3290,7 +3199,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getPremiumBvnWithHttpInfo(
-                        $app_id,
                         $bvn,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
@@ -3381,7 +3289,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Lookup BVN Premium
      *
-     * @param  string $app_id (optional)
      * @param  int $bvn (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPremiumBvn'] to see the possible values for this operation
      *
@@ -3389,7 +3296,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getPremiumBvnAsync(
-        $app_id = SENTINEL_VALUE,
         $bvn = SENTINEL_VALUE,
 
 
@@ -3398,7 +3304,7 @@ class NigeriaKycApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getPremiumBvnAsyncWithHttpInfo($app_id, $bvn, $contentType)
+        return $this->getPremiumBvnAsyncWithHttpInfo($bvn, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -3411,17 +3317,16 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * KYC - Lookup BVN Premium
      *
-     * @param  string $app_id (optional)
      * @param  int $bvn (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPremiumBvn'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getPremiumBvnAsyncWithHttpInfo($app_id = null, $bvn = null, string $contentType = self::contentTypes['getPremiumBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getPremiumBvnAsyncWithHttpInfo($bvn = null, string $contentType = self::contentTypes['getPremiumBvn'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetPremiumBvnResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getPremiumBvnRequest($app_id, $bvn, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getPremiumBvnRequest($bvn, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -3465,20 +3370,15 @@ class NigeriaKycApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getPremiumBvn'
      *
-     * @param  string $app_id (optional)
      * @param  int $bvn (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getPremiumBvn'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getPremiumBvnRequest($app_id = SENTINEL_VALUE, $bvn = SENTINEL_VALUE, string $contentType = self::contentTypes['getPremiumBvn'][0])
+    public function getPremiumBvnRequest($bvn = SENTINEL_VALUE, string $contentType = self::contentTypes['getPremiumBvn'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
 
 
         $resourcePath = '/api/v1/kyc/bvn/advance';
@@ -3500,10 +3400,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -3538,6 +3434,11 @@ class NigeriaKycApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
@@ -3571,7 +3472,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * Lookup VNIN
      *
-     * @param  string $app_id app_id (optional)
      * @param  string $vnin vnin (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getVnin'] to see the possible values for this operation
      *
@@ -3580,7 +3480,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @return \Dojah\Model\GetVninResponse
      */
     public function getVnin(
-        $app_id = SENTINEL_VALUE,
         $vnin = SENTINEL_VALUE,
 
 
@@ -3589,7 +3488,7 @@ class NigeriaKycApi extends \Dojah\CustomApi
     )
     {
 
-        list($response) = $this->getVninWithHttpInfo($app_id, $vnin, $contentType);
+        list($response) = $this->getVninWithHttpInfo($vnin, $contentType);
         return $response;
     }
 
@@ -3598,7 +3497,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * Lookup VNIN
      *
-     * @param  string $app_id (optional)
      * @param  string $vnin (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getVnin'] to see the possible values for this operation
      *
@@ -3606,9 +3504,9 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @throws \InvalidArgumentException
      * @return array of \Dojah\Model\GetVninResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getVninWithHttpInfo($app_id = null, $vnin = null, string $contentType = self::contentTypes['getVnin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getVninWithHttpInfo($vnin = null, string $contentType = self::contentTypes['getVnin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getVninRequest($app_id, $vnin, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getVninRequest($vnin, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -3624,7 +3522,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
                     $requestOptions->shouldRetryOAuth()
                 ) {
                     return $this->getVninWithHttpInfo(
-                        $app_id,
                         $vnin,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
@@ -3715,7 +3612,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * Lookup VNIN
      *
-     * @param  string $app_id (optional)
      * @param  string $vnin (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getVnin'] to see the possible values for this operation
      *
@@ -3723,7 +3619,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getVninAsync(
-        $app_id = SENTINEL_VALUE,
         $vnin = SENTINEL_VALUE,
 
 
@@ -3732,7 +3627,7 @@ class NigeriaKycApi extends \Dojah\CustomApi
     )
     {
 
-        return $this->getVninAsyncWithHttpInfo($app_id, $vnin, $contentType)
+        return $this->getVninAsyncWithHttpInfo($vnin, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -3745,17 +3640,16 @@ class NigeriaKycApi extends \Dojah\CustomApi
      *
      * Lookup VNIN
      *
-     * @param  string $app_id (optional)
      * @param  string $vnin (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getVnin'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getVninAsyncWithHttpInfo($app_id = null, $vnin = null, string $contentType = self::contentTypes['getVnin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function getVninAsyncWithHttpInfo($vnin = null, string $contentType = self::contentTypes['getVnin'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = '\Dojah\Model\GetVninResponse';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->getVninRequest($app_id, $vnin, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->getVninRequest($vnin, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config);
@@ -3799,20 +3693,15 @@ class NigeriaKycApi extends \Dojah\CustomApi
     /**
      * Create request for operation 'getVnin'
      *
-     * @param  string $app_id (optional)
      * @param  string $vnin (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getVnin'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getVninRequest($app_id = SENTINEL_VALUE, $vnin = SENTINEL_VALUE, string $contentType = self::contentTypes['getVnin'][0])
+    public function getVninRequest($vnin = SENTINEL_VALUE, string $contentType = self::contentTypes['getVnin'][0])
     {
 
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
         // Check if $vnin is a string
         if ($vnin !== SENTINEL_VALUE && !is_string($vnin)) {
             throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($vnin, true), gettype($vnin)));
@@ -3838,10 +3727,6 @@ class NigeriaKycApi extends \Dojah\CustomApi
             ) ?? []);
         }
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -3876,6 +3761,11 @@ class NigeriaKycApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {

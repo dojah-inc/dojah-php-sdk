@@ -15,7 +15,7 @@ All URIs are relative to https://api.dojah.io, except if the operation defines a
 ## `getSenderId()`
 
 ```php
-getSenderId($app_id): \Dojah\Model\GetSenderIdResponse
+getSenderId(): \Dojah\Model\GetSenderIdResponse
 ```
 
 Messaging - Get Sender IDs
@@ -27,26 +27,21 @@ Messaging - Get Sender IDs
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 
 try {
-    $result = $dojah->authentication->getSenderId(
-        app_id: $app_id
-    );
+    $result = $dojah->authentication->getSenderId();
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling AuthenticationApi->getSenderId: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
-| Name | Type | Description  | Notes |
-| ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
+This endpoint does not need any parameter.
 
 ### Return type
 
@@ -54,7 +49,7 @@ try {
 
 ### Authorization
 
-[apikeyAuth](../../README.md#apikeyAuth)
+[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -68,7 +63,7 @@ try {
 ## `getSmsStatus()`
 
 ```php
-getSmsStatus($app_id, $message_id): \Dojah\Model\GetSmsStatusResponse
+getSmsStatus($message_id): \Dojah\Model\GetSmsStatusResponse
 ```
 
 Messaging - Get SMS Status
@@ -80,28 +75,25 @@ Messaging - Get SMS Status
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $message_id = "54818c8a-4aed-4e5f-b846-8274fd4e0bbd";
 
 try {
     $result = $dojah->authentication->getSmsStatus(
-        app_id: $app_id, 
         message_id: $message_id
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling AuthenticationApi->getSmsStatus: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **message_id** | **string**|  | [optional] |
 
 ### Return type
@@ -110,7 +102,7 @@ try {
 
 ### Authorization
 
-[apikeyAuth](../../README.md#apikeyAuth)
+[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -124,7 +116,7 @@ try {
 ## `requestSenderId()`
 
 ```php
-requestSenderId($request_sender_id_request, $app_id): \Dojah\Model\RequestSenderIdResponse
+requestSenderId($request_sender_id_request): \Dojah\Model\RequestSenderIdResponse
 ```
 
 Messaging - Request Sender ID
@@ -136,21 +128,19 @@ Messaging - Request Sender ID
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
 $sender_id = "Dojah";
-$app_id = "{{app_id}}";
 
 try {
     $result = $dojah->authentication->requestSenderId(
-        sender_id: $sender_id, 
-        app_id: $app_id
+        sender_id: $sender_id
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling AuthenticationApi->requestSenderId: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
@@ -158,7 +148,6 @@ try {
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
 | **request_sender_id_request** | [**\Dojah\Model\RequestSenderIdRequest**](../Model/RequestSenderIdRequest.md)|  | |
-| **app_id** | **string**|  | [optional] |
 
 ### Return type
 
@@ -166,7 +155,7 @@ try {
 
 ### Authorization
 
-No authorization required
+[appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -180,7 +169,7 @@ No authorization required
 ## `sendOtp()`
 
 ```php
-sendOtp($authentication_send_otp_request, $app_id): \Dojah\Model\AuthenticationSendOtpResponse
+sendOtp($authentication_send_otp_request): \Dojah\Model\AuthenticationSendOtpResponse
 ```
 
 Messaging - Send OTP
@@ -192,6 +181,7 @@ Messaging - Send OTP
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
 $destination = "08068810228";
@@ -199,7 +189,6 @@ $length = 6;
 $channel = "sms";
 $sender_id = "Dojah";
 $priority = True;
-$app_id = "{{app_id}}";
 
 try {
     $result = $dojah->authentication->sendOtp(
@@ -207,14 +196,12 @@ try {
         length: $length, 
         channel: $channel, 
         sender_id: $sender_id, 
-        priority: $priority, 
-        app_id: $app_id
+        priority: $priority
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling AuthenticationApi->sendOtp: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
@@ -222,7 +209,6 @@ try {
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
 | **authentication_send_otp_request** | [**\Dojah\Model\AuthenticationSendOtpRequest**](../Model/AuthenticationSendOtpRequest.md)|  | |
-| **app_id** | **string**|  | [optional] |
 
 ### Return type
 
@@ -230,7 +216,7 @@ try {
 
 ### Authorization
 
-[apikeyAuth](../../README.md#apikeyAuth)
+[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -244,7 +230,7 @@ try {
 ## `sendSms()`
 
 ```php
-sendSms($send_sms_request, $app_id): \Dojah\Model\SendSmsResponse
+sendSms($send_sms_request): \Dojah\Model\SendSmsResponse
 ```
 
 Messaging - Send SMS
@@ -256,27 +242,25 @@ Messaging - Send SMS
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
 $destination = "08068810228";
 $message = "Checking to see if you are Okay";
 $channel = "whatsapp";
 $sender_id = "Kedesa";
-$app_id = "{{app_id}}";
 
 try {
     $result = $dojah->authentication->sendSms(
         destination: $destination, 
         message: $message, 
         channel: $channel, 
-        sender_id: $sender_id, 
-        app_id: $app_id
+        sender_id: $sender_id
     );
     print_r($result->$getEntity());
 } catch (\Exception $e) {
     echo 'Exception when calling AuthenticationApi->sendSms: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
@@ -284,7 +268,6 @@ try {
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
 | **send_sms_request** | [**\Dojah\Model\SendSmsRequest**](../Model/SendSmsRequest.md)|  | |
-| **app_id** | **string**|  | [optional] |
 
 ### Return type
 
@@ -292,7 +275,7 @@ try {
 
 ### Authorization
 
-[apikeyAuth](../../README.md#apikeyAuth)
+[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 
@@ -306,7 +289,7 @@ try {
 ## `validateOtp()`
 
 ```php
-validateOtp($app_id, $reference_id, $code): \Dojah\Model\AuthenticationValidateOtpResponse
+validateOtp($reference_id, $code): \Dojah\Model\AuthenticationValidateOtpResponse
 ```
 
 Messaging - Validate OTP
@@ -318,15 +301,14 @@ Messaging - Validate OTP
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $dojah = new \Dojah\Client(
+    apiKey: "APPID",
 );
 
-$app_id = "{{app_id}}";
 $reference_id = "a89e4b64-367f-414f-a189-1800bc364b05";
 $code = 81974;
 
 try {
     $result = $dojah->authentication->validateOtp(
-        app_id: $app_id, 
         reference_id: $reference_id, 
         code: $code
     );
@@ -334,14 +316,12 @@ try {
 } catch (\Exception $e) {
     echo 'Exception when calling AuthenticationApi->validateOtp: ', $e->getMessage(), PHP_EOL;
 }
-
 ```
 
 ### Parameters
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **app_id** | **string**|  | [optional] |
 | **reference_id** | **string**|  | [optional] |
 | **code** | **int**|  | [optional] |
 
@@ -351,7 +331,7 @@ try {
 
 ### Authorization
 
-[apikeyAuth](../../README.md#apikeyAuth)
+[apikeyAuth](../../README.md#apikeyAuth), [appIdAuth](../../README.md#appIdAuth)
 
 ### HTTP request headers
 

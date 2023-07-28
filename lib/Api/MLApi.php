@@ -140,7 +140,6 @@ class MLApi extends \Dojah\CustomApi
      * KYC - Selfie Photo ID Verification
      *
      * @param  \Dojah\Model\MlVerifyPhotoIdWithSelfieRequest $ml_verify_photo_id_with_selfie_request ml_verify_photo_id_with_selfie_request (required)
-     * @param  string $app_id app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyPhotoIdWithSelfie'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
@@ -151,7 +150,6 @@ class MLApi extends \Dojah\CustomApi
 
         $selfie_image = SENTINEL_VALUE,
         $photoid_image = SENTINEL_VALUE,
-        $app_id = SENTINEL_VALUE,
 
         string $contentType = self::contentTypes['verifyPhotoIdWithSelfie'][0]
 
@@ -162,7 +160,7 @@ class MLApi extends \Dojah\CustomApi
         $this->setRequestBodyProperty($_body, "photoid_image", $photoid_image);
         $ml_verify_photo_id_with_selfie_request = $_body;
 
-        list($response) = $this->verifyPhotoIdWithSelfieWithHttpInfo($ml_verify_photo_id_with_selfie_request, $app_id, $contentType);
+        list($response) = $this->verifyPhotoIdWithSelfieWithHttpInfo($ml_verify_photo_id_with_selfie_request, $contentType);
         return $response;
     }
 
@@ -172,16 +170,15 @@ class MLApi extends \Dojah\CustomApi
      * KYC - Selfie Photo ID Verification
      *
      * @param  \Dojah\Model\MlVerifyPhotoIdWithSelfieRequest $ml_verify_photo_id_with_selfie_request (required)
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyPhotoIdWithSelfie'] to see the possible values for this operation
      *
      * @throws \Dojah\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return array of object, HTTP status code, HTTP response headers (array of strings)
      */
-    public function verifyPhotoIdWithSelfieWithHttpInfo($ml_verify_photo_id_with_selfie_request, $app_id = null, string $contentType = self::contentTypes['verifyPhotoIdWithSelfie'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function verifyPhotoIdWithSelfieWithHttpInfo($ml_verify_photo_id_with_selfie_request, string $contentType = self::contentTypes['verifyPhotoIdWithSelfie'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifyPhotoIdWithSelfieRequest($ml_verify_photo_id_with_selfie_request, $app_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifyPhotoIdWithSelfieRequest($ml_verify_photo_id_with_selfie_request, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
@@ -198,7 +195,6 @@ class MLApi extends \Dojah\CustomApi
                 ) {
                     return $this->verifyPhotoIdWithSelfieWithHttpInfo(
                         $ml_verify_photo_id_with_selfie_request,
-                        $app_id,
                         $contentType,
                         $requestOptions->setRetryOAuth(false)
                     );
@@ -289,7 +285,6 @@ class MLApi extends \Dojah\CustomApi
      * KYC - Selfie Photo ID Verification
      *
      * @param  \Dojah\Model\MlVerifyPhotoIdWithSelfieRequest $ml_verify_photo_id_with_selfie_request (required)
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyPhotoIdWithSelfie'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
@@ -299,7 +294,6 @@ class MLApi extends \Dojah\CustomApi
 
         $selfie_image = SENTINEL_VALUE,
         $photoid_image = SENTINEL_VALUE,
-        $app_id = SENTINEL_VALUE,
 
         string $contentType = self::contentTypes['verifyPhotoIdWithSelfie'][0]
 
@@ -310,7 +304,7 @@ class MLApi extends \Dojah\CustomApi
         $this->setRequestBodyProperty($_body, "photoid_image", $photoid_image);
         $ml_verify_photo_id_with_selfie_request = $_body;
 
-        return $this->verifyPhotoIdWithSelfieAsyncWithHttpInfo($ml_verify_photo_id_with_selfie_request, $app_id, $contentType)
+        return $this->verifyPhotoIdWithSelfieAsyncWithHttpInfo($ml_verify_photo_id_with_selfie_request, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -324,16 +318,15 @@ class MLApi extends \Dojah\CustomApi
      * KYC - Selfie Photo ID Verification
      *
      * @param  \Dojah\Model\MlVerifyPhotoIdWithSelfieRequest $ml_verify_photo_id_with_selfie_request (required)
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyPhotoIdWithSelfie'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function verifyPhotoIdWithSelfieAsyncWithHttpInfo($ml_verify_photo_id_with_selfie_request, $app_id = null, string $contentType = self::contentTypes['verifyPhotoIdWithSelfie'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
+    public function verifyPhotoIdWithSelfieAsyncWithHttpInfo($ml_verify_photo_id_with_selfie_request, string $contentType = self::contentTypes['verifyPhotoIdWithSelfie'][0], \Dojah\RequestOptions $requestOptions = new \Dojah\RequestOptions())
     {
         $returnType = 'object';
-        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifyPhotoIdWithSelfieRequest($ml_verify_photo_id_with_selfie_request, $app_id, $contentType);
+        ["request" => $request, "serializedBody" => $serializedBody] = $this->verifyPhotoIdWithSelfieRequest($ml_verify_photo_id_with_selfie_request, $contentType);
 
         // Customization hook
         $this->beforeSendHook($request, $requestOptions, $this->config, $serializedBody);
@@ -378,13 +371,12 @@ class MLApi extends \Dojah\CustomApi
      * Create request for operation 'verifyPhotoIdWithSelfie'
      *
      * @param  \Dojah\Model\MlVerifyPhotoIdWithSelfieRequest $ml_verify_photo_id_with_selfie_request (required)
-     * @param  string $app_id (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['verifyPhotoIdWithSelfie'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function verifyPhotoIdWithSelfieRequest($ml_verify_photo_id_with_selfie_request, $app_id = SENTINEL_VALUE, string $contentType = self::contentTypes['verifyPhotoIdWithSelfie'][0])
+    public function verifyPhotoIdWithSelfieRequest($ml_verify_photo_id_with_selfie_request, string $contentType = self::contentTypes['verifyPhotoIdWithSelfie'][0])
     {
 
         if ($ml_verify_photo_id_with_selfie_request !== SENTINEL_VALUE) {
@@ -401,10 +393,6 @@ class MLApi extends \Dojah\CustomApi
                 'Missing the required parameter ml_verify_photo_id_with_selfie_request when calling verifyPhotoIdWithSelfie'
             );
         }
-        // Check if $app_id is a string
-        if ($app_id !== SENTINEL_VALUE && !is_string($app_id)) {
-            throw new \InvalidArgumentException(sprintf('Invalid value %s, please provide a string, %s given', var_export($app_id, true), gettype($app_id)));
-        }
 
 
         $resourcePath = '/api/v1/kyc/photoid/verify';
@@ -415,10 +403,6 @@ class MLApi extends \Dojah\CustomApi
         $multipart = false;
 
 
-        // header params
-        if ($app_id !== SENTINEL_VALUE) {
-            $headerParams['AppId'] = ObjectSerializer::toHeaderValue($app_id);
-        }
 
 
 
@@ -460,6 +444,11 @@ class MLApi extends \Dojah\CustomApi
             }
         }
 
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Appid');
+        if ($apiKey !== null) {
+            $headers['Appid'] = $apiKey;
+        }
 
         $defaultHeaders = [];
         if ($this->config->getUserAgent()) {
